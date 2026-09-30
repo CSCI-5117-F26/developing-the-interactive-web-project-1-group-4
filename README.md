@@ -46,6 +46,62 @@ In this space please either provide images (around 4) showing your prototypes, O
 
 ![](https://media.giphy.com/media/26ufnwz3wDUli7GU0/giphy.gif)
 
+### 1. Logged-out Landing page
+![Logged-out Landing page](images/logge-out-home.jpeg)
+
+This is the Landing page of our application when the user is logged-out. Some of the functionalities of the application will be missing.
+
+### 2. Login page
+![Login page](images/login.jpeg)
+
+This is the pop window when the user clicks on the login buttion.
+
+### 3. sign-up page
+![sign-up page](images/sign up.jpeg)
+
+This is the pop-up window when the user hits the sign-up button
+
+### 4. Logged-in Landing page
+![Logged-in landing page](images/logged-in-home.jpeg)
+
+This is the landing page when the user is logged-in.
+
+### 5. Trending page
+![Trending page](images/Trending.jpeg)
+This is the trending page where user can find trending songs/artists/genres.
+
+### 6. Subscriptions page
+![Subscriptions page](images/subscriptions.jpeg)
+This is the subscriptions page where user can find the artists they subscribed to.
+
+### 7. Library page
+![Library page](images/library.jpeg)
+This is the Library page where user can find their playlists, saved videos and videos to watch later.
+
+### 8. Activity page
+![Activity page](images/Activity.jpeg)
+This is the Library page where user can find their liked videos and their comments om different videos.
+
+### 9. Upload page
+![Upload page](images/upload.jpeg)
+This is page where users upload their videos
+
+### 10. Upload page pop-up
+![Upload page pop-up](images/new video.jpeg)
+This is a pop-up window when the user clicks on the '+' button on the upload page
+
+### 11. Collaborations page
+![collab](images/collab.jpeg)
+This is the collaborations page where the user can see his collaborations with other users, create a new collaboration and manage requests from other users.
+
+### 12. Create Collaborations page
+![collab](images/create collab.jpeg)
+This is the pop-up window on the collaborations page where the user can create a new collaboration
+
+### 13. Collaborations Requeast page
+![collab](images/Collab request.jpeg)
+This is the pop-up window on the collaborations page where the user can manage the incoming collaboration requests.
+
 
 ## External Dependencies
 
