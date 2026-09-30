@@ -12,6 +12,7 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 
 * Mohith Siva Sai Bayana, bayan009@umn.edu
 * Jyothsna Mysore Santhosh Kumar, ms000001@umn.edu
+* Ashmitha Ashokkumar, ashok058@umn.edu 
 
 
 ## Key Features
