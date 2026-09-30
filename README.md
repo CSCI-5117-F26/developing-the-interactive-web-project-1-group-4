@@ -95,11 +95,11 @@ This is a pop-up window when the user clicks on the '+' button on the upload pag
 This is the collaborations page where the user can see his collaborations with other users, create a new collaboration and manage requests from other users.
 
 ### 12. Create Collaborations page
-![create collab](images/create collab.jpeg)
+![create collab](images/create_collab.jpeg)
 This is the pop-up window on the collaborations page where the user can create a new collaboration
 
 ### 13. Collaborations Requeast page
-![collab request](images/Collab request.jpeg)
+![collab request](images/Collab_request.jpeg)
 This is the pop-up window on the collaborations page where the user can manage the incoming collaboration requests.
 
 ### 14. Profile page
