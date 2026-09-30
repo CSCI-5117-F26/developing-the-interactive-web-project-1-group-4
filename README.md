@@ -92,7 +92,7 @@ This is the collaborations page where the user can see his collaborations with o
 ![create collab](images/create_collab.jpeg)
 This is the pop-up window on the collaborations page where the user can create a new collaboration
 
-### 13. Collaborations Requeast page
+### 13. Collaborations Request page
 ![collab request](images/Collab_request.jpeg)
 This is the pop-up window on the collaborations page where the user can manage the incoming collaboration requests.
 
