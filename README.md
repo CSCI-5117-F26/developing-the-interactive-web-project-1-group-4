@@ -72,7 +72,7 @@ This is the Library page where user can find their playlists, saved videos and v
 
 ### 8. Activity page
 ![Activity page](images/Activity.jpeg)
-This is the Library page where user can find their liked videos and their comments om different videos.
+This is the Activity page where user can find their liked videos and their comments om different videos.
 
 ### 9. Upload page
 ![Upload page](images/upload.jpeg)
