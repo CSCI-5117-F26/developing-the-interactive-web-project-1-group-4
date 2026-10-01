@@ -97,7 +97,7 @@ This is the pop-up window on the collaborations page where the user can create a
 This is the pop-up window on the collaborations page where the user can manage the incoming collaboration requests.
 
 ### 14. Profile page
-![profile](images/profile.jpeg)
+![profile](images/Profile_new.jpg)
 This is the profile page when the user clicks on their/other user's profile
 
 ### 15. Account Settings page
