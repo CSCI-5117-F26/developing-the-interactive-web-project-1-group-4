@@ -84,47 +84,35 @@ This is page where users upload their videos
 ![Upload page pop-up](images/new_video.jpeg)
 This is a pop-up window when the user clicks on the '+' button on the upload page
 
-### 11. Collaborations page
-![collab](images/collab.jpeg)
-This is the collaborations page where the user can see his collaborations with other users, create a new collaboration and manage requests from other users.
-
-### 12. Create Collaborations page
-![create collab](images/create_collab.jpeg)
-This is the pop-up window on the collaborations page where the user can create a new collaboration
-
-### 13. Collaborations Request page
-![collab request](images/Collab_request.jpeg)
-This is the pop-up window on the collaborations page where the user can manage the incoming collaboration requests.
-
-### 14. Profile page
+### 11. Profile page
 ![profile](images/Profile_new.jpg)
 This is the profile page when the user clicks on their/other user's profile
 
-### 15. Account Settings page
+### 12. Account Settings page
 ![settings](images/Account_settings.jpeg)
 On the account settings page, users have access to make modifications to their profile
 
-### 16. Edit Profile Picture
+### 13. Edit Profile Picture
 ![edit_pp](images/edit_pp.jpeg)
 Users can edit their profile picture (add or remove) on this page
 
-### 17. Edit Account Info
+### 14. Edit Account Info
 ![edit_info](images/Acc_info.jpeg)
 Users can update their account info including their username, phone and email via this page
 
-### 18. Edit Password
+### 15. Edit Password
 ![edit_pswd](images/edit_psswd.jpeg)
 Users can change their passwords through this pop window
 
-### 19. Edit Bio
+### 16. Edit Bio
 ![edit_bio](images/edit_bio.jpeg)
 Users can update their bio and save the changes on this pop up window
 
-### 20. Video Player
+### 17. Video Player
 ![vid-player](images/video_player.jpeg)
 This is the media player window. Users can view the videos on this page. They can like, share, subscribe and view, add, edit their comments.
 
-### 21. Menu Pop-up on video Player
+### 18. Menu Pop-up on video Player
 ![vid-menu](images/video_menu.jpeg)
 The three dots on the media player area leads to this dropdown options. They can save videos and add to watch later. They can also create and save to existing playlists
 
