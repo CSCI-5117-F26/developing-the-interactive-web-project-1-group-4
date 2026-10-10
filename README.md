@@ -97,7 +97,7 @@ This is the Edit Video popup that shows up when Edit is selected from the pop-up
 This is the popup that verifies that the user would like to proceed with deleting the video.
 
 ### 14. Profile page
-![profile](images/IMG_2306.jpg)
+![profile](images/IMG_2306.jpeg)
 This is the profile page when the user clicks on their/other user's profile
 
 ### 15. Account Settings page
