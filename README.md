@@ -56,63 +56,79 @@ This is the pop window when the user clicks on the login buttion.
 This is the pop-up window when the user hits the sign-up button
 
 ### 4. Logged-in Landing page
-![Logged-in landing page](images/logged-in-home.jpeg)
+![Logged-in landing page](images/IMG_2298.jpeg)
 
 This is the landing page when the user is logged-in.
 
 ### 5. Trending page
-![Trending page](images/Trending.jpeg)
+![Trending page](images/IMG_2299.jpeg)
 This is the trending page where user can find trending songs/artists/genres.
 
 ### 6. Subscriptions page
-![Subscriptions page](images/subscriptions.jpeg)
+![Subscriptions page](images/IMG_2300.jpeg)
 This is the subscriptions page where user can find the artists they subscribed to.
 
 ### 7. Library page
-![Library page](images/library.jpeg)
+![Library page](images/IMG_2301.jpeg)
 This is the Library page where user can find their playlists, saved videos and videos to watch later.
 
 ### 8. Activity page
-![Activity page](images/Activity.jpeg)
+![Activity page](images/IMG_2302.jpeg)
 This is the Activity page where user can find their liked videos and their comments om different videos.
 
 ### 9. Upload page
-![Upload page](images/upload.jpeg)
+![Upload page](images/IMG_2303.jpeg)
 This is page where users upload their videos
 
 ### 10. Upload page pop-up
 ![Upload page pop-up](images/new_video.jpeg)
 This is a pop-up window when the user clicks on the '+' button on the upload page
 
-### 11. Profile page
-![profile](images/Profile_new.jpg)
+### 11. Manage Videos Page
+![profile](images/ManageVideosFinal.PNG)
+This is the Manage Videos page where users can see and manage all the videos they have posted. Upon clicking the three dots, the option to either Edit or Delete each video appears via a pop-up menu that is overlaid on the video
+
+### 12. Edit Video
+![profile](images/IMG_2310.PNG)
+This is the Edit Video popup that shows up when Edit is selected from the pop-up menu mentioned on 11. The video creator has the option to edit the title and description of the video, as well as upload a new thumbnail for the video.
+
+### 13. Delete Video Confirmation Popup
+![profile](images/IMG_2316.PNG)
+This is the popup that verifies that the user would like to proceed with deleting the video.
+
+### 14. Profile page
+![profile](images/IMG_2306.jpg)
 This is the profile page when the user clicks on their/other user's profile
 
-### 12. Account Settings page
-![settings](images/Account_settings.jpeg)
+### 15. Account Settings page
+![settings](images/IMG_2307.jpeg)
 On the account settings page, users have access to make modifications to their profile
 
-### 13. Edit Profile Picture
+### 16. Edit Profile Picture
 ![edit_pp](images/edit_pp.jpeg)
 Users can edit their profile picture (add or remove) on this page
 
-### 14. Edit Account Info
+### 17. Edit Account Info
 ![edit_info](images/Acc_info.jpeg)
 Users can update their account info including their username, phone and email via this page
 
-### 15. Edit Password
+### 18. Edit Password
 ![edit_pswd](images/edit_psswd.jpeg)
 Users can change their passwords through this pop window
 
-### 16. Edit Bio
+### 19. Edit Bio
 ![edit_bio](images/edit_bio.jpeg)
 Users can update their bio and save the changes on this pop up window
 
-### 17. Video Player
-![vid-player](images/video_player.jpeg)
-This is the media player window. Users can view the videos on this page. They can like, share, subscribe and view, add, edit their comments.
+### 20. Video Player
+![vid-player](images/Video_Player.JPG)
+This is the media player window. Users can view the videos on this page. They can like, share, subscribe and view, add, edit their comments, with comment editing and deleting down by pressing the three dots.
 
-### 18. Menu Pop-up on video Player
+### 21. Delete Comment Pop-up
+![vid-menu](images/IMG_2315.PNG)
+Clicking on the delete option of the three dots on the comments opens up a window seeking delete confirmation.
+
+### 21. Menu Pop-up on video Player
 ![vid-menu](images/video_menu.jpeg)
 The three dots on the media player area leads to this dropdown options. They can save videos and add to watch later. They can also create and save to existing playlists
 
