@@ -128,7 +128,7 @@ This is the media player window. Users can view the videos on this page. They ca
 ![vid-menu](images/IMG_2315.PNG)
 Clicking on the delete option of the three dots on the comments opens up a window seeking delete confirmation.
 
-### 21. Menu Pop-up on video Player
+### 22. Menu Pop-up on video Player
 ![vid-menu](images/video_menu.jpeg)
 The three dots on the media player area leads to this dropdown options. They can save videos and add to watch later. They can also create and save to existing playlists
 
