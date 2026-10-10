@@ -1,5 +1,5 @@
 from sqlalchemy import inspect
-
+from . import models
 from flask import Flask
 from .database import db
 import os
