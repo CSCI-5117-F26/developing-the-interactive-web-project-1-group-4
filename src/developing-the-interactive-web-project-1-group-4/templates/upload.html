@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Upload | Tune In{% endblock %}
+
+{% block content %}
+<div class="creator-page">
+    <header class="creator-topbar">
+        <div class="creator-search">
+            <span>⌕</span>
+            <input type="search" placeholder="Search artists, songs, or videos...">
+        </div>
+        <div class="creator-topbar-icons"><span>♧</span><span>●</span></div>
+    </header>
+
+    <div class="creator-heading">
+        <h1>Upload</h1>
+        <p>Share your music and videos with your audience.</p>
+    </div>
+
+    <form class="creator-upload-form" method="POST" enctype="multipart/form-data">
+        <div class="creator-form-banner">ADD NEW VIDEO</div>
+
+        <div class="creator-upload-grid">
+            <section class="creator-panel">
+                <h2>1. Upload Video</h2>
+                <p>Select the video file you want to publish.</p>
+                <label class="creator-dropzone">
+                    <span class="creator-upload-icon">⇧</span>
+                    <strong>Upload video</strong>
+                    <span>Choose a video file or browse</span>
+                    <input type="file" name="video_file" accept="video/*">
+                </label>
+                <p class="creator-file-note">Supported: MP4, MOV</p>
+            </section>
+
+            <section class="creator-panel">
+                <h2>2. Upload MP4 <span>(Optional)</span></h2>
+                <p>Alternatively, select an MP4 file.</p>
+                <label class="creator-dropzone">
+                    <span class="creator-upload-icon">▷</span>
+                    <strong>Upload MP4</strong>
+                    <span>Choose an MP4 file or browse</span>
+                    <input type="file" name="mp4_file" accept="video/mp4,.mp4">
+                </label>
+                <p class="creator-file-note">Supported: MP4</p>
+            </section>
+
+            <section class="creator-panel">
+                <h2>3. Upload Thumbnail</h2>
+                <p>Choose the cover image viewers will see.</p>
+                <label class="creator-dropzone">
+                    <span class="creator-upload-icon">▧</span>
+                    <strong>Upload thumbnail</strong>
+                    <span>Choose an image or browse</span>
+                    <input type="file" name="thumbnail_file" accept="image/*">
+                </label>
+                <p class="creator-file-note">Supported: PNG, JPG, JPEG</p>
+            </section>
+
+            <section class="creator-panel creator-png-panel">
+                <h2>4. Upload PNG <span>(Optional)</span></h2>
+                <p>Upload artwork for your video.</p>
+                <label class="creator-dropzone">
+                    <span class="creator-upload-icon">▧</span>
+                    <strong>Upload PNG</strong>
+                    <span>Choose PNG artwork or browse</span>
+                    <input type="file" name="png_file" accept="image/png,.png">
+                </label>
+                <p class="creator-file-note">Supported: PNG</p>
+            </section>
+
+            <section class="creator-panel creator-details-panel">
+                <h2>5. Video Details</h2>
+                <div class="creator-field">
+                    <label for="video-title">Title <span class="required">*</span></label>
+                    <input id="video-title" name="title" type="text"
+                           placeholder="Enter video title" required>
+                </div>
+                <div class="creator-field">
+                    <label for="video-description">Description</label>
+                    <textarea id="video-description" name="description"
+                              rows="2" placeholder="Enter a description"></textarea>
+                </div>
+                <div class="creator-details-grid">
+                    <div class="creator-field">
+                        <label for="video-genre">Genre</label>
+                        <select id="video-genre" name="genre">
+                            <option value="">Select genre</option>
+                            <option>Pop</option><option>Rock</option>
+                            <option>Classical</option><option>Hip-Hop</option>
+                            <option>Jazz</option><option>Electronic</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="creator-field">
+                        <label for="video-type">Original / Cover</label>
+                        <select id="video-type" name="video_type">
+                            <option value="">Select type</option>
+                            <option value="original">Original</option>
+                            <option value="cover">Cover</option>
+                        </select>
+                    </div>
+                    <div class="creator-field">
+                        <label for="video-language">Language</label>
+                        <select id="video-language" name="language">
+                            <option value="">Select language</option>
+                            <option>English</option><option>Tamil</option>
+                            <option>Hindi</option><option>Spanish</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="creator-actions">
+                    <button class="creator-btn creator-btn-primary"
+                            type="submit" name="action" value="publish">PUBLISH</button>
+                    <button class="creator-btn creator-btn-secondary"
+                            type="submit" name="action" value="draft">SAVE DRAFT</button>
+                    <a class="creator-btn creator-btn-cancel" href="/">CANCEL</a>
+                </div>
+            </section>
+        </div>
+    </form>
+
+    <section class="creator-drafts">
+        <div class="creator-form-banner">YOUR DRAFTS</div>
+        <div class="creator-drafts-grid">
+            <article class="creator-draft-card">
+                <div class="creator-draft-art art-one">♫ <small>00:00</small></div>
+                <div class="creator-draft-info"><strong>Video Title (Draft)</strong><span>Sample preview</span></div>
+            </article>
+            <article class="creator-draft-card">
+                <div class="creator-draft-art art-two">♫ <small>00:00</small></div>
+                <div class="creator-draft-info"><strong>Video Title (Draft)</strong><span>Sample preview</span></div>
+            </article>
+            <article class="creator-draft-card">
+                <div class="creator-draft-art art-three">♫ <small>00:00</small></div>
+                <div class="creator-draft-info"><strong>Video Title (Draft)</strong><span>Sample preview</span></div>
+            </article>
+            <article class="creator-draft-card">
+                <div class="creator-draft-art art-four">♫ <small>00:00</small></div>
+                <div class="creator-draft-info"><strong>Video Title (Draft)</strong><span>Sample preview</span></div>
+            </article>
+        </div>
+    </section>
+</div>
+{% endblock %}

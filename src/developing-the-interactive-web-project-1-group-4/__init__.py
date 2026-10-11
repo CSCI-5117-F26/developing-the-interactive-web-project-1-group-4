@@ -1,6 +1,6 @@
 from sqlalchemy import inspect
 from . import models
-from flask import Flask, request
+from flask import Flask, render_template, request
 from .database import db
 from .services import create_dummy_user, create_dummy_video
 from .storage import r2, bucket_name
@@ -26,7 +26,8 @@ def reset_db():  # Use `from . import models` if using package imports
 
 @app.route('/')
 def index():
-    return '<p>Index Page</p>'
+    return render_template("base.html")
+
 
 @app.route('/create-profile', methods=['POST'])
 def create_profile():
@@ -75,6 +76,10 @@ def get_thumbnails():
 
     return jsonify(thumbnails)
 
-@app.route('/hello')
-def hello():
-    return '<p>Hello, World</p>'
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    return render_template("upload.html")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
