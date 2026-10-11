@@ -3,27 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>{% block title %}Tune In{% endblock %}</title>
 
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/purecss@3.0.0/build/pure-min.css"
-    >
-
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/style.css') }}"
-    >
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
-
     {% include "sidebar.html" %}
 
     <main>
-        {% block content %}{% endblock %}
+        {% block content %}
+        <div class="home-placeholder">
+            <h1>Welcome to Tune In</h1>
+            <p>Your space for music, videos, and creators.</p>
+            <a class="creator-btn creator-btn-primary" href="{{ url_for('upload') }}">
+                Upload a video
+            </a>
+        </div>
+        {% endblock %}
     </main>
-
 </body>
 </html>
