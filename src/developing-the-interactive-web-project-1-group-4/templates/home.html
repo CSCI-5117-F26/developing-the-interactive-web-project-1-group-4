@@ -6,20 +6,25 @@
 
 <div class="home-placeholder">
     <!-- search bar -->
-    <div class="search-bar-container">
+    <form class="search-bar-container" method="get" action="{{ url_for('homePage.home') }}">
         <div class="search-bar">
-            <input type="text" id="fl-search" placeholder=" ">
+            <input type="text" id="fl-search" name="q" placeholder=" " value="{{ q }}">
             <label for="fl-search">Search</label>
         </div>
-    </div>
+        {% if selected_genre %}
+            <input type="hidden" name="genre" value="{{ selected_genre }}">
+        {% endif %}
+    </form>
 
     <!-- tags area -->
     <div class="tag-container">
         {% for genre in genres %}
-            <div class="tag">
-                {{genre.name}}
-            </div>
-        {% endfor %}
+            {% if genre.name == selected_genre %}
+                <a class="tag active" href="{{ url_for('homePage.home', q=q or None) }}">{{ genre.name }}</a>
+            {% else %}
+                <a class="tag" href="{{ url_for('homePage.home', genre=genre.name, q=q or None) }}">{{ genre.name }}</a>
+        {% endif %}
+    {% endfor %}
     </div>
 
     <h1>Welcome to Tune In</h1>
@@ -28,7 +33,12 @@
     <div class="row-container">
         {% for video in videos %}
             {% include "svg/vinyl_svg.html" %}
-        {% endfor %}
+        {% else %}
+            <p class="no-results">No videos found{% if q %} for "{{ q }}"{% endif %}.</p>
+    {% endfor %}
     </div>
+    <video id="fullscreen-player" controls playsinline hidden></video>
 </div>
+
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
 {% endblock %}

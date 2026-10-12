@@ -26,10 +26,6 @@ def reset_db():  # Use `from . import models` if using package imports
 
     print("Database tables recreated.")
 
-@app.route('/')
-def index():
-    return render_template("base.html")
-
 
 @app.route('/create-profile', methods=['POST'])
 def create_profile():

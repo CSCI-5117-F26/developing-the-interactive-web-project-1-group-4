@@ -70,3 +70,14 @@
     padding: 6px 23px;
     margin-right: 3%;
 }
+
+/* Selected genre tag looks darker */
+.tag.active {
+    background-color: var(--menuBackgroundColor);
+    color: var(--onMBC);
+}
+
+/* Hand cursor on the playable video */
+.container[data-video-url] {
+    cursor: pointer;
+}
