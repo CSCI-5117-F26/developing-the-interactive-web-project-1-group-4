@@ -6,9 +6,11 @@ from .services import create_dummy_user, create_dummy_video
 from .storage import r2, bucket_name
 import os
 from dotenv import load_dotenv
+from .routes import homePage_bp
 load_dotenv()
 
 app = Flask(__name__)
+app.register_blueprint(homePage_bp)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["Database_url"]
 db.init_app(app)
 with app.app_context():
@@ -83,3 +85,4 @@ def upload():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
