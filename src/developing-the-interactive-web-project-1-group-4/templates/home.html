@@ -4,9 +4,31 @@
 
 {% block content %}
 
-<div style="margin-left: 240px; padding: 40px;">
-    <h1>Generation</h1>
-    <p>Welcome to Generation.</p>
-</div>
+<div class="home-placeholder">
+    <!-- search bar -->
+    <div class="search-bar-container">
+        <div class="search-bar">
+            <input type="text" id="fl-search" placeholder=" ">
+            <label for="fl-search">Search</label>
+        </div>
+    </div>
 
+    <!-- tags area -->
+    <div class="tag-container">
+        {% for genre in genres %}
+            <div class="tag">
+                {{genre.name}}
+            </div>
+        {% endfor %}
+    </div>
+
+    <h1>Welcome to Tune In</h1>
+    <p>Your space for music, videos, and creators.</p>
+
+    <div class="row-container">
+        {% for video in videos %}
+            {% include "svg/vinyl_svg.html" %}
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
