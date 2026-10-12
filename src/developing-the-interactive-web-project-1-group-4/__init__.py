@@ -1,9 +1,10 @@
 from sqlalchemy import inspect
 from . import models
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request,jsonify, current_app
 from .database import db
-from .services import create_dummy_user, create_dummy_video
-from .storage import r2, bucket_name
+from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, upload_video_to_cloud, upload_thumbnail_to_cloud
+from botocore.exceptions import BotoCoreError, ClientError
+from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -49,37 +50,55 @@ def create_video():
     create_dummy_video(ti_user, thumbnail_key, duration, title, video_key, language, original)
     return "successfull"
 
-from flask import jsonify
+
 
 @app.route("/api/thumbnails", methods=["GET"])
 def get_thumbnails():
-    thumbnail_keys = [
-        "thumbnails/0067769d-f9fd-4a79-983e-ec8660fdaff4-2.jpg",
-    ]
-
-    thumbnails = []
-
-    for key in thumbnail_keys:
-        url = r2.generate_presigned_url(
-            "get_object",
-            Params={
-                "Bucket": os.environ["R2_BUCKET_NAME"],
-                "Key": key,
-            },
-            ExpiresIn=3600
-        )
-
-        thumbnails.append({
-            "key": key,
-            "url": url,
-        })
-
+    thumbnails = get_thumbnails_url()
     return jsonify(thumbnails)
 
-@app.route("/upload", methods=["GET", "POST"])
-def upload():
+@app.route("/new-video", methods=["GET", "POST"])
+def new_video():
     return render_template("upload.html")
 
+@app.route("/publish", methods=["POST"])
+def publish():
+    video_key = request.form.get("video_key")
+    thumbnail_key = request.form.get("thumbnail_key")
+    return render_template("Acknowledgement.html", name=video_key, thumbnail_name=thumbnail_key)
 
+@app.route("/upload-video", methods=["POST"])
+def upload_video():
+    video = request.files.get("video_file")
+
+    if video is None or not video.filename:
+        return jsonify(error="No video selected."), 400
+
+    try:
+        video_key = upload_video_to_cloud(video)
+    except ValueError as error:
+        return jsonify(error=str(error)), 400
+    except (BotoCoreError, ClientError):
+        current_app.logger.exception("Video upload to R2 failed")
+        return jsonify(error="Video upload failed. Please try again."), 502
+
+    return jsonify(video_key=video_key)
+
+@app.route("/upload-thumbnail", methods=["POST"])
+def upload_thumbnail():
+    thumbnail = request.files.get("thumbnail_file")
+
+    if thumbnail is None or not thumbnail.filename:
+        return jsonify(error="No Thumbnail selected."), 400
+
+    try:
+        thumbnail_key = upload_thumbnail_to_cloud(thumbnail)
+    except ValueError as error:
+        return jsonify(error=str(error)), 400
+    except (BotoCoreError, ClientError):
+        current_app.logger.exception("Thumbnail upload to R2 failed")
+        return jsonify(error="Thumbnail upload failed. Please try again."), 502
+
+    return jsonify(thumbnail_key=thumbnail_key)
 if __name__ == "__main__":
     app.run(debug=True)
