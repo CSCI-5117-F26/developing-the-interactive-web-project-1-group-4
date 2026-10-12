@@ -456,6 +456,119 @@ body > main {
     color: #77796e;
     font-size: 10px;
 }
+/* Let dropdown panels extend beyond the form. */
+.creator-upload-form {
+    overflow: visible;
+}
+
+.creator-upload-form > .creator-form-banner {
+    border-radius: 8px 8px 0 0;
+}
+
+.upload-dropdown-label {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.upload-dropdown {
+    position: relative;
+    min-width: 0;
+}
+
+.upload-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    height: 35px;
+    padding: 8px 10px;
+    border: 1px solid #d9dccd;
+    border-radius: 6px;
+    background: #fffefb;
+    color: #343a2c;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 400;
+    text-align: left;
+    cursor: pointer;
+}
+
+.upload-dropdown-summary {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.upload-dropdown-toggle:focus-visible {
+    outline: 2px solid #68744f;
+    outline-offset: 2px;
+}
+
+.upload-dropdown-toggle[aria-invalid="true"] {
+    border-color: #9b4034;
+}
+
+.upload-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 6px;
+    border: 1px solid #d9dccd;
+    border-radius: 6px;
+    background: #fffefb;
+    color: #343a2c;
+    box-shadow: 0 6px 18px rgb(0 0 0 / 12%);
+}
+
+.upload-dropdown-panel[hidden] {
+    display: none;
+}
+
+.upload-dropdown-panel .upload-dropdown-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.upload-dropdown-option:hover,
+.upload-dropdown-option:focus-within {
+    background: #eef0e4;
+}
+
+.upload-dropdown-option:has(input:checked) {
+    background: #dce2c9;
+}
+
+.upload-dropdown-panel input {
+    flex: 0 0 14px;
+    width: 14px;
+    height: 14px;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    accent-color: #68744f;
+}
+
+.upload-dropdown-error {
+    margin: 4px 0 0;
+    color: #9b4034;
+    font-size: 11px;
+}
+
+.upload-dropdown-error:empty {
+    display: none;
+}
 
 /* TABLETS */
 

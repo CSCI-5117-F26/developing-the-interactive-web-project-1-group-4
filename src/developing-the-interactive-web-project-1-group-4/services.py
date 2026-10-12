@@ -3,6 +3,7 @@ from .models import *
 from .storage import r2
 from uuid import uuid4
 from werkzeug.utils import secure_filename
+from flask import request
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -81,3 +82,29 @@ def upload_thumbnail_to_cloud(thumbnail):
     )
 
     return thumbnail_key
+
+
+
+def get_upload_form_data():
+    def optional_text(name):
+        value = request.form.get(name, "").strip()
+        return value or None
+
+    return {
+        "video_key": optional_text("video_key"),
+        "thumbnail_key": optional_text("thumbnail_key"),
+        "title": optional_text("title"),
+        "description": optional_text("description"),
+        "genres": list(dict.fromkeys(
+            genre.strip()
+            for genre in request.form.getlist("genre")
+            if genre.strip()
+        )),
+        "video_type": optional_text("video_type"),
+        "language": optional_text("language"),
+    }
+
+def create_video_helper(ti_user, thumbnail_key, duration, title, description, genres, video_key, language, original):
+    video = videos(ti_user=ti_user, thumbnail_key=thumbnail_key, duration=duration, title=title, description=description, video_key = video_key, language=language, Original=original)
+    db.session.add(video)
+    db.session.commit()

@@ -17,12 +17,12 @@
         <p>Share your music and videos with your audience.</p>
     </div>
 
-    <form id="upload-video-form" action="{{ url_for('publish') }}"class="creator-upload-form" method="POST" enctype="multipart/form-data">
+    <form id="upload-video-form" action="{{ url_for('publish') }}" class="creator-upload-form" method="POST" enctype="multipart/form-data">
         <div class="creator-form-banner">ADD NEW VIDEO</div>
 
         <div class="creator-upload-grid">
             <section class="creator-panel">
-                <h2>1. Upload Video</h2>
+                <h2>1. Upload Video <span class="required">*</span></h2>
                 <p>Select the video file you want to publish.</p>
                 <label class="creator-dropzone">
                     <span class="creator-upload-icon">⇧</span>
@@ -36,7 +36,7 @@
             </section>
 
             <section class="creator-panel">
-                <h2>2. Upload Thumbnail</h2>
+                <h2>2. Upload Thumbnail <span class="required">*</span></h2>
                 <p>Choose the cover image viewers will see.</p>
                 <label class="creator-dropzone">
                     <span class="creator-upload-icon">▧</span>
@@ -58,44 +58,82 @@
                            placeholder="Enter video title" required>
                 </div>
                 <div class="creator-field">
-                    <label for="video-description">Description</label>
+                    <label for="video-description">Description <span class="required">*</span></label>
                     <textarea id="video-description" name="description"
-                              rows="2" placeholder="Enter a description"></textarea>
+                              rows="2" placeholder="Enter a description" required></textarea>
                 </div>
-                <div class="creator-details-grid">
-                    <div class="creator-field">
-                        <label for="video-genre">Genre</label>
-                        <select id="video-genre" name="genre">
-                            <option value="">Select genre</option>
-                            <option>Pop</option><option>Rock</option>
-                            <option>Classical</option><option>Hip-Hop</option>
-                            <option>Jazz</option><option>Electronic</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div class="creator-field">
-                        <label for="video-type">Original / Cover</label>
-                        <select id="video-type" name="video_type">
-                            <option value="">Select type</option>
-                            <option value="original">Original</option>
-                            <option value="cover">Cover</option>
-                        </select>
-                    </div>
-                    <div class="creator-field">
-                        <label for="video-language">Language</label>
-                        <select id="video-language" name="language">
-                            <option value="">Select language</option>
-                            <option>English</option><option>Tamil</option>
-                            <option>Hindi</option><option>Spanish</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                </div>
+    {% set dropdowns = [
+    ('genre', 'Genres', 'Select genres', 'checkbox', [
+        ('Pop', 'Pop'),
+        ('Rock', 'Rock'),
+        ('Classical', 'Classical'),
+        ('Hip-Hop', 'Hip-Hop'),
+        ('Jazz', 'Jazz'),
+        ('Electronic', 'Electronic'),
+        ('Other', 'Other')
+    ]),
+    ('video_type', 'Original / Cover', 'Select type', 'radio', [
+        ('original', 'Original'),
+        ('cover', 'Cover')
+    ]),
+    ('language', 'Language', 'Select language', 'radio', [
+        ('English', 'English'),
+        ('Tamil', 'Tamil'),
+        ('Hindi', 'Hindi'),
+        ('Spanish', 'Spanish'),
+        ('Other', 'Other')
+    ])
+] %}
+
+<div class="creator-details-grid">
+    {% for name, label, placeholder, input_type, options in dropdowns %}
+    <div class="creator-field">
+        <span id="{{ name }}-label" class="upload-dropdown-label">
+            {{ label }} <span class="required">*</span>
+        </span>
+
+        <div class="upload-dropdown"
+             data-placeholder="{{ placeholder }}">
+            <button type="button"
+                    class="upload-dropdown-toggle"
+                    aria-expanded="false"
+                    aria-controls="{{ name }}-panel"
+                    aria-labelledby="{{ name }}-label {{ name }}-summary"
+                    aria-describedby="{{ name }}-error">
+                <span id="{{ name }}-summary"
+                      class="upload-dropdown-summary">
+                    {{ placeholder }}
+                </span>
+                <span aria-hidden="true">▾</span>
+            </button>
+
+            <div id="{{ name }}-panel"
+                 class="upload-dropdown-panel"
+                 role="group"
+                 aria-labelledby="{{ name }}-label"
+                 hidden>
+                {% for value, text in options %}
+                <label class="upload-dropdown-option">
+                    <input type="{{ input_type }}"
+                           name="{{ name }}"
+                           value="{{ value }}">
+                    <span>{{ text }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <p id="{{ name }}-error"
+           class="upload-dropdown-error"
+           role="alert"></p>
+    </div>
+    {% endfor %}
+</div>
                 <div class="creator-actions">
                     <button class="creator-btn creator-btn-primary"
                             type="submit" name="action" value="publish">PUBLISH</button>
                     <button class="creator-btn creator-btn-secondary"
-                            type="submit" name="action" value="draft">SAVE DRAFT</button>
+                            type="submit" name="action" value="draft" formaction="{{url_for('save_draft')}}" formnovalidate>SAVE DRAFT</button>
                     <a class="creator-btn creator-btn-cancel" href="/">CANCEL</a>
                 </div>
             </section>
@@ -183,19 +221,160 @@ function setupUpload(type) {
 
 setupUpload("video");
 setupUpload("thumbnail");
+const dropdowns = [...form.querySelectorAll(".upload-dropdown")];
 
-form.addEventListener("submit", (event) => {
+function setDropdownOpen(dropdown, open) {
+    dropdown.querySelector(".upload-dropdown-panel").hidden = !open;
+    dropdown.querySelector(".upload-dropdown-toggle")
+        .setAttribute("aria-expanded", String(open));
+}
+
+function closeDropdowns() {
+    dropdowns.forEach(dropdown => setDropdownOpen(dropdown, false));
+}
+
+function updateDropdown(dropdown) {
+    const selected = [...dropdown.querySelectorAll("input:checked")];
+    const summary = dropdown.querySelector(".upload-dropdown-summary");
+    const toggle = dropdown.querySelector(".upload-dropdown-toggle");
+    const error = dropdown.parentElement.querySelector(
+        ".upload-dropdown-error"
+    );
+
+    summary.textContent = selected.length === 0
+        ? dropdown.dataset.placeholder
+        : selected.length === 1
+            ? selected[0].nextElementSibling.textContent.trim()
+            : `${selected.length} genres selected`;
+
+    if (selected.length > 0) {
+        error.textContent = "";
+        toggle.removeAttribute("aria-invalid");
+    }
+}
+
+dropdowns.forEach(dropdown => {
+    const toggle = dropdown.querySelector(".upload-dropdown-toggle");
+    const panel = dropdown.querySelector(".upload-dropdown-panel");
+
+    toggle.addEventListener("click", () => {
+        const shouldOpen = panel.hidden;
+        closeDropdowns();
+        setDropdownOpen(dropdown, shouldOpen);
+    });
+
+    dropdown.querySelectorAll("input").forEach(input => {
+        input.addEventListener("change", () => {
+            updateDropdown(dropdown);
+
+            // Single-choice dropdowns close after selection.
+            if (input.type === "radio" && !input.matches(":focus-visible")) {
+                setDropdownOpen(dropdown, false);
+                toggle.focus();
+            }
+        });
+    });
+
+    dropdown.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !panel.hidden) {
+            event.preventDefault();
+            setDropdownOpen(dropdown, false);
+            toggle.focus();
+        }
+
+        if (event.key === "ArrowDown" && event.target === toggle) {
+            event.preventDefault();
+            closeDropdowns();
+            setDropdownOpen(dropdown, true);
+
+            const target = panel.querySelector("input:checked")
+                || panel.querySelector("input");
+            target.focus();
+        }
+    });
+
+    dropdown.addEventListener("focusout", event => {
+        if (!dropdown.contains(event.relatedTarget)) {
+            setDropdownOpen(dropdown, false);
+        }
+    });
+
+    updateDropdown(dropdown);
+});
+
+document.addEventListener("click", event => {
+    if (!dropdowns.some(dropdown => dropdown.contains(event.target))) {
+        closeDropdowns();
+    }
+});
+
+function validateDropdowns() {
+    for (const dropdown of dropdowns) {
+        if (dropdown.querySelector("input:checked")) continue;
+
+        const toggle = dropdown.querySelector(".upload-dropdown-toggle");
+        const error = dropdown.parentElement.querySelector(
+            ".upload-dropdown-error"
+        );
+        const name = dropdown.querySelector("input").name;
+
+        const messages = {
+            genre: "Choose at least one genre.",
+            video_type: "Choose Original or Cover.",
+            language: "Choose a language."
+        };
+
+        error.textContent = messages[name];
+        toggle.setAttribute("aria-invalid", "true");
+
+        closeDropdowns();
+        setDropdownOpen(dropdown, true);
+        dropdown.querySelector("input").focus();
+        return false;
+    }
+
+    return true;
+}
+
+form.addEventListener("submit", event => {
     if (activeUploads > 0) {
         event.preventDefault();
         return;
     }
 
-    // Allow drafts without a video, but require one for publishing.
     const isDraft = event.submitter?.value === "draft";
-    if (!isDraft && !document.getElementById("video-key").value) {
+
+    // Both actions require a completed video upload.
+    if (!document.getElementById("video-key").value.trim()) {
         event.preventDefault();
         document.getElementById("upload-status-video").textContent =
-            "Please upload a video before publishing.";
+            "Please upload a video before continuing.";
+        return;
+    }
+
+    // All remaining fields are optional for drafts.
+    if (isDraft) return;
+
+    if (!document.getElementById("thumbnail-key").value.trim()) {
+        event.preventDefault();
+        document.getElementById("upload-status-thumbnail").textContent =
+            "Please upload a thumbnail before publishing.";
+        return;
+    }
+
+    for (const id of ["video-title", "video-description"]) {
+        const field = document.getElementById(id);
+
+        if (!field.value.trim()) {
+            event.preventDefault();
+            field.value = "";
+            field.reportValidity();
+            return;
+        }
+    }
+
+    if (!validateDropdowns()) {
+        event.preventDefault();
     }
 });
 </script>
