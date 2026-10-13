@@ -1,6 +1,6 @@
 from sqlalchemy import inspect
 from . import models
-from flask import Flask, render_template, request,jsonify, current_app
+from flask import Flask, render_template, request,jsonify, current_app , session, redirect , url_for
 from .database import db
 from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, upload_video_to_cloud, upload_thumbnail_to_cloud, get_upload_form_data, create_video_helper, create_draft_helper
 from botocore.exceptions import BotoCoreError, ClientError
@@ -9,8 +9,24 @@ import os
 from dotenv import load_dotenv
 from .routes import homePage_bp, profileInput_bp
 load_dotenv()
-
+from authlib.integrations.flask_client import OAuth
 app = Flask(__name__)
+app.secret_key = os.environ["FLASK_SECRET"]
+oauth = OAuth(app)
+
+domain = os.environ["AUTH_0_DOMAIN"]
+client_id = os.environ["AUTH_0_CLIENT_ID"]
+client_secret = os.environ["AUTH_0_CLIENT_SECRET"]
+
+oauth.register(
+    "auth0",
+    client_id=client_id,
+    client_secret=client_secret,
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f"https://{domain}/.well-known/openid-configuration",
+)
 app.register_blueprint(homePage_bp)
 app.register_blueprint(profileInput_bp)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["Database_url"]
@@ -28,6 +44,32 @@ def reset_db():
 
     print("Database tables recreated.")
 
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    """
+    Callback redirect from Auth0
+    """
+    token = oauth.auth0.authorize_access_token()
+    session["user"] = token
+    return redirect("/")
+
+@app.route("/login")
+def login():
+    """
+    Redirects the user to the Auth0 Universal Login (https://auth0.com/docs/authenticate/login/auth0-universal-login)
+    """
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True)
+    )
+@app.route("/signup")
+def signup():
+    """
+    Redirects the user to the Auth0 Universal Login (https://auth0.com/docs/authenticate/login/auth0-universal-login)
+    """
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=url_for("callback", _external=True),
+        screen_hint="signup"
+    )
 
 @app.route('/create-profile', methods=['POST'])
 def create_profile():
