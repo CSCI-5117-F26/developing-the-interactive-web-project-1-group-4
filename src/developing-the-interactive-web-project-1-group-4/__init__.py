@@ -57,7 +57,12 @@ def get_thumbnails():
 
 @app.route("/new-video", methods=["GET", "POST"])
 def new_video():
-    return render_template("upload.html")
+    genres = db.session.execute(
+        db.select(models.Genres).order_by(models.Genres.name)
+    ).scalars().all()
+
+    genre_options = [(genre.name, genre.name) for genre in genres]
+    return render_template("upload.html", genre_options=genre_options)
 
 
 @app.route("/save-draft", methods=["POST"])

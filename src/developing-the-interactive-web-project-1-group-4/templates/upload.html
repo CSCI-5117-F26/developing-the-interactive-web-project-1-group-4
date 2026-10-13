@@ -63,15 +63,7 @@
                               rows="2" placeholder="Enter a description" required></textarea>
                 </div>
     {% set dropdowns = [
-    ('genre', 'Genres', 'Select genres', 'checkbox', [
-        ('Pop', 'Pop'),
-        ('Rock', 'Rock'),
-        ('Classical', 'Classical'),
-        ('Hip-Hop', 'Hip-Hop'),
-        ('Jazz', 'Jazz'),
-        ('Electronic', 'Electronic'),
-        ('Other', 'Other')
-    ]),
+    ('genre', 'Genres', 'Select genres', 'checkbox', genre_options),
     ('video_type', 'Original / Cover', 'Select type', 'radio', [
         ('original', 'Original'),
         ('cover', 'Cover')
@@ -289,7 +281,7 @@ dropdowns.forEach(dropdown => {
 
             const target = panel.querySelector("input:checked")
                 || panel.querySelector("input");
-            target.focus();
+            target?.focus();
         }
     });
 
@@ -316,7 +308,16 @@ function validateDropdowns() {
         const error = dropdown.parentElement.querySelector(
             ".upload-dropdown-error"
         );
-        const name = dropdown.querySelector("input").name;
+        const firstInput = dropdown.querySelector("input");
+
+        if (!firstInput) {
+            error.textContent = "No options available. Please try again later.";
+            toggle.setAttribute("aria-invalid", "true");
+            toggle.focus();
+            return false;
+        }
+
+        const name = firstInput.name;
 
         const messages = {
             genre: "Choose at least one genre.",
