@@ -7,11 +7,12 @@ from botocore.exceptions import BotoCoreError, ClientError
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
-from .routes import homePage_bp
+from .routes import homePage_bp, profileInput_bp
 load_dotenv()
 
 app = Flask(__name__)
 app.register_blueprint(homePage_bp)
+app.register_blueprint(profileInput_bp)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["Database_url"]
 db.init_app(app)
 with app.app_context():
@@ -20,7 +21,7 @@ with app.app_context():
     print("Tables in the database:", inspector.get_table_names())
 
 @app.cli.command("reset-db")
-def reset_db():  # Use `from . import models` if using package imports
+def reset_db(): 
 
     db.drop_all()
     db.create_all()
