@@ -12,5 +12,4 @@ r2 = boto3.client(
     aws_secret_access_key=os.environ["R2_SECRET_ACCESS_KEY"],
     region_name="auto",
 )
-
 bucket_name = os.environ["R2_BUCKET_NAME"]
