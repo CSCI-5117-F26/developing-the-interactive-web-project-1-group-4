@@ -1,6 +1,8 @@
 from .database import db
 from .models import *
 import subprocess
+import json, os
+from flask import current_app
 
 def create_dummy_user(username: str, email: str, first_name: str, last_name: str):
     user = Ti_user(username=username, email=email, first_name=first_name, last_name=last_name)
@@ -72,3 +74,17 @@ def getVideoDuration(video):
 
     duration = float(result.stdout.strip())
     return duration
+
+def saveProfile(profile):
+    os.makedirs(current_app.instance_path, exist_ok=True)
+    path = os.path.join(current_app.instance_path, "profiles.json")
+
+    profiles = []
+    if os.path.exists(path):
+        with open(path) as f:
+            profiles = json.load(f)
+
+    profiles.append(profile)
+
+    with open(path, "w") as f:
+        json.dump(profiles, f, indent=2)

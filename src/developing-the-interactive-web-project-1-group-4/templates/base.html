@@ -11,12 +11,12 @@
         href="{{ url_for('static', filename='css/main-style.css') }}">
 </head>
 <body>
-    {% include "sidebar.html" %}
+    {% block sidebar %}
+        {% include "sidebar.html" %}
+    {% endblock %}
 
     <main class="main-page-colors">
-        {% block content %}
-
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
 </body>
 </html>
