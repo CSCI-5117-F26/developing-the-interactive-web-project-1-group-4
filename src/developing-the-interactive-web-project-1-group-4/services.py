@@ -13,7 +13,11 @@ def create_dummy_user(username: str, email: str, first_name: str, last_name: str
     db.session.add(user)
     db.session.commit()
     return user
-
+def create_dummy_genre(name: str):
+    genre = Genres(name=name)
+    db.session.add(genre)
+    db.session.commit()
+    return genre
 def create_dummy_video(ti_user:int,thumbnail_key:str,duration:int,title:str,video_key:str,language:str,original:bool):
     video = videos(ti_user=ti_user, thumbnail_key=thumbnail_key, duration=duration, title=title, video_key=video_key, language=language, Original=original)
     db.session.add(video)
@@ -107,8 +111,30 @@ def get_upload_form_data():
 
 def create_video_helper(ti_user, thumbnail_key, duration, title, description, genres, video_key, language, original):
     video = videos(ti_user=ti_user, thumbnail_key=thumbnail_key, duration=duration, title=title, description=description, video_key = video_key, language=language, Original=original)
-    db.session.add(video)
-    db.session.commit()
+    genre_records = db.session.execute(
+        db.select(Genres).where(Genres.name.in_(genres))
+    ).scalars().all()
+    video.genres = genre_records
+    try:
+        db.session.add(video)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+def create_draft_helper(ti_user, thumbnail_key, duration, title, description, genres, video_key, language, original):
+    draft = Drafts(ti_user=ti_user, thumbnail_key=thumbnail_key, duration=duration, title=title, description=description, video_key = video_key, language=language, Original=original)
+    if genres:
+        genre_records = db.session.execute(
+                db.select(Genres).where(Genres.name.in_(genres))
+            ).scalars().all()
+        draft.genres = genre_records
+    try:
+        db.session.add(draft)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
 
 
 def mediaURL(key, expires=3600):

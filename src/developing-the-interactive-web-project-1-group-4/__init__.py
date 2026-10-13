@@ -2,7 +2,7 @@ from sqlalchemy import inspect
 from . import models
 from flask import Flask, render_template, request,jsonify, current_app
 from .database import db
-from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, upload_video_to_cloud, upload_thumbnail_to_cloud, get_upload_form_data, create_video_helper
+from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, upload_video_to_cloud, upload_thumbnail_to_cloud, get_upload_form_data, create_video_helper, create_draft_helper
 from botocore.exceptions import BotoCoreError, ClientError
 from werkzeug.utils import secure_filename
 import os
@@ -59,6 +59,52 @@ def get_thumbnails():
 def new_video():
     return render_template("upload.html")
 
+
+@app.route("/save-draft", methods=["POST"])
+def save_draft():
+    def optional_text(name):
+        return request.form.get(name, "").strip() or None
+
+    video_key = optional_text("video_key")
+
+    if not video_key:
+        return jsonify(error="A video is required to save a draft."), 400
+
+    thumbnail_key = optional_text("thumbnail_key")
+    title = optional_text("title")
+    description = optional_text("description")
+    language = optional_text("language")
+    video_type = optional_text("video_type")
+
+    # Missing genres becomes an empty list.
+    genres = [
+        genre.strip()
+        for genre in request.form.getlist("genre")
+        if genre.strip()
+    ]
+    create_draft_helper(
+        ti_user=1,
+        thumbnail_key=thumbnail_key,
+        duration=150,
+        title=title,
+        description=description,
+        genres=genres,
+        video_key=video_key,
+        language=language,
+        original=request.form.get("original", "false").lower() == "true"
+    )
+
+    # Temporary response to check the collected data.
+
+    return jsonify(
+        video_key=video_key,
+        thumbnail_key=thumbnail_key,
+        title=title,
+        description=description,
+        language=language,
+        video_type=video_type,
+        genres=genres,
+    ), 200
 @app.route("/publish", methods=["POST"])
 def publish():
     data = get_upload_form_data()
@@ -92,9 +138,6 @@ def publish():
     # Save the published video here.
     return "Succesfully created video"
 
-@app.route("/save-draft", methods=["POST"])
-def save_draft():
-    return "saved draft"
 @app.route("/upload-video", methods=["POST"])
 def upload_video():
     video = request.files.get("video_file")
