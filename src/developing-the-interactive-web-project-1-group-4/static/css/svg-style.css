@@ -1,0 +1,19 @@
+.container {
+    position: relative;
+    width: 33%;
+    height: 216px;
+    margin-bottom: 3%;
+}
+
+.video-img{
+    position: absolute;
+    top: 52px;
+    left: 2px;
+    width: 181.8px;
+    height: 138px;
+    z-index:100;
+}
+
+.video-title{
+    font-family: "Josefin Sans", sans-serif;
+}

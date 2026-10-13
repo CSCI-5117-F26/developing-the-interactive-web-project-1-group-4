@@ -7,9 +7,11 @@ from botocore.exceptions import BotoCoreError, ClientError
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
+from .routes import homePage_bp
 load_dotenv()
 
 app = Flask(__name__)
+app.register_blueprint(homePage_bp)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["Database_url"]
 db.init_app(app)
 with app.app_context():
@@ -24,10 +26,6 @@ def reset_db():  # Use `from . import models` if using package imports
     db.create_all()
 
     print("Database tables recreated.")
-
-@app.route('/')
-def index():
-    return render_template("base.html")
 
 
 @app.route('/create-profile', methods=['POST'])
@@ -132,3 +130,4 @@ def upload_thumbnail():
     return jsonify(thumbnail_key=thumbnail_key)
 if __name__ == "__main__":
     app.run(debug=True)
+

@@ -7,16 +7,15 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/main-style.css') }}">
 </head>
 <body>
     {% include "sidebar.html" %}
 
-    <main>
+    <main class="main-page-colors">
         {% block content %}
-        <div class="home-placeholder">
-            <h1>Welcome to Tune In</h1>
-            <p>Your space for music, videos, and creators.</p>
-        </div>
+
         {% endblock %}
     </main>
 </body>
