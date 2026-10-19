@@ -1,9 +1,12 @@
+from urllib.parse import urlencode
+
 from sqlalchemy import inspect
 from . import models
 from flask import Flask, render_template, request,jsonify, current_app , session, redirect , url_for
 from .database import db
 from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, upload_video_to_cloud, upload_thumbnail_to_cloud, get_upload_form_data, create_video_helper, create_draft_helper
 from botocore.exceptions import BotoCoreError, ClientError
+from .models import Ti_user
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
@@ -51,8 +54,20 @@ def callback():
     """
     token = oauth.auth0.authorize_access_token()
     session["user"] = token
-    return redirect("/")
+    auth0_id = session["user"]["userinfo"]["sub"]
 
+    user = db.session.execute(
+    db.select(Ti_user).where(Ti_user.auth0_id == auth0_id)
+    ).scalar_one_or_none()
+    return redirect(url_for("profileInput.createProfile")) if user is None else redirect(url_for("new_video"))
+
+@app.route("/userinfor",methods=["GET"])
+def userinfor():
+    user = session.get("user")
+    if user:
+        return jsonify(user)
+    else:
+        return jsonify({"error": "User not logged in"}), 401
 @app.route("/login")
 def login():
     """
@@ -61,6 +76,20 @@ def login():
     return oauth.auth0.authorize_redirect(
         redirect_uri=url_for("callback", _external=True)
     )
+
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    session.clear()
+
+    params = urlencode({
+        "returnTo": url_for("homePage.home", _external=True),
+        "client_id": current_app.config["AUTH0_CLIENT_ID"],
+    })
+
+    domain = current_app.config["AUTH0_DOMAIN"]
+
+    return redirect(f"https://{domain}/v2/logout?{params}")
 @app.route("/signup")
 def signup():
     """

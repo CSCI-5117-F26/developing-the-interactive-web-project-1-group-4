@@ -16,7 +16,7 @@
         <p>Fill in your details to get started on Tune In.</p>
     </div>
 
-    <form class="creator-upload-form" method="post" enctype="multipart/form-data">
+    <form class="creator-upload-form" action="{{ url_for('profileInput.createProfile') }}"method="post" enctype="multipart/form-data">
         <div class="creator-form-banner">PROFILE DETAILS</div>
 
         <div class="profile-card-body">
@@ -63,12 +63,12 @@
                         {% if errors.userName %}<p class="field-error">{{ errors.userName }}</p>{% endif %}
                     </div>
 
-                    <div class="creator-field">
+                <!--<div class="creator-field">
                         <label for="userEmail">Email <span class="required">*</span></label>
                         <input id="userEmail" name="userEmail" type="email" maxlength="100" required
                                value="{{ form.get('userEmail', '') }}">
                         {% if errors.userEmail %}<p class="field-error">{{ errors.userEmail }}</p>{% endif %}
-                    </div>
+                    </div>-->
 
                     <div class="creator-field">
                         <label for="userPhoneNumber">Phone number</label>

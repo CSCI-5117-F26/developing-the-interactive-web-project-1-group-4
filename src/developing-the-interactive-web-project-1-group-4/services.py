@@ -198,16 +198,46 @@ def getVideoDuration(video):
     duration = float(result.stdout.strip())
     return duration
 
-def saveProfile(profile):
-    os.makedirs(current_app.instance_path, exist_ok=True)
-    path = os.path.join(current_app.instance_path, "profiles.json")
+def saveProfile(
+    username,
+    first_name,
+    last_name,
+    email,
+    auth0_id,
+    bio=None,
+    phone_number=None,
+    profile_picture_key=None,
+):
+    user = Ti_user(
+        username=username,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        auth0_id=auth0_id,
+        Bio=bio,
+        Phone_number=phone_number,
+        Profile_picture_key=profile_picture_key,
+    )
 
-    profiles = []
-    if os.path.exists(path):
-        with open(path) as f:
-            profiles = json.load(f)
+    db.session.add(user)
+    db.session.commit()
 
-    profiles.append(profile)
+def upload_profile_picture_to_cloud(profile_picture):
+    filename = secure_filename(profile_picture.filename or "")
 
-    with open(path, "w") as f:
-        json.dump(profiles, f, indent=2)
+    if not filename:
+        raise ValueError("Please select a file with a valid filename.")
+
+    # Unique key prevents files with the same name overwriting each other.
+    profile_picture_key = f"profile_photos/{uuid4()}-{filename}"
+
+    r2.upload_fileobj(
+        Fileobj=profile_picture.stream,
+        Bucket=os.environ["R2_BUCKET_NAME"],
+        Key=profile_picture_key,
+        ExtraArgs={
+            "ContentType": profile_picture.mimetype or "application/octet-stream"
+        }
+    )
+
+    return profile_picture_key
