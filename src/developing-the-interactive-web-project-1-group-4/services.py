@@ -2,7 +2,8 @@ from .database import db
 from .models import *
 import subprocess
 import json, os
-from flask import current_app
+from flask import current_app , session
+from .models import db, Ti_user
 from .storage import r2
 from uuid import uuid4
 from werkzeug.utils import secure_filename
@@ -241,3 +242,17 @@ def upload_profile_picture_to_cloud(profile_picture):
     )
 
     return profile_picture_key
+
+def get_current_user():
+    login_user = session.get("user")
+    auth0_id = (
+        login_user.get("userinfo", {}).get("sub")
+        if login_user else None
+    )
+
+    if not auth0_id:
+        return None
+
+    return db.session.execute(
+        db.select(Ti_user).where(Ti_user.auth0_id == auth0_id)
+    ).scalar_one_or_none()

@@ -17,7 +17,7 @@
         <p>Share your music and videos with your audience.</p>
     </div>
 
-    <form id="upload-video-form" action="{{ url_for('publish') }}" class="creator-upload-form" method="POST" enctype="multipart/form-data">
+    <form id="upload-video-form" action="{{ url_for('uploadVideo.publish') }}" class="creator-upload-form" method="POST" enctype="multipart/form-data">
         <div class="creator-form-banner">ADD NEW VIDEO</div>
 
         <div class="creator-upload-grid">
@@ -125,7 +125,7 @@
                     <button class="creator-btn creator-btn-primary"
                             type="submit" name="action" value="publish">PUBLISH</button>
                     <button class="creator-btn creator-btn-secondary"
-                            type="submit" name="action" value="draft" formaction="{{url_for('save_draft')}}" formnovalidate>SAVE DRAFT</button>
+                            type="submit" name="action" value="draft" formaction="{{url_for('uploadVideo.save_draft')}}" formnovalidate>SAVE DRAFT</button>
                     <a class="creator-btn creator-btn-cancel" href="/">CANCEL</a>
                 </div>
             </section>
@@ -181,8 +181,8 @@ function setupUpload(type) {
         try {
             // Each endpoint returns its corresponding video_key or thumbnail_key.
             const uploadUrl = type === "thumbnail"
-                ? "{{ url_for('upload_thumbnail') }}"
-                : "{{ url_for('upload_video') }}";
+                ? "{{ url_for('uploadVideo.upload_thumbnail') }}"
+                : "{{ url_for('uploadVideo.upload_video') }}";
             const response = await fetch(uploadUrl, {
                 method: "POST",
                 body: data
