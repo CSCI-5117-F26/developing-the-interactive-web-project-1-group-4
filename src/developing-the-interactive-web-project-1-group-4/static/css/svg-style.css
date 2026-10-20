@@ -3,12 +3,20 @@
     width: 33%;
     height: 216px;
     margin-bottom: 3%;
+    cursor: -webkit-grab;
+    cursor: grab;
 }
+
+.container:active {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+}
+/* .grabbing {cursor: -webkit-grabbing; cursor: grabbing;} */
 
 .video-img{
     position: absolute;
     top: 52px;
-    left: 2px;
+    left: 1px;
     width: 181.8px;
     height: 138px;
     z-index:100;
@@ -16,4 +24,12 @@
 
 .video-title{
     font-family: "Josefin Sans", sans-serif;
+}
+
+.container:hover{
+    transform: scale(110%);
+}
+
+.container:hover .video-img {
+    left: 1px;
 }

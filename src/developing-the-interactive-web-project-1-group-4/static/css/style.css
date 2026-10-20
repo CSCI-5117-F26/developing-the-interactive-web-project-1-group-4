@@ -45,7 +45,7 @@ a {
     display: flex;
     flex-direction: column;
     width: 240px;
-    padding: 24px 16px;
+    padding: 18px 16px;
     overflow-y: auto;
     background: #68744f;
     color: #fffef9;
@@ -69,7 +69,7 @@ a {
     align-items: center;
     gap: 14px;
     width: 100%;
-    padding: 11px 12px;
+    padding: 10px 12px;
     margin: 2px 0;
     border-radius: 7px;
     color: #f1f0e5;
@@ -125,7 +125,7 @@ body > main {
 }
 
 .home-placeholder {
-    padding: 50px;
+    padding: 30px 60px;
 }
 
 .home-placeholder h1 {
