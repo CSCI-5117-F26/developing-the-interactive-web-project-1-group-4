@@ -2,7 +2,7 @@
     <a class="sidebar-logo" href="/">Tune In</a>
 
     <nav class="sidebar-nav">
-        <a href="/" class="sidebar-link active"><span>⌂</span> Home</a>
+        <a href="/" class="sidebar-link" id="homeMenuOption"><span>⌂</span> Home</a>
         <a href="#" class="sidebar-link"><span>♫</span> Trending</a>
         <a href="#" class="sidebar-link"><span>▶</span> Subscriptions</a>
         <a href="#" class="sidebar-link"><span>□</span> Library</a>
@@ -12,20 +12,47 @@
     <div class="sidebar-section">
         <div class="sidebar-divider"></div>
         <p class="sidebar-heading">CREATOR STUDIO</p>
-        <a href="{{ url_for('new_video') }}" class="sidebar-link">
+        <a href="{{ url_for('new_video') }}" class="sidebar-link" id="uploadMenuOption">
             <span>↑</span> Upload Video
         </a>
         <a href="#" class="sidebar-link"><span>▷</span> Manage Videos</a>
     </div>
 
-    <div class="sidebar-section">
-        <div class="sidebar-divider"></div>
-        <p class="sidebar-heading">SETTINGS</p>
-        <a href="#" class="sidebar-link"><span>◉</span> Profile</a>
-        <a href="#" class="sidebar-link"><span>⚙</span> Account Settings</a>
-    </div>
+    <nav>
+        <div class="sidebar-section">
+            <div class="sidebar-divider"></div>
+            <p class="sidebar-heading">SETTINGS</p>
+            <a href="#" class="sidebar-link"><span>◉</span> Profile</a>
+            <a href="#" class="sidebar-link"><span>⚙</span> Account Settings</a>
+        </div>
+    </nav>
+
 
     <div class="sidebar-logout">
         <a href="{{ url_for('logout') }}" class="sidebar-link"><span>↪</span> Logout</a>
     </div>
 </aside>
+
+<script>
+    let previousUrl = '';
+    console.log(window.location.href)
+    const links = document.getElementsByClassName("sidebar-link")
+    console.log(links)
+    let url = window.location.href;
+    if (url.includes('new-video')){
+        for (let i=0; i < links.length; i++){
+            links[i].classList.remove("active")
+            console.log(links[i], " removed");
+        }
+        var element = document.getElementById("uploadMenuOption")
+        element.classList.add("active")
+        console.log("Added active")
+    } else {
+        for (let i=0; i < links.length; i++){
+            links[i].classList.remove("active")
+            console.log(links[i], " removed");
+        }
+        var element = document.getElementById("homeMenuOption")
+        element.classList.add("active")
+    }
+</script>
