@@ -9,6 +9,8 @@ from botocore.exceptions import BotoCoreError, ClientError
 
 @uploadVideo_bp.route("/new-video", methods=["GET", "POST"])
 def new_video():
+    if session.get("user") is None:
+        return redirect(url_for("login"))
     genres = db.session.execute(
         db.select(models.Genres).order_by(models.Genres.name)
     ).scalars().all()
@@ -18,6 +20,8 @@ def new_video():
 
 @uploadVideo_bp.route("/save-draft", methods=["POST"])
 def save_draft():
+    if session.get("user") is None:
+        return redirect(url_for("login"))
     def optional_text(name):
         return request.form.get(name, "").strip() or None
 
@@ -65,6 +69,8 @@ def save_draft():
     ), 200
 @uploadVideo_bp.route("/publish", methods=["POST"])
 def publish():
+    if session.get("user") is None:
+        return redirect(url_for("login"))
     data = get_upload_form_data()
 
     required = (
@@ -100,6 +106,8 @@ def publish():
 
 @uploadVideo_bp.route("/upload-video", methods=["POST"])
 def upload_video():
+    if session.get("user") is None:
+        return redirect(url_for("login"))
     video = request.files.get("video_file")
 
     if video is None or not video.filename:
@@ -117,6 +125,8 @@ def upload_video():
 
 @uploadVideo_bp.route("/upload-thumbnail", methods=["POST"])
 def upload_thumbnail():
+    if session.get("user") is None:
+        return redirect(url_for("login"))
     thumbnail = request.files.get("thumbnail_file")
 
     if thumbnail is None or not thumbnail.filename:
