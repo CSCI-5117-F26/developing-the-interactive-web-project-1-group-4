@@ -4,10 +4,14 @@
     <nav class="sidebar-nav">
         <a href="/" class="sidebar-link" id="homeMenuOption"><span>⌂</span> Home</a>
         <a href="#" class="sidebar-link"><span>♫</span> Trending</a>
+        {% if session.get('user') %}
+            <a href="{{ url_for('uploadVideo.new_video') }}" class="sidebar-link"><span>↑</span> Upload Video</a>
         <a href="#" class="sidebar-link"><span>▶</span> Subscriptions</a>
         <a href="#" class="sidebar-link"><span>□</span> Library</a>
         <a href="#" class="sidebar-link"><span>◷</span> Activity</a>
+        {% endif %}
     </nav>
+    {% if session.get('user') %}
 
     <div class="sidebar-section">
         <div class="sidebar-divider"></div>
@@ -26,33 +30,32 @@
             <a href="#" class="sidebar-link"><span>⚙</span> Account Settings</a>
         </div>
     </nav>
+    {% endif %}
 
-
+    {% if session.get('user') %}
     <div class="sidebar-logout">
         <a href="{{ url_for('logout') }}" class="sidebar-link"><span>↪</span> Logout</a>
     </div>
+    {% endif %}
+    {% if not session.get('user') %}
+    <div class="sidebar-logout">
+        <a href="{{ url_for('login') }}" class="sidebar-link"><span>↪</span> Login/Signup</a>
+    </div>
+    {% endif %}
 </aside>
 
 <script>
-    let previousUrl = '';
-    console.log(window.location.href)
-    const links = document.getElementsByClassName("sidebar-link")
-    console.log(links)
-    let url = window.location.href;
-    if (url.includes('new-video')){
-        for (let i=0; i < links.length; i++){
-            links[i].classList.remove("active")
-            console.log(links[i], " removed");
-        }
-        var element = document.getElementById("uploadMenuOption")
-        element.classList.add("active")
-        console.log("Added active")
-    } else {
-        for (let i=0; i < links.length; i++){
-            links[i].classList.remove("active")
-            console.log(links[i], " removed");
-        }
-        var element = document.getElementById("homeMenuOption")
-        element.classList.add("active")
+    const activeId = window.location.pathname.includes("new-video")
+        ? "uploadMenuOption"
+        : "homeMenuOption";
+
+    document.querySelectorAll(".sidebar-link").forEach(link => {
+        link.classList.remove("active");
+    });
+
+    const activeLink = document.getElementById(activeId);
+
+    if (activeLink) {
+        activeLink.classList.add("active");
     }
 </script>
