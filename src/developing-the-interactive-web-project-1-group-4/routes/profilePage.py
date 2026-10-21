@@ -10,12 +10,7 @@ from botocore.exceptions import BotoCoreError, ClientError
 def profile():
     if session.get("user") is None:
         return redirect(url_for("login"))
-    userinfo = session["user"]["userinfo"]
-    auth0_id = userinfo["sub"]
-
-    user = db.session.execute(
-        db.select(models.Ti_user).filter_by(auth0_id=auth0_id)
-    ).scalar_one_or_none()
+    user = get_current_user()
 
     if user is None:
         return redirect(url_for("profileInput.createProfile"))
