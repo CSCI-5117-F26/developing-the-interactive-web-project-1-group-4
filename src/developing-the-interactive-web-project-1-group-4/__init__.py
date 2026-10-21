@@ -60,7 +60,7 @@ def callback():
     user = db.session.execute(
     db.select(Ti_user).where(Ti_user.auth0_id == auth0_id)
     ).scalar_one_or_none()
-    return redirect(url_for("profileInput.createProfile")) if user is None else redirect(url_for("new_video"))
+    return redirect(url_for("profileInput.createProfile")) if user is None else redirect(url_for("homePage.home"))
 
 @app.route("/userinfor",methods=["GET"])
 def userinfor():
@@ -75,22 +75,15 @@ def login():
     Redirects the user to the Auth0 Universal Login (https://auth0.com/docs/authenticate/login/auth0-universal-login)
     """
     return oauth.auth0.authorize_redirect(
-        redirect_uri=url_for("callback", _external=True)
+        redirect_uri=url_for("callback", _external=True),
+        prompt="login"
     )
 
 
 @app.route("/logout", methods=["GET"])
 def logout():
     session.clear()
-
-    params = urlencode({
-        "returnTo": url_for("homePage.home", _external=True),
-        "client_id": current_app.config["AUTH0_CLIENT_ID"],
-    })
-
-    domain = current_app.config["AUTH0_DOMAIN"]
-
-    return redirect(f"https://{domain}/v2/logout?{params}")
+    return redirect(url_for("homePage.home"))
 @app.route("/signup")
 def signup():
     """
@@ -98,7 +91,7 @@ def signup():
     """
     return oauth.auth0.authorize_redirect(
         redirect_uri=url_for("callback", _external=True),
-        screen_hint="signup"
+        prompt="signup"
     )
 
 @app.route('/create-profile', methods=['POST'])
