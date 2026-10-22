@@ -303,6 +303,7 @@ def videoCard(v):
         "videoURL": mediaURL(v.video_key),
         "durationText": formatDuration(v.duration),
         "views": v.views,
+        "watchURL": url_for("mediaPlayer.watchVideo", videoId=v.id),
     }
 
 
