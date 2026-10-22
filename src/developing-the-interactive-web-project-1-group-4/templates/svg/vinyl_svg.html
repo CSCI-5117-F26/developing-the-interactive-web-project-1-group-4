@@ -1,6 +1,6 @@
 <link rel="stylesheet"
     href="{{ url_for('static', filename='css/svg-style.css') }}">
-<div class="container" {% if video.video_url %}data-video-url="{{ video.video_url }}" role="button" tabindex="0" title="Play {{ video.title }}"{% endif %}>
+<div class="container" {% if video.videoURL %}data-video-url="{{ video.videoURL }}" role="button" tabindex="0" title="Play {{ video.title }}"{% endif %}>
     <svg width="300" height="203.03" viewBox="0 0 434 277" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g filter="url(#filter0_d_100_19)">
         <circle cx="291.5" cy="133.5" r="131.5" fill="#171717"/>
@@ -56,5 +56,5 @@
         {% endfor %}
         </text>
     </svg>
-    <img class="video-img" src="{{ video.cover or url_for('static', filename='images/Rectangle_1.png') }}" alt="{{ video.title }}"/>
+    <img class="video-img" src="{{ video.cover }}" alt="{{ video.title }}" onerror="this.onerror=null; this.src='{{ video.fallbackCover }}';"/>
 </div>

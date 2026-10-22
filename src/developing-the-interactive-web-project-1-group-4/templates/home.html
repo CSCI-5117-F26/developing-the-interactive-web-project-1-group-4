@@ -6,31 +6,29 @@
 
 <div class="home-placeholder">
     <!-- search bar -->
-    <form class="search-bar-container" method="get" action="{{ url_for('homePage.home') }}">
-        <div class="search-bar">
-            <input type="text" id="fl-search" name="q" placeholder=" " value="{{ q }}">
-            <label for="fl-search">Search</label>
-        </div>
-        {% if selected_genre %}
-            <input type="hidden" name="genre" value="{{ selected_genre }}">
-        {% endif %}
-    </form>
+    {% include "searchBar.html" %}
 
     <!-- tags area -->
+    <div class="tag-scroller">
+    <button type="button" class="tag-arrow tag-arrow-left" aria-label="Scroll genres left">‹</button>
+
     <div class="tag-container">
         {% for genre in genres %}
             {% if genre.name == selected_genre %}
-                <a class="tag active" href="{{ url_for('homePage.home', q=q or None) }}">{{ genre.name }}</a>
+                <a class="tag active" href="{{ url_for('homePage.home') }}">{{ genre.name }}</a>
             {% else %}
-                <a class="tag" href="{{ url_for('homePage.home', genre=genre.name, q=q or None) }}">{{ genre.name }}</a>
-        {% endif %}
-    {% endfor %}
+                <a class="tag" href="{{ url_for('homePage.home', genre=genre.name) }}">{{ genre.name }}</a>
+            {% endif %}
+        {% endfor %}
     </div>
+
+    <button type="button" class="tag-arrow tag-arrow-right" aria-label="Scroll genres right">›</button>
+</div>
     
     <h1>Welcome to Tune In</h1>
     <p>Your space for music, videos, and creators.</p>
 
-    <div class="row-container">
+    <div class="row-container home-grid">
         {% for video in videos %}
             {% include "svg/vinyl_svg.html" %}
         {% else %}
@@ -41,4 +39,5 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
 {% endblock %}

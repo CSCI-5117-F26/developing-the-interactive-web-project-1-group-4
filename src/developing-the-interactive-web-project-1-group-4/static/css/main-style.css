@@ -144,3 +144,249 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== Search dropdown ===== */
+.search-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 200;                 /* above the vinyl cards (their images use 100) */
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 6px 0;
+    border: 2px solid var(--menuBackgroundColor);
+    border-radius: 8px;
+    background: #fffef9;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.search-dropdown[hidden] {
+    display: none;
+}
+
+.search-group + .search-group {
+    border-top: 1px solid #e0e2d3;
+}
+
+.search-group-title {
+    margin: 0;
+    padding: 8px 14px 4px;
+    color: var(--tagBorderColor);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 14px;
+    color: var(--onPBC);
+}
+
+.search-item:hover,
+.search-item:focus {
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    outline: none;
+}
+
+.search-item img {
+    width: 48px;
+    height: 36px;
+    flex: none;
+    border-radius: 4px;
+    background: var(--tagBackgroundColor);
+    object-fit: cover;
+}
+
+.search-item div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.search-item strong {
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-item small {
+    color: #77796e;
+    font-size: 12px;
+}
+
+.search-view-more {
+    display: block;
+    padding: 10px 14px;
+    border-top: 1px solid #e0e2d3;
+    color: var(--menuBackgroundColor);
+    font-weight: 700;
+}
+
+.search-empty {
+    margin: 0;
+    padding: 10px 14px;
+    color: #77796e;
+}
+
+/* ===== Search results page ===== */
+.search-section-title {
+    margin: 20px 0 10px;
+    font-size: 18px;
+}
+
+.artist-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 2%;
+}
+
+.artist-chip {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 16px;
+    border: 2px solid var(--tagBorderColor);
+    border-radius: 10px;
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+}
+
+.artist-chip span {
+    font-size: 12px;
+}
+
+/* ===== Genre tag scroller (same width as the search bar) ===== */
+.tag-scroller {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 70%;
+    margin-bottom: 2%;
+}
+
+.tag-scroller .tag-container {
+    flex: 1;
+    min-width: 0;                 /* lets it shrink so it can scroll */
+    gap: 12px;
+    margin-bottom: 0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;        /* hide scrollbar (Firefox) */
+}
+
+.tag-scroller .tag-container::-webkit-scrollbar {
+    display: none;                /* hide scrollbar (Chrome, Safari) */
+}
+
+.tag-scroller .tag {
+    flex: none;
+    margin-right: 0;
+    white-space: nowrap;
+}
+
+.tag-arrow {
+    display: grid;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    place-items: center;
+    border: 2px solid var(--tagBorderColor);
+    border-radius: 50%;
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.tag-arrow:hover:not(:disabled) {
+    background: var(--menuBackgroundColor);
+    color: var(--onMBC);
+}
+
+.tag-arrow:disabled {
+    opacity: .35;
+    cursor: default;
+}
+
+/* ===== Video grid: 3 equal columns, cards centered ===== */
+.row-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-items: center;
+    gap: 48px 24px;               /* row gap, column gap */
+}
+
+.row-container .container {
+    width: 300px;                 /* same width as the vinyl artwork */
+    margin-bottom: 0;
+}
+
+.row-container .no-results {
+    grid-column: 1 / -1;          /* message spans the full row */
+}
+
+/* Fewer columns on smaller screens so cards never overlap */
+@media (max-width: 1300px) {
+    .row-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+    .row-container { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ===== Home grid: 3 rows that always fit the screen ===== */
+.home-placeholder {
+    padding: 30px 50px 20px;
+}
+
+.home-placeholder h1 {
+    margin: 0 0 4px;
+}
+
+.home-placeholder > p {
+    margin: 0 0 16px;
+}
+
+.home-grid {
+    /* screen height minus everything above the grid, split into 3 rows */
+    --card-h: clamp(110px, calc((100vh - 380px) / 3), 216px);
+    row-gap: 18px;
+}
+
+.home-grid .container,
+.row-container .container {
+    width: auto;
+    aspect-ratio: 300 / 216;          /* keeps the card's shape */
+}
+
+.home-grid .container {
+    height: var(--card-h);
+}
+
+.row-container .container {
+    height: 216px;                    /* normal size on the search page */
+}
+
+/* Scale the vinyl artwork and the photo together with the card */
+.row-container .container svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.row-container .video-img {
+    top: 24.07%;
+    left: 0.67%;
+    width: 60.6%;
+    height: 63.9%;
+    object-fit: cover;                /* fills the frame without stretching */
+}
