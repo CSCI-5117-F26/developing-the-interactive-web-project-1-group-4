@@ -5,7 +5,6 @@
         <a href="/" class="sidebar-link" id="homeMenuOption"><span>⌂</span> Home</a>
         <a href="#" class="sidebar-link"><span>♫</span> Trending</a>
         {% if session.get('user') %}
-            <a href="{{ url_for('uploadVideo.new_video') }}" class="sidebar-link"><span>↑</span> Upload Video</a>
         <a href="#" class="sidebar-link"><span>▶</span> Subscriptions</a>
         <a href="#" class="sidebar-link"><span>□</span> Library</a>
         <a href="#" class="sidebar-link"><span>◷</span> Activity</a>
