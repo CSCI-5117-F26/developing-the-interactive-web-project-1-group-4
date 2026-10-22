@@ -256,3 +256,9 @@ def get_current_user():
     return db.session.execute(
         db.select(Ti_user).where(Ti_user.auth0_id == auth0_id)
     ).scalar_one_or_none()
+
+def get_subscribers_count(channel_id):
+    return Subscriptions.query.filter_by(channel_id=channel_id).count()
+
+def get_subscriptions_count(user_id):
+    return Subscriptions.query.filter_by(subscriber_id=user_id).count()

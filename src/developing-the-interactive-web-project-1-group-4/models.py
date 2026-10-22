@@ -54,6 +54,7 @@ class Ti_user(db.Model):
     last_name: Mapped[str] = mapped_column(String(50), nullable=False)
     email: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     Bio: Mapped[str] = mapped_column(String(200), nullable=True)
+    contact_me : Mapped[str] = mapped_column(String(200), nullable=True)
     Profile_picture_key: Mapped[str] = mapped_column(String(200), nullable=True)
     Phone_number: Mapped[str] = mapped_column(String(20), nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
