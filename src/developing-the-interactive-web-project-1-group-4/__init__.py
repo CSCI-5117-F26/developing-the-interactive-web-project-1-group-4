@@ -10,7 +10,7 @@ from .models import Ti_user
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
-from .routes import homePage_bp, profileInput_bp, uploadVideo_bp, profilePage_bp, manageVideos_bp
+from .routes import homePage_bp, profileInput_bp, uploadVideo_bp, profilePage_bp, manageVideos_bp , subscription_bp
 load_dotenv()
 from authlib.integrations.flask_client import OAuth
 app = Flask(__name__)
@@ -35,6 +35,7 @@ app.register_blueprint(profileInput_bp)
 app.register_blueprint(uploadVideo_bp)
 app.register_blueprint(profilePage_bp)
 app.register_blueprint(manageVideos_bp)
+app.register_blueprint(subscription_bp)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["Database_url"]
 db.init_app(app)
 with app.app_context():

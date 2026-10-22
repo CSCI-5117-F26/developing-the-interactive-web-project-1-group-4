@@ -414,3 +414,9 @@ def defaultCoverURL():
         return mediaURL(key)
     # Safety net if the setting is missing: the static placeholder image
     return url_for("static", filename="images/Rectangle_1.png")
+
+def get_subscribers_count(channel_id):
+    return Subscriptions.query.filter_by(channel_id=channel_id).count()
+
+def get_subscriptions_count(user_id):
+    return Subscriptions.query.filter_by(subscriber_id=user_id).count()

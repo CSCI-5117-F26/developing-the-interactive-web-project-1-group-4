@@ -9,6 +9,6 @@ with psycopg.connect(database_url) as conn:
     with conn.cursor() as cur:
         cur.execute("""
             ALTER TABLE ti_user
-ADD COLUMN auth0_id VARCHAR(255) UNIQUE;
+ADD COLUMN contact_me VARCHAR(200);
         """)
-print("auth0_id column added successfully.")
+print("contact_me column added successfully.")
