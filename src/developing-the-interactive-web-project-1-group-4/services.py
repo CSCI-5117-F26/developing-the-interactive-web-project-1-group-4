@@ -1,15 +1,19 @@
 from .database import db
 from .models import *
 import subprocess
-import json, os
-from flask import current_app , session
+import json, os, re
+from flask import current_app , session, url_for
 from .models import db, Ti_user
 from .storage import r2
 from uuid import uuid4
 from werkzeug.utils import secure_filename
 from flask import request
-import os
 from dotenv import load_dotenv
+from sqlalchemy import func, or_, select
+from sqlalchemy.orm import selectinload
+
+from .models import videos as Video, Genres, Ti_user, video_genres
+
 load_dotenv()
 def create_dummy_user(username: str, email: str, first_name: str, last_name: str):
     user = Ti_user(username=username, email=email, first_name=first_name, last_name=last_name)
@@ -256,6 +260,160 @@ def get_current_user():
     return db.session.execute(
         db.select(Ti_user).where(Ti_user.auth0_id == auth0_id)
     ).scalar_one_or_none()
+
+# ======================= Home page & search =======================
+HOME_PAGE_LIMIT = 24
+SEARCH_PREVIEW_LIMIT = 5     # per group, in the dropdown
+SEARCH_PAGE_LIMIT = 60       # per group, on the full results page
+MAX_SEARCH_WORDS = 8
+
+def searchWords(q):
+    """'Country  Roads!' -> ['country', 'roads']  (letters and digits only)"""
+    return re.findall(r"[^\W_]+", q.lower())[:MAX_SEARCH_WORDS]
+
+
+def likePattern(text):
+    """Escape % and _ so they're treated as normal characters in ILIKE."""
+    escaped = text.replace("\\", "\\\\").replace("%", r"\%").replace("_", r"\_")
+    return f"%{escaped}%"
+
+
+def textMatch(column, q, words):
+    """Full-text prefix match OR plain substring match, plus a relevance rank."""
+    substring = column.ilike(likePattern(q), escape="\\")
+    if not words:
+        return substring, func.length(column) * 0     # rank 0 for everyone
+
+    vector = func.to_tsvector("simple", column)
+    query = func.to_tsquery("simple", " & ".join(f"{w}:*" for w in words))
+    return or_(vector.op("@@")(query), substring), func.ts_rank(vector, query)
+
+
+# ---------- Turning database rows into page data ----------
+
+def videoCard(v):
+    fallback = defaultCoverURL()
+    return {
+        "id": v.id,
+        "title": v.title,
+        "artist": v.uploader.username if v.uploader else "",
+        "genres": [g.name for g in v.genres],
+        "cover": mediaURL(v.thumbnail_key) or fallback,
+        "fallbackCover": fallback,
+        "videoURL": mediaURL(v.video_key),
+        "durationText": formatDuration(v.duration),
+        "views": v.views,
+    }
+
+
+def artistCard(user, videoCount):
+    return {
+        "username": user.username,
+        "displayName": f"{user.first_name} {user.last_name}".strip(),
+        "picture": mediaURL(user.Profile_picture_key) or "",
+        "videoCount": videoCount,
+        "url": url_for("homePage.search", artist=user.username),
+    }
+
+
+def genreCard(name, videoCount):
+    return {
+        "name": name,
+        "videoCount": videoCount,
+        "url": url_for("homePage.home", genre=name),
+    }
+
+
+def videoQuery():
+    """Base query for videos, loading genres and uploader in the same round trip."""
+    return select(Video).options(selectinload(Video.genres), selectinload(Video.uploader))
+
+
+# ---------- Home page ----------
+
+def fetchVideos(genre="", limit=HOME_PAGE_LIMIT):
+    stmt = videoQuery().order_by(Video.created_at.desc())
+    if genre:
+        stmt = stmt.where(Video.genres.any(Genres.name == genre))
+    return [videoCard(v) for v in db.session.scalars(stmt.limit(limit))]
+
+
+def fetchGenres():
+    names = db.session.scalars(select(Genres.name).order_by(Genres.name)).all()
+    return [{"name": n} for n in names]
+
+
+def fetchArtistVideos(username, limit=SEARCH_PAGE_LIMIT):
+    user = db.session.scalar(select(Ti_user).where(Ti_user.username == username))
+    if user is None:
+        return None, []
+    stmt = (
+        videoQuery()
+        .where(Video.ti_user == user.ti_user_id)
+        .order_by(Video.created_at.desc())
+        .limit(limit)
+    )
+    videos = [videoCard(v) for v in db.session.scalars(stmt)]
+    return artistCard(user, len(videos)), videos
+
+
+# ---------- Search ----------
+
+def searchVideos(q, words, limit):
+    condition, rank = textMatch(Video.title, q, words)
+    stmt = (
+        videoQuery()
+        .where(condition)
+        .order_by(rank.desc(), Video.views.desc(), Video.created_at.desc())
+        .limit(limit)
+    )
+    return [videoCard(v) for v in db.session.scalars(stmt)]
+
+
+def searchArtists(q, words, limit):
+    fullName = func.concat_ws(" ", Ti_user.username, Ti_user.first_name, Ti_user.last_name)
+    condition, rank = textMatch(fullName, q, words)
+    videoCount = func.count(Video.id)
+    stmt = (
+        select(Ti_user, videoCount)
+        .join(Video, Video.ti_user == Ti_user.ti_user_id)   # only users who have uploaded
+        .where(condition)
+        .group_by(Ti_user.ti_user_id)
+        .order_by(rank.desc(), videoCount.desc())
+        .limit(limit)
+    )
+    return [artistCard(user, count) for user, count in db.session.execute(stmt)]
+
+
+def searchGenres(q, words, limit):
+    condition, rank = textMatch(Genres.name, q, words)
+    videoCount = func.count(video_genres.c.video_id)
+    stmt = (
+        select(Genres.name, videoCount)
+        .outerjoin(video_genres, video_genres.c.genre_id == Genres.id)
+        .where(condition)
+        .group_by(Genres.id, Genres.name)
+        .order_by(rank.desc(), videoCount.desc())
+        .limit(limit)
+    )
+    return [genreCard(name, count) for name, count in db.session.execute(stmt)]
+
+
+def searchAll(q, limit):
+    words = searchWords(q)
+    return {
+        "videos": searchVideos(q, words, limit),
+        "artists": searchArtists(q, words, limit),
+        "genres": searchGenres(q, words, limit),
+    }
+
+def defaultCoverURL():
+    """Default thumbnail: the R2 file named in DEFAULT_THUMBNAIL_KEY (.env)."""
+    key = os.environ.get("DEFAULT_THUMBNAIL_KEY", "").strip()
+    if key:
+        return mediaURL(key)
+    # Safety net if the setting is missing: the static placeholder image
+    return url_for("static", filename="images/Rectangle_1.png")
 
 def get_subscribers_count(channel_id):
     return Subscriptions.query.filter_by(channel_id=channel_id).count()

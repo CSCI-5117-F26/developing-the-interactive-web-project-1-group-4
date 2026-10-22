@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Search - Tune In{% endblock %}
+
+{% block content %}
+<div class="home-placeholder">
+    {% include "searchBar.html" %}
+
+    {% if artist %}
+        <h1>Videos by {{ artist.displayName or artist.username }}</h1>
+        <p>@{{ artist.username }} · {{ artist.videoCount }} video{{ "" if artist.videoCount == 1 else "s" }}</p>
+    {% else %}
+        <h1>Results for "{{ q }}"</h1>
+    {% endif %}
+
+    {% if genres %}
+        <h2 class="search-section-title">Genres</h2>
+        <div class="tag-container">
+            {% for genre in genres %}
+                <a class="tag" href="{{ genre.url }}">{{ genre.name }} ({{ genre.videoCount }})</a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if artists %}
+        <h2 class="search-section-title">Artists</h2>
+        <div class="artist-list">
+            {% for a in artists %}
+                <a class="artist-chip" href="{{ a.url }}">
+                    <strong>{{ a.displayName or a.username }}</strong>
+                    <span>@{{ a.username }} · {{ a.videoCount }} video{{ "" if a.videoCount == 1 else "s" }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <h2 class="search-section-title">Videos</h2>
+    <div class="row-container">
+        {% for video in videos %}
+            {% include "svg/vinyl_svg.html" %}
+        {% else %}
+            <p class="no-results">No videos found.</p>
+        {% endfor %}
+    </div>
+
+    <video id="fullscreen-player" controls playsinline hidden></video>
+</div>
+
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}
