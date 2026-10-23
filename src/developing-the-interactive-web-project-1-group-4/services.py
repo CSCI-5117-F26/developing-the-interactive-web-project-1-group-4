@@ -421,3 +421,74 @@ def get_subscribers_count(channel_id):
 
 def get_subscriptions_count(user_id):
     return Subscriptions.query.filter_by(subscriber_id=user_id).count()
+
+# ======================= Account deletion =======================
+import os
+from sqlalchemy import select, delete
+from flask import current_app
+
+from .models import Ti_user, videos as Video, Drafts
+
+
+def deleteRowsAndDependents(table, column, ids):
+    """Delete rows of `table` where `column` is in `ids`,
+    after first deleting every row in any table that points at them."""
+    ids = list(ids)
+    if not ids:
+        return
+
+    # The primary keys of the rows we're about to delete
+    primaryKey = list(table.primary_key.columns)[0]
+    rowIds = db.session.scalars(select(primaryKey).where(column.in_(ids))).all()
+
+    # Delete children first: any table with a foreign key pointing at this table
+    if rowIds:
+        for childTable in db.metadata.sorted_tables:
+            for foreignKey in childTable.foreign_keys:
+                if foreignKey.column.table is table:
+                    deleteRowsAndDependents(childTable, foreignKey.parent, rowIds)
+
+    db.session.execute(delete(table).where(column.in_(ids)))
+
+
+def deleteCloudFiles(keys):
+    """Remove files from R2. Failures are logged, not raised (the account is already gone)."""
+    from .storage import r2, bucket_name
+    defaultKey = os.environ.get("DEFAULT_THUMBNAIL_KEY", "").strip()
+
+    for key in set(keys):
+        if not key or key == defaultKey:     # never delete the shared default thumbnail
+            continue
+        try:
+            r2.delete_object(Bucket=bucket_name, Key=key)
+        except Exception:
+            current_app.logger.exception("Could not delete %s from R2", key)
+
+
+def deleteAccountData(user):
+    """Delete a user and EVERYTHING connected to them: database rows and R2 files."""
+    userId = user.ti_user_id
+
+    # 1. Collect the R2 file keys first; they can't be read once the rows are gone
+    keys = [user.Profile_picture_key]
+    for videoKey, thumbnailKey in db.session.execute(
+        select(Video.video_key, Video.thumbnail_key).where(Video.ti_user == userId)
+    ):
+        keys += [videoKey, thumbnailKey]
+    for videoKey, thumbnailKey in db.session.execute(
+        select(Drafts.video_key, Drafts.thumbnail_key).where(Drafts.ti_user == userId)
+    ):
+        keys += [videoKey, thumbnailKey]
+
+    # 2. Delete all database rows in one transaction (all or nothing)
+    db.session.expunge(user)     # stop the ORM from also trying to manage this object
+    try:
+        userTable = Ti_user.__table__
+        deleteRowsAndDependents(userTable, userTable.c.ti_user_id, [userId])
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+    # 3. Only after the database delete succeeded, remove the files
+    deleteCloudFiles(keys)

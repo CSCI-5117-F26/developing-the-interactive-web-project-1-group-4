@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from . import accountSettings_bp
 from ..database import db
 from ..models import Ti_user
-from ..services import get_current_user, mediaURL
+from ..services import get_current_user, mediaURL, deleteAccountData
 from .profileInput import savePicture, userNameRE, userPhoneRE
 
 emailRE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -190,21 +190,12 @@ def deleteAccount():
     if request.form.get("confirmUsername", "").strip() != user.username:
         return jsonify(errors={"confirmUsername": "Type your username exactly to confirm."}), 400
 
-    # Collect the R2 files first; they can't be read after the rows are gone
-    keys = [user.Profile_picture_key]
-    for video in user.videos:
-        keys += [video.video_key, video.thumbnail_key]
-
-    db.session.delete(user)
     try:
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
-        current_app.logger.exception("Account delete blocked by related rows")
-        return jsonify(error="Your account couldn't be deleted. Please contact support."), 409
+        deleteAccountData(user)
+    except Exception:
+        current_app.logger.exception("Account deletion failed")
+        return jsonify(error="Your account couldn't be deleted. Please try again."), 500
 
-    for key in keys:
-        deleteCloudFile(key)
-
-    session.clear()                 # log them out
-    return jsonify(redirectURL=url_for("homePage.home"))
+    session.clear()
+    # Go through logout so the Auth0 login session ends too
+    return jsonify(redirectURL=url_for("logout"))
