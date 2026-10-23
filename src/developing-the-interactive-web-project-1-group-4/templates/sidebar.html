@@ -26,7 +26,7 @@
         <div class="sidebar-section">
             <div class="sidebar-divider"></div>
             <p class="sidebar-heading">SETTINGS</p>
-            <a href="#" class="sidebar-link"><span>◉</span> Profile</a>
+            <a href="{{ url_for('profilePage.profile_page') }}" class="sidebar-link" id="profileMenuOption"><span>◉</span> Profile</a>
             <a href="{{ url_for('accountSettings.accountSettings') }}"
                 class="sidebar-link {% if currentPage == 'accountSettings.accountSettings' %}active{% endif %}" id="accountSettingsMenuOption">
                 <span>⚙</span> Account Settings
@@ -55,6 +55,8 @@
         activeId = "uploadMenuOption";
             } else if (path.includes("manage-videos")) {
         activeId = "manageVideosMenuOption";
+            } else if (path === "/profile") {
+        activeId = "profileMenuOption";
     } else if (path.includes("account-settings")) {
         activeId = "accountSettingsMenuOption";
     }
