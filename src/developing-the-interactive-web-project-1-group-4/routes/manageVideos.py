@@ -8,32 +8,82 @@ from botocore.exceptions import BotoCoreError, ClientError
 from sqlalchemy.exc import SQLAlchemyError
 from ..storage import r2
 
-@manageVideos_bp.route("/manage-videos", methods=["GET"])
-def manage_videos():
-    if session.get("user") is None:
-        return redirect(url_for("login"))
-    user = get_current_user()
-    return jsonify(videos=[
-    {
+
+def short_count(n):
+    # 856 -> '856', 1200 -> '1.2K', 2400000 -> '2.4M'
+    n = n or 0
+    if n < 1000:
+        return str(n)
+    if n < 1_000_000:
+        return f"{n / 1000:.1f}".rstrip("0").rstrip(".") + "K"
+    return f"{n / 1_000_000:.1f}".rstrip("0").rstrip(".") + "M"
+
+
+def video_dict(video):
+    return {
         "id": video.id,
         "title": video.title,
         "description": video.description,
         "duration": video.duration,
+        "duration_text": formatDuration(video.duration),
         "views": video.views,
+        "views_text": short_count(video.views),
         "thumbnail_url": (
             mediaURL(video.thumbnail_key)
             if video.thumbnail_key else None
         ),
     }
-    for video in user.videos
-])
+
+
+@manageVideos_bp.route("/manage-videos", methods=["GET"])
+def manage_videos():
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+    user = get_current_user()
+    if user is None:
+        return redirect(url_for("profileInput.createProfile"))
+    return render_template(
+        "manageVideos.html",
+        videos=[video_dict(v) for v in user.videos],
+    )
+
+
+# The edit page (opened from the three-dot menu -> "Edit video").
+@manageVideos_bp.route("/manage-videos/<int:video_id>/edit", methods=["GET"])
+def edit_video_page(video_id):
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+    user = get_current_user()
+    if user is None:
+        return redirect(url_for("profileInput.createProfile"))
+
+    video = db.session.execute(
+        db.select(models.videos).filter_by(
+            id=video_id,
+            ti_user=user.ti_user_id
+        )
+    ).scalar_one_or_none()
+
+    if video is None:
+        return redirect(url_for("manageVideos.manage_videos"))
+    return render_template("editVideo.html", video=video_dict(video))
+
+
+# The original JSON version of this route, kept for anyone who needs the data.
+@manageVideos_bp.route("/api/manage-videos", methods=["GET"])
+def manage_videos_api():
+    user = get_current_user()
+    if user is None:
+        return jsonify(error="Please log in and create your profile"), 401
+    return jsonify(videos=[video_dict(v) for v in user.videos])
+
 
 @manageVideos_bp.route("/edit-video/<int:video_id>", methods=["PATCH"])
 def edit_video(video_id):
     user = get_current_user()
 
     if user is None:
-        return redirect(url_for("login"))
+        return jsonify(error="Please log in and create your profile"), 401
 
     # Find the video only if it belongs to the current user.
     video = db.session.execute(
@@ -73,36 +123,35 @@ def edit_video(video_id):
     if new_thumbnail_key is not None:
         if not isinstance(new_thumbnail_key, str) or not new_thumbnail_key.strip():
             return jsonify(error="Invalid thumbnail key"), 400
+        video.thumbnail_key = new_thumbnail_key.strip()
 
-        new_thumbnail_key = new_thumbnail_key.strip()
+    # Save title / description / thumbnail changes (the original code only
+    # committed when a thumbnail was sent, so title-only edits were lost).
+    try:
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Video update failed")
+        return jsonify(error="Could not update video"), 500
 
-        # Verify this key belongs to an upload by the current user
-        # before saving it.
-        video.thumbnail_key = new_thumbnail_key
-
+    # Delete the old thumbnail only after the database update succeeds.
+    if (
+        new_thumbnail_key
+        and old_thumbnail_key
+        and video.thumbnail_key != old_thumbnail_key
+    ):
         try:
-            db.session.commit()
-        except SQLAlchemyError:
-            db.session.rollback()
-            current_app.logger.exception("Video update failed")
-            return jsonify(error="Could not update video"), 500
+            r2.delete_object(
+                Bucket=os.environ["R2_BUCKET_NAME"],
+                Key=old_thumbnail_key
+            )
+        except (BotoCoreError, ClientError):
+            current_app.logger.exception(
+                "Old thumbnail cleanup failed for video %s", video.id
+            )
 
-        # Delete the old thumbnail only after the database update succeeds.
-        if (
-            new_thumbnail_key
-            and old_thumbnail_key
-            and new_thumbnail_key != old_thumbnail_key
-        ):
-            try:
-                r2.delete_object(
-                    Bucket=os.environ["R2_BUCKET_NAME"],
-                    Key=old_thumbnail_key
-                )
-            except (BotoCoreError, ClientError):
-                current_app.logger.exception(
-                    "Old thumbnail cleanup failed for video %s", video.id
-                )
-        return jsonify(message="Video updated", video_id=video.id)
+    return jsonify(message="Video updated", video_id=video.id)
+
 
 @manageVideos_bp.route("/edit-video/<int:video_id>/delete", methods=["POST"])
 def delete_video(video_id):
@@ -157,4 +206,3 @@ def delete_video(video_id):
         ), 200
 
     return jsonify(message="Video and thumbnail deleted successfully")
-
