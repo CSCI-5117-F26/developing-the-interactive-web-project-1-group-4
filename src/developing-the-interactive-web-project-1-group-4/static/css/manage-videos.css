@@ -5,7 +5,8 @@ main:has(.mv-page) {
 }
 
 .mv-page {
-    max-width: 1100px;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 28px 48px 60px;
     color: var(--onPBC);
 }
@@ -58,8 +59,16 @@ main:has(.mv-page) {
 /* ---------- Grid of cards ---------- */
 .mv-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+}
+
+@media (max-width: 1000px) {
+    .mv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+    .mv-grid { grid-template-columns: 1fr; }
 }
 
 .mv-card {
@@ -116,7 +125,15 @@ main:has(.mv-page) {
     object-fit: cover;
     display: block;
 }
-
+.mv-thumb img[hidden],
+.mv-thumb-empty[hidden] {
+    display: none;
+}/* The default thumbnail is shown whole instead of being cropped */
+.mv-thumb img.is-default,
+.mv-edit-thumb img.is-default {
+    object-fit: contain;
+    background: #fff;
+}
 .mv-thumb-empty {
     font-size: 36px;
     color: var(--onTBC);

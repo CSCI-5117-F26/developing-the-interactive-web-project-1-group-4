@@ -9,6 +9,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from ..storage import r2
 
 
+def default_key():
+    # The shared default thumbnail named in .env. Never delete this file.
+    return os.environ.get("DEFAULT_THUMBNAIL_KEY", "").strip()
+
+
 def short_count(n):
     # 856 -> '856', 1200 -> '1.2K', 2400000 -> '2.4M'
     n = n or 0
@@ -19,7 +24,7 @@ def short_count(n):
     return f"{n / 1_000_000:.1f}".rstrip("0").rstrip(".") + "M"
 
 
-def video_dict(video):
+def video_dict(video, default_url=None):
     return {
         "id": video.id,
         "title": video.title,
@@ -28,9 +33,11 @@ def video_dict(video):
         "duration_text": formatDuration(video.duration),
         "views": video.views,
         "views_text": short_count(video.views),
+        "is_default": (not video.thumbnail_key) or video.thumbnail_key == default_key(),
+        # Falls back to the default thumbnail when the video has none.
         "thumbnail_url": (
             mediaURL(video.thumbnail_key)
-            if video.thumbnail_key else None
+            if video.thumbnail_key else default_url
         ),
     }
 
@@ -42,9 +49,11 @@ def manage_videos():
     user = get_current_user()
     if user is None:
         return redirect(url_for("profileInput.createProfile"))
+    default_url = defaultCoverURL()
     return render_template(
         "manageVideos.html",
-        videos=[video_dict(v) for v in user.videos],
+        videos=[video_dict(v, default_url) for v in user.videos],
+        default_thumbnail_url=default_url,
     )
 
 
@@ -66,7 +75,10 @@ def edit_video_page(video_id):
 
     if video is None:
         return redirect(url_for("manageVideos.manage_videos"))
-    return render_template("editVideo.html", video=video_dict(video))
+    return render_template(
+        "editVideo.html",
+        video=video_dict(video, defaultCoverURL()),
+    )
 
 
 # The original JSON version of this route, kept for anyone who needs the data.
@@ -75,7 +87,8 @@ def manage_videos_api():
     user = get_current_user()
     if user is None:
         return jsonify(error="Please log in and create your profile"), 401
-    return jsonify(videos=[video_dict(v) for v in user.videos])
+    default_url = defaultCoverURL()
+    return jsonify(videos=[video_dict(v, default_url) for v in user.videos])
 
 
 @manageVideos_bp.route("/edit-video/<int:video_id>", methods=["PATCH"])
@@ -134,11 +147,13 @@ def edit_video(video_id):
         current_app.logger.exception("Video update failed")
         return jsonify(error="Could not update video"), 500
 
-    # Delete the old thumbnail only after the database update succeeds.
+    # Delete the old thumbnail only after the database update succeeds,
+    # and never delete the shared default thumbnail.
     if (
         new_thumbnail_key
         and old_thumbnail_key
         and video.thumbnail_key != old_thumbnail_key
+        and old_thumbnail_key != default_key()
     ):
         try:
             r2.delete_object(
@@ -170,11 +185,12 @@ def delete_video(video_id):
     if video is None:
         return jsonify(error="Video not found"), 404
 
-    # Save the keys before deleting the database record.
+    # Save the keys before deleting the database record
+    # (the shared default thumbnail is never deleted).
     keys = {key for key in (
         video.video_key,
         video.thumbnail_key
-    ) if key}
+    ) if key and key != default_key()}
 
     try:
         db.session.delete(video)

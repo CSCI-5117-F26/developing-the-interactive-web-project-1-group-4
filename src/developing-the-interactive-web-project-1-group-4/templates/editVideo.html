@@ -3,8 +3,7 @@
 {% block title %}Edit Video - Tune In{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}">
-
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
 <div class="mv-page">
     <header class="mv-head">
         <div>
@@ -22,8 +21,10 @@
           data-back-url="{{ url_for('manageVideos.manage_videos') }}">
 
         <div class="mv-edit-thumb">
-            {% if video.thumbnail_url %}
-                <img id="thumbPreview" src="{{ video.thumbnail_url }}" alt="Current thumbnail">
+                        {% if video.thumbnail_url %}
+                <img id="thumbPreview" src="{{ video.thumbnail_url }}" alt="Current thumbnail"
+                     class="{{ 'is-default' if video.is_default else '' }}"
+                     {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}>
             {% else %}
                 <img id="thumbPreview" alt="Current thumbnail" hidden>
             {% endif %}

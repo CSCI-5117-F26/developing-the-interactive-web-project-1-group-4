@@ -3,7 +3,7 @@
 {% block title %}Manage Videos - Tune In{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
 
 <div class="mv-page">
     <header class="mv-head">
@@ -32,9 +32,13 @@
 
             <div class="mv-art">
                 <div class="mv-vinyl" aria-hidden="true"></div>
-                <div class="mv-thumb">
+                                <div class="mv-thumb">
                     {% if video.thumbnail_url %}
-                        <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}">
+                                                <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                             class="{{ 'is-default' if video.is_default else '' }}"
+                             {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
+                             data-fallback="{{ default_thumbnail_url or '' }}"
+                             onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
                     {% else %}
                         <span class="mv-thumb-empty">♫</span>
                     {% endif %}
@@ -68,5 +72,5 @@
     </div>
 </dialog>
 
-<script src="{{ url_for('static', filename='js/manageVideos.js') }}"></script>
+<script src="{{ url_for('static', filename='js/manageVideos.js') }}?v=2"></script>
 {% endblock %}

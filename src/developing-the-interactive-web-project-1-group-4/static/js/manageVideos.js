@@ -87,3 +87,8 @@ deleteYes.addEventListener("click", async () => {
         deleteYes.disabled = false;
     }
 });
+// Show default thumbnails whole instead of cropped
+document.querySelectorAll(".mv-thumb img.is-default").forEach((img) => {
+    img.style.setProperty("object-fit", "contain", "important");
+    img.style.setProperty("background", "#fff", "important");
+});
