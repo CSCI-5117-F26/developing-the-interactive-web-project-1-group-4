@@ -1,3 +1,4 @@
+{% set currentPage = request.endpoint or "" %}
 <aside class="sidebar">
     <a class="sidebar-logo" href="/">Tune In</a>
 
@@ -26,7 +27,10 @@
             <div class="sidebar-divider"></div>
             <p class="sidebar-heading">SETTINGS</p>
             <a href="#" class="sidebar-link"><span>◉</span> Profile</a>
-            <a href="#" class="sidebar-link"><span>⚙</span> Account Settings</a>
+            <a href="{{ url_for('accountSettings.accountSettings') }}"
+                class="sidebar-link {% if currentPage == 'accountSettings.accountSettings' %}active{% endif %}" id="accountSettingsMenuOption">
+                <span>⚙</span> Account Settings
+            </a>
         </div>
     </nav>
     {% endif %}
@@ -44,9 +48,14 @@
 </aside>
 
 <script>
-    const activeId = window.location.pathname.includes("new-video")
-        ? "uploadMenuOption"
-        : "homeMenuOption";
+    const path = window.location.pathname;
+    let activeId = "homeMenuOption";
+
+    if (path.includes("new-video")) {
+        activeId = "uploadMenuOption";
+    } else if (path.includes("account-settings")) {
+        activeId = "accountSettingsMenuOption";
+    }
 
     document.querySelectorAll(".sidebar-link").forEach(link => {
         link.classList.remove("active");

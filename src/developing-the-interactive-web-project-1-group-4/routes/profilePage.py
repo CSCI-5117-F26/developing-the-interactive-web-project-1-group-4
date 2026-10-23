@@ -48,12 +48,12 @@ def profile_info():
     return jsonify(
         id=user.ti_user_id,
         username=user.username,
-        bio=user.bio,
+        bio=user.Bio,
         subscribers_count=get_subscribers_count(user.ti_user_id),
         subscriptions_count=get_subscriptions_count(user.ti_user_id),
         contact_me=user.contact_me,
         profile_picture_url=(
-            mediaURL(user.profile_picture_key)
-            if user.profile_picture_key else None
+            mediaURL(user.Profile_picture_key)
+            if user.Profile_picture_key else None
         )
     ), 200
