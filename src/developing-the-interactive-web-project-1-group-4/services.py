@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from sqlalchemy import func, or_, select, func
 from sqlalchemy.orm import selectinload
 from .models import videos as Video, Genres, Ti_user, video_genres
+import av
 
 trendingVideoLimit = 20
 trendingArtistLimit = 20
@@ -188,6 +189,7 @@ def text_wrap(text, max_length = 50):
     return lines
 
 def getVideoDuration(video):
+    """
     result = subprocess.run(
         [
             "ffprobe",
@@ -203,9 +205,16 @@ def getVideoDuration(video):
         stderr=subprocess.STDOUT,
         text=True,
     )
+    """
+    with av.open(video) as container:
+        if container.duration is not None:
+            return float(container.duration / av.time_base)
 
-    duration = float(result.stdout.strip())
-    return duration
+        for stream in container.streams.video:
+            if stream.duration is not None and stream.time_base is not None:
+                return float(stream.duration * stream.time_base)
+    #duration = float(result.stdout.strip())
+    raise ValueError("Could not determine video duration.")
 
 def saveProfile(
     username,
@@ -481,10 +490,8 @@ def deleteAccountData(user):
         keys += [videoKey, thumbnailKey]
 
     # 2. Delete all database rows in one transaction (all or nothing)
-    db.session.expunge(user)     # stop the ORM from also trying to manage this object
     try:
-        userTable = Ti_user.__table__
-        deleteRowsAndDependents(userTable, userTable.c.ti_user_id, [userId])
+        db.session.delete(user)
         db.session.commit()
     except Exception:
         db.session.rollback()
