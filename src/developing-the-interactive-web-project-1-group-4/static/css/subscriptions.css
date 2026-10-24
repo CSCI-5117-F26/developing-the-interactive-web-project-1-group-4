@@ -1,5 +1,9 @@
 /* Subscriptions page: a grid of round artist photos with the name underneath. */
-
+/* Use the full width so the space left of the first circle equals the space right of the last */
+.sub-page {
+    max-width: none;
+    margin: 0;
+}
 .sub-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 170px));
