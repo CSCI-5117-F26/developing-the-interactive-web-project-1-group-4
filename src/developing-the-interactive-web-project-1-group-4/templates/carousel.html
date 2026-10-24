@@ -1,0 +1,12 @@
+{% macro carousel(title, id) %}
+<section class="carousel-section" aria-labelledby="{{ id }}Title">
+    <h2 id="{{ id }}Title" class="carousel-title">{{ title }}</h2>
+    <div class="carousel">
+        <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll {{ title }} left">‹</button>
+        <div class="carousel-track" id="{{ id }}">
+            {{ caller() }}
+        </div>
+        <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll {{ title }} right">›</button>
+    </div>
+</section>
+{% endmacro %}

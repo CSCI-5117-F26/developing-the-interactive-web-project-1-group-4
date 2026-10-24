@@ -2,15 +2,19 @@ from .database import db
 from .models import *
 import subprocess
 import json, os, re
-from flask import current_app , session, url_for
+from flask import current_app , session, url_for, request
 from .models import db, Ti_user
 from .storage import r2
 from uuid import uuid4
 from werkzeug.utils import secure_filename
-from flask import request
 from dotenv import load_dotenv
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, or_, select, func
 from sqlalchemy.orm import selectinload
+from .models import videos as Video, Genres, Ti_user, video_genres
+
+trendingVideoLimit = 20
+trendingArtistLimit = 20
+genrePageLimit = 60
 
 from .models import videos as Video, Genres, Ti_user, video_genres
 
@@ -423,12 +427,6 @@ def get_subscriptions_count(user_id):
     return Subscriptions.query.filter_by(subscriber_id=user_id).count()
 
 # ======================= Account deletion =======================
-import os
-from sqlalchemy import select, delete
-from flask import current_app
-
-from .models import Ti_user, videos as Video, Drafts
-
 
 def deleteRowsAndDependents(table, column, ids):
     """Delete rows of `table` where `column` is in `ids`,
@@ -492,3 +490,101 @@ def deleteAccountData(user):
 
     # 3. Only after the database delete succeeded, remove the files
     deleteCloudFiles(keys)
+
+# ======================= Trending page =======================
+def addTitleLines(cards):
+    """The vinyl card needs the title split into lines."""
+    for card in cards:
+        card["title_lines"] = text_wrap(card["title"], max_length=25)
+    return cards
+
+
+def artistProfileURL(username):
+    """Where an artist tile links to: that artist's public profile page."""
+    return url_for("profilePage.profile_page", username=username)
+
+
+# ---------- Trending videos ----------
+def fetchTrendingVideos(limit=trendingVideoLimit):
+    stmt = videoQuery().order_by(Video.views.desc(), Video.created_at.desc()).limit(limit)
+    return addTitleLines([videoCard(v) for v in db.session.scalars(stmt)])
+
+
+# ---------- Genres ----------
+def fetchGenreCards():
+    """Every genre, most-watched first, shaped like a vinyl card."""
+    videoCount = func.count(Video.id)
+    totalViews = func.coalesce(func.sum(Video.views), 0)
+    rows = db.session.execute(
+        select(Genres.id, Genres.name, videoCount, totalViews)
+        .outerjoin(video_genres, video_genres.c.genre_id == Genres.id)
+        .outerjoin(Video, Video.id == video_genres.c.video_id)
+        .group_by(Genres.id, Genres.name)
+        .order_by(totalViews.desc(), videoCount.desc(), Genres.name)
+    ).all()
+
+    # Placeholder art: the thumbnail of each genre's most-viewed video (one query, Postgres DISTINCT ON)
+    topThumbnails = dict(db.session.execute(
+        select(video_genres.c.genre_id, Video.thumbnail_key)
+        .join(Video, Video.id == video_genres.c.video_id)
+        .where(Video.thumbnail_key.is_not(None))
+        .order_by(video_genres.c.genre_id, Video.views.desc())
+        .distinct(video_genres.c.genre_id)
+    ).all())
+
+    fallback = defaultCoverURL()
+    return [
+        {
+            "title": name,
+            "title_lines": text_wrap(name, max_length=25),
+            "cover": mediaURL(topThumbnails.get(genreId)) or fallback,
+            "fallbackCover": fallback,
+            "videoURL": None,        # a genre card isn't a playable video
+            "videoCount": count,
+            "totalViews": views,
+            "url": url_for("trending.genrePage", genreName=name),
+        }
+        for genreId, name, count, views in rows
+    ]
+
+
+def getGenre(genreName):
+    return db.session.scalar(select(Genres).where(Genres.name == genreName))
+
+
+def fetchGenreVideos(genreName, limit=genrePageLimit):
+    stmt = (
+        videoQuery()
+        .where(Video.genres.any(Genres.name == genreName))
+        .order_by(Video.views.desc(), Video.created_at.desc())
+        .limit(limit)
+    )
+    return addTitleLines([videoCard(v) for v in db.session.scalars(stmt)])
+
+
+# ---------- Trending artists ----------
+def fetchTrendingArtists(limit=trendingArtistLimit):
+    totalViews = func.coalesce(func.sum(Video.views), 0)
+    videoCount = func.count(Video.id)
+    stmt = (
+        select(Ti_user, totalViews, videoCount)
+        .join(Video, Video.ti_user == Ti_user.ti_user_id)   # only users who have uploaded
+        .group_by(Ti_user.ti_user_id)
+        .order_by(totalViews.desc(), videoCount.desc())
+        .limit(limit)
+    )
+    artists = []
+    fallback = defaultCoverURL()
+    artists = []
+    for user, views, count in db.session.execute(stmt):
+        artists.append({
+            "username": user.username,
+            "displayName": f"{user.first_name} {user.last_name}".strip() or user.username,
+            "picture": mediaURL(user.Profile_picture_key) or fallback,
+            "fallbackPicture": fallback,
+            "totalViews": views,
+            "videoCount": count,
+            "url": artistProfileURL(user.username),
+        })
+    return artists
+    return artists

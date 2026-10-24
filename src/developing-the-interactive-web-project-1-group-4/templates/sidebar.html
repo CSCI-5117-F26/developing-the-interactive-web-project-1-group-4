@@ -4,7 +4,10 @@
 
     <nav class="sidebar-nav">
         <a href="/" class="sidebar-link" id="homeMenuOption"><span>⌂</span> Home</a>
-        <a href="#" class="sidebar-link"><span>♫</span> Trending</a>
+        <a href="{{ url_for('trending.trending') }}"
+            class="sidebar-link {% if currentPage in ['trending.trending', 'trending.genrePage'] %}active{% endif %}" id="trendingMenuOption">
+                <span>♫</span> Trending
+        </a>
         {% if session.get('user') %}
         <a href="{{ url_for('subscription.subscriptions_page') }}" class="sidebar-link" id="subscriptionsMenuOption"><span>▶</span> Subscriptions</a>
         <a href="#" class="sidebar-link"><span>□</span> Library</a>
@@ -59,6 +62,8 @@
         activeId = "profileMenuOption";
             } else if (path === "/subscriptions") {
         activeId = "subscriptionsMenuOption";
+            } else if (path === "/trending") {
+        activeId = "trendingMenuOption";
     } else if (path.includes("account-settings")) {
         activeId = "accountSettingsMenuOption";
     }
