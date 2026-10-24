@@ -92,7 +92,7 @@ def publish():
     create_video_helper(
         ti_user=user_id,
         thumbnail_key=data["thumbnail_key"],
-        duration= 150,
+        duration= getVideoDuration(mediaURL(data["video_key"])),
         title=data["title"],
         description=data["description"],
         genres=data["genres"],
