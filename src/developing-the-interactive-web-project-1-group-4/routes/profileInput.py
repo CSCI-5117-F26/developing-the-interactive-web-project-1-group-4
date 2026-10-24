@@ -101,6 +101,7 @@ def createProfile():
     bio = request.form.get("userBio", "").strip()
     phone_number = request.form.get("userPhoneNumber", "").strip()
     picture = request.files.get("profilePicture")
+    contact_me = request.form.get("userContact", "").strip()
 
     # Use the authenticated identity from the session
     userinfo = session["user"]["userinfo"]
@@ -130,6 +131,7 @@ def createProfile():
         bio=bio,
         phone_number=phone_number,
         profile_picture_key=picture_filename,
+        contact_me=contact_me,
     )
 
-    return redirect(url_for("new_video"))
+    return redirect(url_for("homePage.home"))

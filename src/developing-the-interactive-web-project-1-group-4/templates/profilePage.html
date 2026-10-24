@@ -40,17 +40,12 @@
             <p class="pf-bio">{{ profile.bio }}</p>
         {% endif %}
 
-        {% if profile.email or profile.phone %}
+        
         <div class="pf-contact">
-            <p class="pf-contact-title">CONTACT INFO</p>
-            {% if profile.email %}
-                <p><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></p>
-            {% endif %}
-            {% if profile.phone %}
-                <p>{{ profile.phone }}</p>
-            {% endif %}
+            <p class="pf-bio">Contact Me</p>
+                <p>{{ profile.contact_me }}</p>
         </div>
-        {% endif %}
+        
 
         <div class="pf-action">
             {% if is_own %}

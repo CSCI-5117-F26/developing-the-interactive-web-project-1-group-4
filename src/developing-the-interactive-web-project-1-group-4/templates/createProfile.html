@@ -84,6 +84,12 @@
                               placeholder="A few words about you (200 characters max)">{{ form.get('userBio', '') }}</textarea>
                     {% if errors.userBio %}<p class="field-error">{{ errors.userBio }}</p>{% endif %}
                 </div>
+                <div class="creator-field">
+                    <label for="userContact">Contact Me</label>
+                    <textarea id="userContact" name="userContact" maxlength="200" rows="4"
+                              placeholder="Give a way for people to reach out (200 characters max)">{{ form.get('userContact', '') }}</textarea>
+                    {% if errors.userContact %}<p class="field-error">{{ errors.userContact }}</p>{% endif %}
+                </div>
 
                 <div class="creator-actions">
                     <a class="creator-btn creator-btn-cancel" href="{{ url_for('homePage.home') }}">Cancel</a>

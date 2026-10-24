@@ -34,6 +34,7 @@ def accountData(user):
         "userEmail": user.email,
         "userPhoneNumber": user.Phone_number or "",
         "userBio": user.Bio or "",
+        "userContact": user.contact_me or "",
         "profilePictureURL": mediaURL(user.Profile_picture_key) or "",
     }
 
@@ -175,6 +176,22 @@ def updateBio():
         return jsonify(errors={"userBio": f"Bio must be {bioMaxLength} characters or fewer."}), 400
 
     user.Bio = bio or None
+    db.session.commit()
+    return jsonify(accountData(user))
+
+# ---------------- Contact Me ----------------
+
+@accountSettings_bp.patch("/api/account/contact")
+def updateContact():
+    user, error = apiUser()
+    if error:
+        return error
+
+    contact = request.form.get("userContact", "").strip()
+    if len(contact) > bioMaxLength:
+        return jsonify(errors={"userContact": f"Contact info must be {bioMaxLength} characters or fewer."}), 400
+
+    user.contact_me = contact or None
     db.session.commit()
     return jsonify(accountData(user))
 

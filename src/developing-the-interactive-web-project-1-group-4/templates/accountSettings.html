@@ -41,6 +41,14 @@
             </span>
             <span class="settings-arrow">›</span>
         </button>
+        <button type="button" class="settings-item" data-open="contactDialog">
+            <span class="settings-icon">❝</span>
+            <span class="settings-text">
+                <strong>Change Contact Me</strong>
+                <small>Give people a way to reach you</small>
+            </span>
+            <span class="settings-arrow">›</span>
+        </button>
 
         <button type="button" class="settings-item settings-item-danger" data-open="deleteDialog">
             <span class="settings-icon">✕</span>
@@ -144,6 +152,46 @@
     </form>
 </dialog>
 
+
+<!-- ===== Pop-up: Contact Me ===== -->
+<dialog id="contactDialog" class="settings-dialog"
+        aria-labelledby="contactTitle">
+    <form id="contactForm"
+          data-url="{{ url_for('accountSettings.updateContact') }}"
+          data-method="PATCH">
+
+        <div id="contactTitle" class="settings-dialog-banner">
+            CHANGE CONTACT ME
+        </div>
+
+        <div class="settings-dialog-body">
+            <div class="creator-field">
+                <label for="userContact">Contact Me</label>
+
+                <textarea id="userContact" name="userContact"
+                          maxlength="200" rows="5"
+                          placeholder="Give people a way to reach you">{{ account.userContact or '' }}</textarea>
+
+                <p class="field-error" data-error="userContact"></p>
+            </div>
+
+            <p class="field-error" data-error="form"></p>
+        </div>
+
+        <div class="settings-dialog-actions">
+            <button type="button"
+                    class="creator-btn creator-btn-cancel"
+                    data-close>
+                Cancel
+            </button>
+
+            <button type="submit"
+                    class="creator-btn settings-btn-save">
+                Save
+            </button>
+        </div>
+    </form>
+</dialog>
 <!-- ===== Pop-up: delete account ===== -->
 <dialog id="deleteDialog" class="settings-dialog" aria-labelledby="deleteTitle">
     <form id="deleteForm" data-url="{{ url_for('accountSettings.deleteAccount') }}" data-method="DELETE">

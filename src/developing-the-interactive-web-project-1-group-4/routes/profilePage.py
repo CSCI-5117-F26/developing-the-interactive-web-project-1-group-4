@@ -132,6 +132,7 @@ def profile_page(username):
         "bio": profile_user.Bio,
         "email": profile_user.email,
         "phone": profile_user.Phone_number,
+        "contact_me": profile_user.contact_me,
         "picture_url": (
             mediaURL(profile_user.Profile_picture_key)
             if profile_user.Profile_picture_key else None

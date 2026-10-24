@@ -55,6 +55,10 @@ const onSuccess = {
         rememberValues(form);
         showStatus("Bio updated.");
     },
+    contactForm(data, form) {
+        rememberValues(form);
+        showStatus("Contact info updated.");
+    },
     deleteForm(data) {
         window.location.href = data.redirectURL;
     },

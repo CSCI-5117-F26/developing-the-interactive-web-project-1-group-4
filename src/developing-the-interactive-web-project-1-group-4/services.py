@@ -216,6 +216,7 @@ def saveProfile(
     bio=None,
     phone_number=None,
     profile_picture_key=None,
+    contact_me=None
 ):
     user = Ti_user(
         username=username,
@@ -226,6 +227,7 @@ def saveProfile(
         Bio=bio,
         Phone_number=phone_number,
         Profile_picture_key=profile_picture_key,
+        contact_me=contact_me,
     )
 
     db.session.add(user)
