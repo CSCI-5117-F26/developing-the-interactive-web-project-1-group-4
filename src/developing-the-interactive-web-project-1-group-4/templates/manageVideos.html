@@ -10,7 +10,7 @@
         <div>
             <p class="mv-eyebrow">CREATOR STUDIO</p>
             <h1>Manage Videos</h1>
-            <p class="mv-sub">Keep your videos and thumbnails up to date.</p>
+            <!-- <p class="mv-sub">Keep your videos and thumbnails up to date.</p> -->
         </div>
         <span id="mvCount" class="mv-pill">{{ videos|length }} video{{ '' if videos|length == 1 else 's' }}</span>
     </header>
@@ -46,8 +46,11 @@
                 </div>
             </div>
 
-            <h2 class="mv-title">{{ video.title }}</h2>
-            <p class="mv-views">{{ video.views_text }} view{{ '' if video.views == 1 else 's' }}</p>
+            <div class="mv-info">
+                <h2 class="mv-title">{{ video.title }}</h2>
+                <p class="mv-views">{{ video.views_text }} view{{ '' if video.views == 1 else 's' }}</p>
+            </div>
+
         </article>
         {% endfor %}
     </div>
