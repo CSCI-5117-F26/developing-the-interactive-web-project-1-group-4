@@ -60,7 +60,7 @@ main:has(.mv-page) {
 .mv-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 28px;
+    gap: 16px 28px;
 }
 
 @media (max-width: 1000px) {
@@ -82,13 +82,15 @@ main:has(.mv-page) {
 /* ---------- Vinyl record peeking out behind the thumbnail ---------- */
 .mv-art {
     position: relative;
-    padding-top: 58px;
+    padding-top: 5%;
+    margin-left: 5%;
+    max-width: 300px;
 }
 
 .mv-vinyl {
     position: absolute;
-    top: 0;
-    left: 50%;
+    top: 20%;
+    left: 69%;
     width: 150px;
     aspect-ratio: 1;
     transform: translateX(-50%);
@@ -107,16 +109,22 @@ main:has(.mv-page) {
     transform: translateX(-50%) rotate(40deg);
 }
 
+.mv-info {
+    margin-left: 6%;
+}
+
 .mv-thumb {
     position: relative;
     z-index: 1;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 9 / 9;
     border-radius: 10px;
     overflow: hidden;
     background: var(--tagBackgroundColor);
     box-shadow: 0 6px 14px rgba(0, 0, 0, .35);
     display: grid;
     place-items: center;
+    left: 2%;
+    width: 68%;
 }
 
 .mv-thumb img {
@@ -152,7 +160,7 @@ main:has(.mv-page) {
 }
 
 .mv-title {
-    margin: 16px 0 3px 4px;
+    margin: 12px 0 3px 4px;
     font-size: 15px;
     font-weight: 700;
     color: #1f2a16;
