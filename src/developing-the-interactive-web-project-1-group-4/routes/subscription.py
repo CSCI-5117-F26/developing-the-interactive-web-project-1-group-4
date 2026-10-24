@@ -119,3 +119,36 @@ def get_subscribers():
             }
             for subscriber in subscriber_ids
         ]),200
+
+
+# ---------- Subscriptions page (grid of artists the user follows) ----------
+@subscription_bp.route("/subscriptions", methods=["GET"])
+def subscriptions_page():
+    if session.get("user") is None:
+        return redirect(url_for("login"))
+    user = get_current_user()
+    if user is None:
+        return redirect(url_for("profileInput.createProfile"))
+
+    channels = (
+        db.session.query(Ti_user)
+        .join(Subscriptions, Subscriptions.channel_id == Ti_user.ti_user_id)
+        .filter(Subscriptions.subscriber_id == user.ti_user_id)
+        .order_by(Ti_user.username)
+        .all()
+    )
+
+    artists = [
+        {
+            "username": channel.username,
+            "initial": (channel.username or "?")[:1].upper(),
+            "picture_url": (
+                mediaURL(channel.Profile_picture_key)
+                if channel.Profile_picture_key else None
+            ),
+            "profile_url": url_for("profilePage.profile_page", username=channel.username),
+        }
+        for channel in channels
+    ]
+
+    return render_template("subscriptions.html", artists=artists)
