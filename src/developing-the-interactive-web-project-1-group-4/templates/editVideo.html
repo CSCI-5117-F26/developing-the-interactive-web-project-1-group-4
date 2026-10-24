@@ -3,7 +3,8 @@
 {% block title %}Edit Video - Tune In{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}">
+
 <div class="mv-page">
     <header class="mv-head">
         <div>
@@ -16,24 +17,21 @@
 
     <form id="editForm" class="mv-edit-card"
           data-save-url="{{ url_for('manageVideos.edit_video', video_id=video.id) }}"
-          data-delete-url="{{ url_for('manageVideos.delete_video', video_id=video.id) }}"
           data-upload-url="{{ url_for('uploadVideo.upload_thumbnail') }}"
           data-back-url="{{ url_for('manageVideos.manage_videos') }}">
 
-        <div class="mv-edit-thumb">
-                        {% if video.thumbnail_url %}
-                <img id="thumbPreview" src="{{ video.thumbnail_url }}" alt="Current thumbnail"
-                     class="{{ 'is-default' if video.is_default else '' }}"
-                     {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}>
-            {% else %}
-                <img id="thumbPreview" alt="Current thumbnail" hidden>
-            {% endif %}
-            <label class="mv-upload-overlay" for="thumbFile">
-                <span class="mv-upload-circle">↑</span>
-                <span>Upload New Thumbnail</span>
+        <section class="creator-panel mv-thumb-panel">
+            <h2>Thumbnail</h2>
+            <p>Choose the cover image viewers will see.</p>
+
+            <label class="creator-dropzone">
+                <span class="creator-upload-icon">▧</span>
+                <strong>Upload thumbnail</strong>
+                <span>Choose an image or browse</span>
+                <input type="file" id="thumbFile" accept="image/*">
             </label>
-            <input id="thumbFile" type="file" accept="image/*" hidden>
-        </div>
+            <p class="creator-file-note">Supported: PNG, JPG, JPEG</p>
+        </section>
         <p class="mv-error" id="thumbError"></p>
 
         <div class="mv-field">
@@ -56,22 +54,11 @@
         <p class="mv-error" id="formError"></p>
 
         <div class="mv-edit-actions">
-            <button type="button" class="mv-btn mv-btn-danger" id="deleteBtn">Delete</button>
+            <a class="mv-btn mv-btn-light" href="{{ url_for('manageVideos.manage_videos') }}">Cancel</a>
             <button type="submit" class="mv-btn mv-btn-primary" id="submitBtn">Submit</button>
         </div>
     </form>
 </div>
-
-<!-- ===== Delete confirmation ===== -->
-<dialog id="deleteDialog" class="mv-confirm" aria-labelledby="deleteQuestion">
-    <button type="button" class="mv-confirm-x" data-close aria-label="Close">✕</button>
-    <p id="deleteQuestion" class="mv-confirm-text">Are you sure you want to delete this video?</p>
-    <p class="mv-error" id="deleteError"></p>
-    <div class="mv-confirm-actions">
-        <button type="button" class="mv-btn mv-btn-light" data-close>No</button>
-        <button type="button" class="mv-btn mv-btn-danger" id="deleteYes">Yes</button>
-    </div>
-</dialog>
 
 <script src="{{ url_for('static', filename='js/editVideo.js') }}"></script>
 {% endblock %}

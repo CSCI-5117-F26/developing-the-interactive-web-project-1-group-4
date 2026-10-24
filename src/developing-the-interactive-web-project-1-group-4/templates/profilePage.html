@@ -11,36 +11,48 @@
 
     <!-- ===== Profile header ===== -->
     <section class="pf-card">
-        <div class="pf-top">
-            <div class="pf-avatar">
-                {% if profile.picture_url %}
-                    <img src="{{ profile.picture_url }}" alt="Profile picture of {{ profile.username }}">
-                {% else %}
-                    <span aria-hidden="true">{{ profile.initial }}</span>
-                {% endif %}
-            </div>
+        <h1 class="pf-name">{{ profile.username }}</h1>
 
-            <div class="pf-stats">
-                <div class="pf-stat">
-                    <span class="pf-stat-label">VIDEOS</span>
-                    <span class="pf-stat-value">{{ profile.video_count }}</span>
-                </div>
-                <div class="pf-stat">
-                    <span class="pf-stat-label">SUBSCRIBERS</span>
-                    <span class="pf-stat-value" id="statSubscribers">{{ profile.subscribers_count }}</span>
-                </div>
-                <div class="pf-stat">
-                    <span class="pf-stat-label">SUBSCRIBED</span>
-                    <span class="pf-stat-value">{{ profile.subscriptions_count }}</span>
-                </div>
+        <div class="pf-avatar">
+            {% if profile.picture_url %}
+                <img src="{{ profile.picture_url }}" alt="Profile picture of {{ profile.username }}">
+            {% else %}
+                <span aria-hidden="true">{{ profile.initial }}</span>
+            {% endif %}
+        </div>
+
+        <div class="pf-stats">
+            <div class="pf-stat">
+                <span class="pf-stat-label">VIDEOS</span>
+                <span class="pf-stat-value">{{ profile.video_count }}</span>
+            </div>
+            <div class="pf-stat">
+                <span class="pf-stat-label">SUBSCRIBERS</span>
+                <span class="pf-stat-value" id="statSubscribers">{{ profile.subscribers_count }}</span>
+            </div>
+            <div class="pf-stat">
+                <span class="pf-stat-label">SUBSCRIBED</span>
+                <span class="pf-stat-value">{{ profile.subscriptions_count }}</span>
             </div>
         </div>
 
-        <div class="pf-info">
-            <h1>{{ profile.username }}</h1>
-            {% if profile.bio %}<p class="pf-bio">{{ profile.bio }}</p>{% endif %}
-            {% if profile.contact_me %}<p class="pf-contact">Contact: {{ profile.contact_me }}</p>{% endif %}
+        {% if profile.bio %}
+            <p class="pf-bio">{{ profile.bio }}</p>
+        {% endif %}
 
+        {% if profile.email or profile.phone %}
+        <div class="pf-contact">
+            <p class="pf-contact-title">CONTACT INFO</p>
+            {% if profile.email %}
+                <p><a href="mailto:{{ profile.email }}">{{ profile.email }}</a></p>
+            {% endif %}
+            {% if profile.phone %}
+                <p>{{ profile.phone }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="pf-action">
             {% if is_own %}
                 <a class="pf-btn pf-btn-primary" href="{{ url_for('accountSettings.accountSettings') }}">Edit profile</a>
             {% elif is_logged_in %}

@@ -2,11 +2,7 @@ const form = document.getElementById("editForm");
 const titleInput = document.getElementById("titleInput");
 const descInput = document.getElementById("descInput");
 const thumbFile = document.getElementById("thumbFile");
-const thumbPreview = document.getElementById("thumbPreview");
 const submitBtn = document.getElementById("submitBtn");
-const deleteBtn = document.getElementById("deleteBtn");
-const dialog = document.getElementById("deleteDialog");
-const deleteYes = document.getElementById("deleteYes");
 
 function setText(id, message) {
     document.getElementById(id).textContent = message || "";
@@ -23,15 +19,6 @@ document.querySelectorAll("[data-focus]").forEach((button) => {
         field.focus();
         field.setSelectionRange(field.value.length, field.value.length);
     });
-});
-
-// Show a preview of the new thumbnail
-thumbFile.addEventListener("change", () => {
-    const file = thumbFile.files[0];
-    if (file) {
-        thumbPreview.src = URL.createObjectURL(file);
-        thumbPreview.hidden = false;
-    }
 });
 
 // Submit: upload thumbnail (if any), then save title/description
@@ -79,31 +66,5 @@ form.addEventListener("submit", async (event) => {
         setText("formError", "Network error. Please try again.");
     } finally {
         submitBtn.disabled = false;
-    }
-});
-
-// Delete: confirmation first
-deleteBtn.addEventListener("click", () => {
-    setText("deleteError", "");
-    dialog.showModal();
-});
-dialog.querySelectorAll("[data-close]").forEach((button) => {
-    button.addEventListener("click", () => dialog.close());
-});
-
-deleteYes.addEventListener("click", async () => {
-    deleteYes.disabled = true;
-    try {
-        const response = await fetch(form.dataset.deleteUrl, { method: "POST" });
-        const data = await readJson(response);
-        if (!response.ok) {
-            setText("deleteError", data.error || "Could not delete video.");
-            return;
-        }
-        window.location.href = form.dataset.backUrl;
-    } catch {
-        setText("deleteError", "Network error. Please try again.");
-    } finally {
-        deleteYes.disabled = false;
     }
 });
