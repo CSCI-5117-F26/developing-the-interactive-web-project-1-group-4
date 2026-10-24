@@ -429,7 +429,7 @@ def defaultCoverURL():
     if key:
         return mediaURL(key)
     # Safety net if the setting is missing: the static placeholder image
-    return url_for("static", filename="images/Rectangle_1.png")
+    return url_for("static", filename="images/square_test.png")
 
 def get_subscribers_count(channel_id):
     return Subscriptions.query.filter_by(channel_id=channel_id).count()
