@@ -50,10 +50,23 @@ def manage_videos():
     if user is None:
         return redirect(url_for("profileInput.createProfile"))
     default_url = defaultCoverURL()
+
+    # Genre filter (same tags as the home page); only your own videos are filtered
+    genres = fetchGenres()
+    selected_genre = request.args.get("genre", "").strip()
+    if selected_genre not in {g["name"] for g in genres}:
+        selected_genre = ""
+    user_videos = [
+        v for v in user.videos
+        if not selected_genre or any(g.name == selected_genre for g in v.genres)
+    ]
+
     return render_template(
         "manageVideos.html",
-        videos=[video_dict(v, default_url) for v in user.videos],
+        videos=[video_dict(v, default_url) for v in user_videos],
         default_thumbnail_url=default_url,
+        genres=genres,
+        selected_genre=selected_genre,
     )
 
 

@@ -593,3 +593,12 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ---------- Center the search bar and the genre filters on every page ---------- */
+.search-bar-container .search-bar {
+    margin: .5rem auto;
+}
+
+main .tag-scroller {
+    margin: 0 auto 2%;
+}

@@ -6,6 +6,25 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
 
 <div class="mv-page">
+    {% include "searchBar.html" %}
+
+    <!-- genre filters (same as the home page) -->
+    <div class="tag-scroller">
+        <button type="button" class="tag-arrow tag-arrow-left" aria-label="Scroll genres left">‹</button>
+
+        <div class="tag-container">
+            {% for genre in genres %}
+                {% if genre.name == selected_genre %}
+                    <a class="tag active" href="{{ url_for('manageVideos.manage_videos') }}">{{ genre.name }}</a>
+                {% else %}
+                    <a class="tag" href="{{ url_for('manageVideos.manage_videos', genre=genre.name) }}">{{ genre.name }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <button type="button" class="tag-arrow tag-arrow-right" aria-label="Scroll genres right">›</button>
+    </div>
+
     <header class="mv-head">
         <div>
             <p class="mv-eyebrow">CREATOR STUDIO</p>
@@ -56,8 +75,13 @@
     </div>
 
     <div id="mvEmpty" class="mv-empty" {% if videos %}hidden{% endif %}>
-        <p>You haven't uploaded any videos yet.</p>
-        <a class="mv-btn mv-btn-primary" href="{{ url_for('uploadVideo.new_video') }}">Upload your first video</a>
+        {% if selected_genre %}
+            <p>You have no {{ selected_genre }} videos.</p>
+            <a class="mv-btn mv-btn-primary" href="{{ url_for('manageVideos.manage_videos') }}">Show all videos</a>
+        {% else %}
+            <p>You haven't uploaded any videos yet.</p>
+            <a class="mv-btn mv-btn-primary" href="{{ url_for('uploadVideo.new_video') }}">Upload your first video</a>
+        {% endif %}
     </div>
 
     <p id="mvToast" class="mv-toast" role="status" hidden></p>
@@ -75,5 +99,7 @@
     </div>
 </dialog>
 
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tagScroller.js') }}"></script>
 <script src="{{ url_for('static', filename='js/manageVideos.js') }}?v=2"></script>
 {% endblock %}

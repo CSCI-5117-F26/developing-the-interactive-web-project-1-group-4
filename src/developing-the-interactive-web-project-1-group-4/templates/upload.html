@@ -5,14 +5,7 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
 <div class="creator-page">
-    <header class="creator-topbar">
-        <div class="creator-search">
-            <span>⌕</span>
-            <input type="search" placeholder="Search artists, songs, or videos...">
-        </div>
-        <div class="creator-topbar-icons"><span>♧</span><span>●</span></div>
-    </header>
-
+        {% include "searchBar.html" %}
     <div class="creator-heading">
         <h1>Upload</h1>
         <p>Share your music and videos with your audience.</p>
@@ -311,6 +304,7 @@
 </style>
 </div>
 <script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
 const form = document.getElementById("upload-video-form");
 const submitButtons = form.querySelectorAll('button[type="submit"]');
 let activeUploads = 0;

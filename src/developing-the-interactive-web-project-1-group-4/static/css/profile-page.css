@@ -63,6 +63,7 @@
     flex: 0 0 auto;                   /* each stat is only as wide as its own text */
     text-align: center;
 }
+
 .pf-stat-label {
     display: block;
     font-size: 11px;
@@ -79,12 +80,23 @@
     color: #1f2a16;
 }
 
-.pf-bio {
+.pf-bio-wrap {
     grid-column: 2;
     grid-row: 3 / span 2;
     align-self: start;
     margin: 22px 0 0;
-    padding: 0;                       /* bio now spans exactly the same width as the stats row */
+}
+
+.pf-bio-title {
+    margin: 0 0 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    color: #6b6b55;
+}
+
+.pf-bio-text {
+    margin: 0;
     font-size: 15px;
     line-height: 1.6;
     color: #50503e;
@@ -181,7 +193,7 @@
         padding: 22px 18px;
     }
 
-    .pf-name, .pf-avatar, .pf-stats, .pf-bio, .pf-contact, .pf-action {
+    .pf-name, .pf-avatar, .pf-stats, .pf-bio-wrap, .pf-contact, .pf-action {
         grid-column: 1;
         grid-row: auto;
     }
@@ -189,7 +201,8 @@
     .pf-name    { order: 1; }
     .pf-avatar  { order: 2; }
     .pf-stats   { order: 3; margin-top: 20px; }
-    .pf-bio     { order: 4; margin: 16px 0 0; padding: 0; text-align: left; }
+    .pf-bio-wrap { order: 4; margin: 16px 0 0; }
+    .pf-bio-text { text-align: left; }
     .pf-contact { order: 5; }
     .pf-action  { order: 6; }
 }
