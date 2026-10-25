@@ -133,8 +133,64 @@ def library():
 
 @homePage_bp.get("/activity")
 def activity():
+    liked_videos = [
+    {
+        "title": "testing watchlater 1",
+        "duration_text": "03:10",
+        "author": "some dude",
+        "thumbnail": "",
+        "likedtime": "2 hours"
+    },
+    {
+        "title": "testing watchlater 2",
+        "duration_text": "05:55",
+        "author": "some dude",
+        "thumbnail": "",
+        "likedtime": "2 hours"
+    },
+    {
+        "title": "testing watchlater 3",
+        "duration_text": "02:30",
+        "author": "some dude",
+        "thumbnail": "",
+        "likedtime": "2 hours"
+    }
+    ]
+    commented_videos = [
+    {
+        "title": "testing watchlater 1",
+        "duration_text": "03:10",
+        "author": "some dude",
+        "thumbnail": "",
+        "commentedtime": "2 hours",
+        "comments": [
+            {
+                "comment": "Wow! your voice brought me to tears! start a class now and take my money!"
+            },
+            {
+                "comment": "Wow! your voice brought me to tears! start a class now and take my money!"
+            }
+        ]
+    },
+    {
+        "title": "testing watchlater 2",
+        "duration_text": "05:55",
+        "author": "some dude",
+        "thumbnail": "",
+        "commentedtime": "2 hours",
+        "comment": "Wow! your voice brought me to tears! start a class now and take my money!"
+    },
+    {
+        "title": "testing watchlater 3",
+        "duration_text": "02:30",
+        "author": "some dude",
+        "thumbnail": "",
+        "commentedtime": "2 hours",
+        "comment": "Wow! your voice brought me to tears! start a class now and take my money!"
+    }
+    ]
     return render_template(
-        "activity.html"
+        "activity.html", liked_videos = liked_videos, commented_videos = commented_videos
     )
 
 # ---------------- JSON endpoints ----------------
