@@ -1,3 +1,4 @@
+
 from .database import db
 from .models import *
 import subprocess
@@ -10,7 +11,7 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from sqlalchemy import func, or_, select, func
 from sqlalchemy.orm import selectinload
-from .models import videos as Video, Genres, Ti_user, video_genres
+from .models import videos as Video, Genres, Ti_user, video_genres, Drafts
 import av
 
 trendingVideoLimit = 20
@@ -597,3 +598,71 @@ def fetchTrendingArtists(limit=trendingArtistLimit):
         })
     return artists
     return artists
+
+def get_owned_draft(user):
+    draft_id = request.form.get("draft_id", type=int)
+
+    if draft_id is None:
+        return None
+
+    return db.session.execute(
+        db.select(Drafts).where(
+            Drafts.id == draft_id,
+            Drafts.ti_user == user.ti_user_id,
+        )
+    ).scalar_one_or_none()
+
+
+def apply_draft_form(draft):
+    """Validate submitted fields before changing the draft."""
+    title = request.form.get("title", "").strip()
+    description = request.form.get("description", "").strip()
+    language = request.form.get("language", "").strip()
+    video_type = request.form.get("video_type", "").strip()
+
+    if not title:
+        raise ValueError("A video title is required.")
+    if len(title) > 200:
+        raise ValueError("Title must be 200 characters or fewer.")
+    if len(description) > 10000:
+        raise ValueError("Description is too long.")
+    if len(language) > 100:
+        raise ValueError("Language is too long.")
+    if video_type not in ("", "original", "cover"):
+        raise ValueError("Invalid video type.")
+
+    # Assumes genre_options uses Genres.id as its option values.
+    try:
+        genre_names = {
+            str(value)
+            for value in request.form.getlist("genre")
+        }
+    except ValueError:
+        raise ValueError("Invalid genre selection.")
+
+    genres = []
+    if genre_names:
+        genres = db.session.execute(
+            db.select(Genres).where(
+                Genres.name.in_(genre_names)
+            )
+        ).scalars().all()
+
+        if len(genres) != len(genre_names):
+            raise ValueError("Invalid genre selection.")
+
+    thumbnail_key = draft.thumbnail_key
+    if "thumbnail_key" in request.form:
+        thumbnail_key = request.form["thumbnail_key"].strip() or None
+
+    if thumbnail_key and len(thumbnail_key) > 200:
+        raise ValueError("Invalid thumbnail key.")
+
+    draft.title = title
+    draft.description = description or None
+    draft.language = language or None
+    draft.Original = (
+        None if not video_type else video_type == "original"
+    )
+    draft.thumbnail_key = thumbnail_key
+    draft.genres = genres
