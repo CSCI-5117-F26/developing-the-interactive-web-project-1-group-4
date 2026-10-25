@@ -10,14 +10,14 @@ href="{{ url_for('static', filename='css/manage-videos.css') }}">
 <div class="home-placeholder">
     {% include "searchBar.html" %}
     <div class="video-title">
-        Testing video title
+        <h1>{{ video.title }}</h1>
     </div>
     <div class="video-player-row">
         <div class="record-player">
             {% include "svg/turntable_svg.html" %}
             <div class="video-container">
                 <video controls playsinline>
-                    <source src={{url}} type="video/mp4">
+                    <source src="{{ video.videoURL }}" type="video/mp4">
                 </video>
             </div>
         </div>

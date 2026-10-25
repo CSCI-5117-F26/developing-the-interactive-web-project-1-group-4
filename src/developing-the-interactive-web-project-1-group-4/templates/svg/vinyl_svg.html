@@ -1,6 +1,9 @@
 <link rel="stylesheet"
     href="{{ url_for('static', filename='css/vinyl-svg-style.css') }}">
-<div class="container" {% if video.videoURL %}data-video-url="{{ video.videoURL }}" role="button" tabindex="0" title="Play {{ video.title }}"{% endif %}>
+<a class="container"
+   href="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}"
+   title="Play {{ video.title }}"
+   style="color: inherit; text-decoration: none;">
     <!-- <svg width="300" height="203.03" viewBox="0 0 434 277" fill="none" xmlns="http://www.w3.org/2000/svg"> -->
     <svg width="100%" height="100%" viewBox="0 0 434 277" fill="none" xmlns="http://www.w3.org/2000/svg">
     
@@ -117,4 +120,4 @@
 </svg> -->
 
     <img class="video-img" src="{{ video.cover or url_for('static', filename='images/Rectangle_1.png') }}" alt="{{ video.title }}"/>
-</div>
+</a>
