@@ -6,15 +6,57 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/svg-style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/trending.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
 
 <div class="home-placeholder trending-page">
     {% include "searchBar.html" %}
 
     <!-- ===== Section 1: Trending videos ===== -->
     {% call carousel("Trending", "trendingVideos") %}
+    
         {% for video in trendingVideos %}
             <div class="carousel-item">
-                {% include "svg/vinyl_svg.html" %}
+                <article class="mv-card"
+                 data-title="{{ video.title }}"
+                 data-delete-url="{{ url_for('manageVideos.delete_video', video_id=video.id) }}">
+
+            <button type="button" class="mv-dots" aria-haspopup="menu" aria-expanded="false"
+                    aria-label="Options for {{ video.title }}">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="mv-menu" role="menu" hidden>
+                <a role="menuitem" href="{{ url_for('manageVideos.edit_video_page', video_id=video.id) }}">Edit video</a>
+                <button type="button" role="menuitem" class="mv-menu-danger" data-action="delete">Delete video</button>
+            </div>
+
+            <a class="video-watch-link"
+   href="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}">
+
+    <div class="mv-art">
+        <div class="mv-vinyl" aria-hidden="true"></div>
+
+        <div class="mv-thumb">
+            <img class="video-img"
+                 src="{{ video.cover or url_for('static', filename='images/Rectangle_1.png') }}"
+                 alt="{{ video.title }}">
+
+            {% if video.durationText %}
+                <span class="mv-duration">
+                    {{ video.durationText }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mv-info">
+        <h2 class="mv-title">{{ video.title }}</h2>
+        <p class="mv-views">
+            {{ video.views_text }} view{{ '' if video.views == 1 else 's' }}
+        </p>
+    </div>
+</a>
+
+        </article>
                 <p class="carousel-meta">{{ video.artist }} · {{ video.views }} views</p>
             </div>
         {% else %}
@@ -34,6 +76,7 @@
         {% else %}
             <p class="carousel-empty">No genres yet.</p>
         {% endfor %}
+        
     {% endcall %}
 
     <!-- ===== Section 3: Trending artists ===== -->

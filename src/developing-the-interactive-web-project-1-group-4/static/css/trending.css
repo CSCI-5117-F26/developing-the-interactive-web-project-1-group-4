@@ -158,3 +158,41 @@
     color: var(--menuBackgroundColor);
     font-weight: 700;
 }
+.carousel-track .mv-thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    display: block;
+}
+/* Only the Trending videos carousel */
+#trendingVideos .carousel-item {
+    flex: 0 0 300px;
+    width: 300px;
+    min-width: 0;
+}
+
+#trendingVideos .mv-card {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+#trendingVideos .video-watch-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+#trendingVideos .mv-art {
+    width: 95%;
+}
+
+#trendingVideos .mv-thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
