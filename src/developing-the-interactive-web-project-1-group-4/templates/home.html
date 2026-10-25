@@ -44,19 +44,32 @@
                 <button type="button" role="menuitem" class="mv-menu-danger" data-action="delete">Delete video</button>
             </div>
 
-            <div class="mv-art">
-                <div class="mv-vinyl" aria-hidden="true"></div>
-                        <div class="mv-thumb">
-                        <img class="video-img" src="{{ video.cover or url_for('static', filename='images/Rectangle_1.png') }}" alt="{{ video.title }}"/> 
+            <a class="video-watch-link"
+   href="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}">
 
-                    {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
-                </div>
-            </div>
+    <div class="mv-art">
+        <div class="mv-vinyl" aria-hidden="true"></div>
 
-            <div class="mv-info">
-                <h2 class="mv-title">{{ video.title }}</h2>
-                <p class="mv-views">{{ video.views_text }} view{{ '' if video.views == 1 else 's' }}</p>
-            </div>
+        <div class="mv-thumb">
+            <img class="video-img"
+                 src="{{ video.cover or url_for('static', filename='images/Rectangle_1.png') }}"
+                 alt="{{ video.title }}">
+
+            {% if video.durationText %}
+                <span class="mv-duration">
+                    {{ video.durationText }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mv-info">
+        <h2 class="mv-title">{{ video.title }}</h2>
+        <p class="mv-views">
+            {{ video.views_text }} view{{ '' if video.views == 1 else 's' }}
+        </p>
+    </div>
+</a>
 
         </article>
         {% else %}

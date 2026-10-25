@@ -32,7 +32,7 @@ def home():
     genre = readGenre()
     return render_template(
         "home.html",
-        videos=addTitleLines(fetchVideos(genre=genre)),
+        videos=fetchVideos(genre=genre),
         genres=fetchGenres(),
         q="",
         selected_genre=genre,
