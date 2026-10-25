@@ -156,7 +156,7 @@ def postComment(videoId):
 
 
 # ---------------- Playlists ----------------
-
+"""
 @mediaPlayer_bp.get("/api/playlists")
 def getPlaylists():
     user = currentUser()
@@ -192,3 +192,4 @@ def deletePlaylistVideo(playlistId, videoId):
     if user is None:
         return loginRequired()
     return jsonify(removeVideoFromPlaylist(playlistId, videoId, user))
+    """
