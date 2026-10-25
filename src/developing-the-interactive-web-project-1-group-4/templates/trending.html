@@ -27,7 +27,7 @@
         {% for genre in genres %}
             <a class="carousel-item genre-card" href="{{ genre.url }}" title="Browse {{ genre.title }}">
                 {% with video = genre %}
-                    {% include "svg/vinyl_svg.html" %}
+                    {% include "svg/genre_folder_svg.html" %}
                 {% endwith %}
                 <p class="carousel-meta">{{ genre.videoCount }} video{{ "" if genre.videoCount == 1 else "s" }}</p>
             </a>
