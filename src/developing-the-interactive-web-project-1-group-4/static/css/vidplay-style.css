@@ -1,7 +1,9 @@
 .video-player-row{
-    display: flex;
-    margin-top: 1%;
-    margin-bottom: 2%;
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 20px;
+    margin-bottom: 5%;
 }
 
 .video-title {
@@ -11,33 +13,73 @@
 }
 
 .record-player {
-    display: flex;
     position: relative;
-    flex-basis: 70%;
-    margin-right: 3%;
+    width: 100%;
+    min-width: 0;
+    margin-right: 0%;
+    /* aspect-ratio: 966/649; */
+    aspect-ratio: 600/385;
+}
+
+.record-player > svg {
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    transform: none;
 }
 
 .recommended-section {
-    flex-basis: 25%;
+    min-width: 0;
+    width: 100%;
+    height: 100%;
     background-color: white;
     display: flex;
     flex-direction: column;
+    /* align-self: stretch;
+    box-sizing: border-box; */
+    overflow: hidden;
+}
+
+.recommended-scrollable {
+    flex: 1;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 500px;
+}
+
+.vinyl-positioning {
+    top: 13% !important;
+    left: 66% !important;
+}
+
+.vinyl-art-repositioning {
+    margin-left: 1% !important;
+}
+
+.recommended-title {
+    margin-left: 8%;
+    margin-bottom: 0%;
 }
 
 .video-container {
     position: absolute;
-    left: 9.8%;
-    top: 12.9%;
-    width: 69.5%;
-    aspect-ratio: 696 / 510;
+    left: 11%;
+    top: 10.5%;
+    width: 74%;
+    height: 78%;
+    z-index: 1;
+    /* aspect-ratio: 696 / 510; */
     overflow: hidden;
 }
 
 .video-container video {
     display: block;
-    width: 100%;
+    width: 92%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    margin-top: 2%;
 }
 
 .comment-section {
