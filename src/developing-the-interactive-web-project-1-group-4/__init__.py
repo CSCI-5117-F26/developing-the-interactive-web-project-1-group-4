@@ -4,7 +4,7 @@ from sqlalchemy import inspect
 from . import models
 from flask import Flask, render_template, request,jsonify, current_app , session, redirect , url_for
 from .database import db
-from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, upload_video_to_cloud, upload_thumbnail_to_cloud, get_upload_form_data, create_video_helper, create_draft_helper
+from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, upload_video_to_cloud, upload_thumbnail_to_cloud, get_upload_form_data, create_video_helper, create_draft_helper, mediaURL
 from botocore.exceptions import BotoCoreError, ClientError
 from .models import Ti_user
 from werkzeug.utils import secure_filename
@@ -16,6 +16,37 @@ from authlib.integrations.flask_client import OAuth
 app = Flask(__name__)
 app.secret_key = os.environ["FLASK_SECRET"]
 oauth = OAuth(app)
+
+# temp
+recommendations = [
+    {
+        "id": 12,
+        "title": "Introduction to Python",
+        "thumbnail_url": "/static/images/python.jpg",
+        "description": "Learn Python basics.",
+        "duration_text": "03:10",
+        "author": "unknown",
+        "author_url": "hehe", 
+    },
+    {
+        "id": 15,
+        "title": "Flask Web Development",
+        "thumbnail": "/static/images/flask.jpg",
+        "description": "Build web apps with Flask.",
+        "duration_text": "03:10",
+        "author": "unknown",
+        "author_url": "hehe", 
+    },
+    {
+        "id": 15,
+        "title": "Flask Web Development",
+        "thumbnail": "/static/images/flask.jpg",
+        "description": "Build web apps with Flask.",
+        "duration_text": "03:10",
+        "author": "unknown",
+        "author_url": "hehe", 
+    }
+]
 
 domain = os.environ["AUTH_0_DOMAIN"]
 client_id = os.environ["AUTH_0_CLIENT_ID"]
@@ -126,6 +157,11 @@ def create_video():
 def get_thumbnails():
     thumbnails = get_thumbnails_url()
     return jsonify(thumbnails)
+
+@app.route("/play-video")
+def playvid():
+    url = mediaURL("videos/00f523e3-5701-4db3-abf6-4bc1ffb3ea95.mp4")
+    return render_template('watch.html', url=url, recommendations = recommendations)
 
 if __name__ == "__main__":
     app.run(debug=True)

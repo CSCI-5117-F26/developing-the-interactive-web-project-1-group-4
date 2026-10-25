@@ -10,6 +10,35 @@ from ..mediaPlayerServices import (
     fetchPlaylists, createPlaylist, addVideoToPlaylist, removeVideoFromPlaylist,
 )
 
+recommendations = [
+    {
+        "id": 12,
+        "title": "Introduction to Python",
+        "thumbnail_url": "",
+        "description": "Learn Python basics.",
+        "duration_text": "03:10",
+        "author": "unknown",
+        "author_url": "hehe", 
+    },
+    {
+        "id": 15,
+        "title": "Flask Web Development",
+        "thumbnail": "",
+        "description": "Build web apps with Flask.",
+        "duration_text": "03:10",
+        "author": "unknown",
+        "author_url": "hehe", 
+    },
+    {
+        "id": 15,
+        "title": "Flask Web Development",
+        "thumbnail": "",
+        "description": "Build web apps with Flask.",
+        "duration_text": "03:10",
+        "author": "unknown",
+        "author_url": "hehe", 
+    }
+]
 
 # ---------------- Helpers ----------------
 
@@ -64,7 +93,7 @@ def watchVideo(videoId):
     return render_template(
         "watch.html",
         video=videoDetails(video, user),
-        recommendations=fetchRecommendations(video),
+        recommendations=recommendations,
         comments=fetchComments(videoId),
         playlists=fetchPlaylists(user, videoId) if user else [],
         loggedIn=user is not None,

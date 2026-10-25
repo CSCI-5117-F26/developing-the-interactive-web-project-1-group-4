@@ -1,39 +1,74 @@
 {% extends "base.html" %}
 
-{% block title %}{{ video.title }} - Tune In{% endblock %}
-
 {% block content %}
+
+<link rel="stylesheet"
+    href="{{ url_for('static', filename='css/vidplay-style.css') }}">
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/manage-videos.css') }}">
+
 <div class="home-placeholder">
-    <video src="{{ video.videoURL }}" poster="{{ video.cover }}" controls width="640"></video>
+    {% include "searchBar.html" %}
+    <div class="video-title">
+        Testing video title
+    </div>
+    <div class="video-player-row">
+        <div class="record-player">
+            {% include "svg/turntable_svg.html" %}
+            <div class="video-container">
+                <video controls playsinline>
+                    <source src={{url}} type="video/mp4">
+                </video>
+            </div>
+        </div>
 
-    <h1>{{ video.title }}</h1>
-    <p>{{ video.artistName or video.artist }} · {{ video.views }} views · {{ video.uploadedAgo }}</p>
-    <p>❤ {{ video.likeCount }} likes{% if video.likedByMe %} (you liked this){% endif %}</p>
-    <p>{{ video.description }}</p>
+        <div class="recommended-section">
+            <h2 class="recommended-title">Recommended</h2>
+            <div class="recommended-scrollable">
+            {% for video in recommendations %}
+            <article class="mv-card"
+                    data-title="{{ video.title }}"
+                    data-delete-url="{{ url_for('manageVideos.delete_video', video_id=video.id) }}">
 
-    <h2>Recommended</h2>
-    <ul>
-        {% for r in recommendations %}
-            <li><a href="{{ r.watchURL }}">{{ r.title }}</a> ({{ r.reason }})</li>
-        {% endfor %}
-    </ul>
+                <button type="button" class="mv-dots" aria-haspopup="menu" aria-expanded="false"
+                        aria-label="Options for {{ video.title }}">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="mv-menu" role="menu" hidden>
+                    <button type="button" role="menuitem" class="mv-menu">Add to Playlist</button>
+                    <button type="button" role="menuitem" class="mv-menu">Add to Watch Later</button>
+                </div>
 
-    <h2>Comments ({{ comments.total }})</h2>
-    <ul>
-        {% for c in comments.comments %}
-            <li><strong>{{ c.username }}</strong> · {{ c.timeAgo }}<br>{{ c.comment }}</li>
-        {% else %}
-            <li>No comments yet.</li>
-        {% endfor %}
-    </ul>
+                <div class="mv-art vinyl-art-repositioning">
+                    <div class="mv-vinyl vinyl-positioning" aria-hidden="true"></div>
+                        <div class="mv-thumb">
+                        {% if video.thumbnail_url %}
+                                                    <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                                class="{{ 'is-default' if video.is_default else '' }}"
+                                {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
+                                data-fallback="{{ default_thumbnail_url or '' }}"
+                                onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
+                        {% else %}
+                            <span class="mv-thumb-empty">♫</span>
+                        {% endif %}
+                        {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
+                    </div>
+                </div>
 
-    {% if loggedIn %}
-        <h2>Your playlists</h2>
-        <ul>
-            {% for p in playlists %}
-                <li>{{ p.title }} ({{ p.videoCount }}){% if p.containsVideo %} ✓{% endif %}</li>
+                <div class="mv-info">
+                    <h2 class="mv-title">{{ video.title }}</h2>
+                    <p class="mv-views">{{ video.views_text }} view{{ '' if video.views == 1 else 's' }}</p>
+                </div>
+
+            </article>
             {% endfor %}
-        </ul>
-    {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="comment-section">
+
+    </div>
 </div>
+
 {% endblock %}
