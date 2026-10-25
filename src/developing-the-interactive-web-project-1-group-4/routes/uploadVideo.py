@@ -5,18 +5,47 @@ from ..models import *
 from flask import render_template, request, jsonify, current_app, session, redirect, url_for
 from ..services import *
 from botocore.exceptions import BotoCoreError, ClientError
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
 @uploadVideo_bp.route("/new-video", methods=["GET", "POST"])
 def new_video():
     if session.get("user") is None:
         return redirect(url_for("login"))
+    user = get_current_user()
+    if user is None:
+        return redirect(url_for("profileInput.createProfile"))
     genres = db.session.execute(
         db.select(models.Genres).order_by(models.Genres.name)
     ).scalars().all()
-
+    drafts = db.session.execute(
+    db.select(models.Drafts).where(models.Drafts.ti_user== user.ti_user_id).order_by(models.Drafts.created_at.desc())
+    ).scalars().all()
+    draft_list = [
+        {
+            "id": draft.id,
+            "title": draft.title or "",
+            "description": draft.description or "",
+            "duration": draft.duration,
+            "thumbnail_url": (
+                mediaURL(draft.thumbnail_key)
+                if draft.thumbnail_key else None
+            ),
+            "language": draft.language or "",
+            "video_type": (
+                "original" if draft.Original is True
+                else "cover" if draft.Original is False
+                else ""
+            ),
+            # Use the Genres primary-key attribute used by genre_options.
+            "genres": [str(genre.name) for genre in draft.genres],
+        }
+        for draft in drafts
+    ]
     genre_options = [(genre.name, genre.name) for genre in genres]
-    return render_template("upload.html", genre_options=genre_options)
+    return render_template("upload.html", genre_options=genre_options,draft_list =draft_list)
 
 @uploadVideo_bp.route("/save-draft", methods=["POST"])
 def save_draft():
@@ -32,6 +61,11 @@ def save_draft():
 
     thumbnail_key = optional_text("thumbnail_key")
     title = optional_text("title")
+    if not title:
+        return jsonify(error="A title is required to save a draft."), 400
+
+    if len(title) > 200:
+        return jsonify(error="Title must be 200 characters or fewer."), 400
     description = optional_text("description")
     language = optional_text("language")
     video_type = optional_text("video_type")
@@ -53,7 +87,11 @@ def save_draft():
         genres=genres,
         video_key=video_key,
         language=language,
-        original=request.form.get("original", "false").lower() == "true"
+        original=(
+            video_type == "original"
+            if video_type in ("original", "cover")
+            else None
+        )
     )
 
     # Temporary response to check the collected data.
@@ -141,3 +179,81 @@ def upload_thumbnail():
         return jsonify(error="Thumbnail upload failed. Please try again."), 502
 
     return jsonify(thumbnail_key=thumbnail_key)
+
+@uploadVideo_bp.route("/update-draft", methods=["POST"])
+def update_draft():
+    if session.get("user") is None:
+        return jsonify(error="Please log in."), 401
+
+    user = get_current_user()
+    if user is None:
+        return jsonify(error="Please create your profile."), 403
+
+    draft = get_owned_draft(user)
+    if draft is None:
+        return jsonify(error="Draft not found."), 404
+
+    try:
+        apply_draft_form(draft)
+        db.session.commit()
+    except ValueError as error:
+        db.session.rollback()
+        return jsonify(error=str(error)), 400
+    except Exception:
+        db.session.rollback()
+        raise
+
+    return jsonify(message="Draft updated."), 200
+
+@uploadVideo_bp.route("/publish-draft", methods=["POST"])
+def publish_draft():
+    if session.get("user") is None:
+        return jsonify(error="Please log in."), 401
+
+    user = get_current_user()
+    if user is None:
+        return jsonify(error="Please create your profile."), 403
+
+    draft = get_owned_draft(user)
+    if draft is None:
+        return jsonify(error="Draft not found."), 404
+
+    try:
+        apply_draft_form(draft)
+
+        if (
+            not draft.video_key
+            or not draft.thumbnail_key
+            or not draft.description
+            or not draft.genres
+            or not draft.language
+            or draft.Original is None
+        ):
+            raise ValueError(
+                "Publishing requires a video, thumbnail, title, "
+                "description, genre, Original/Cover selection and language."
+            )
+
+        create_video_helper(
+            ti_user=user.ti_user_id,
+            thumbnail_key=draft.thumbnail_key,
+            duration=getVideoDuration(mediaURL(draft.video_key)),
+            title=draft.title,
+            description=draft.description,
+            genres=[str(genre.name) for genre in draft.genres],
+            video_key=draft.video_key,
+            language=draft.language,
+            original=draft.Original,
+        )
+
+        db.session.delete(draft)
+        db.session.commit()
+
+    except ValueError as error:
+        db.session.rollback()
+        return jsonify(error=str(error)), 400
+    except Exception:
+        db.session.rollback()
+        raise
+
+    return jsonify(message="Video published."), 200

@@ -3,6 +3,7 @@
 {% block title %}Upload | Tune In{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
 <div class="creator-page">
     <header class="creator-topbar">
         <div class="creator-search">
@@ -131,28 +132,183 @@
             </section>
         </div>
     </form>
+    <dialog id="draftDialog" aria-labelledby="draftDialogTitle">
+    <form id="draftForm"
+      class="creator-upload-form"
+      data-save-url="{{ url_for('uploadVideo.update_draft') }}"
+      data-publish-url="{{ url_for('uploadVideo.publish_draft') }}">
+
+        <h2 id="draftDialogTitle">Edit draft</h2>
+        <input type="hidden" name="draft_id" id="draftId">
+
+        <div class="creator-field">
+            <label for="draftTitle">Title *</label>
+            <input type="text" id="draftTitle" name="title"
+                   maxlength="200" required>
+        </div>
+
+        <div class="creator-field">
+            <label for="draftDescription">Description</label>
+            <textarea id="draftDescription" name="description"
+                      maxlength="10000" rows="4"></textarea>
+        </div>
+
+       <div class="creator-field">
+    <label class="creator-dropzone">
+        <span class="creator-upload-icon">▧</span>
+        <strong>Upload thumbnail</strong>
+        <span>Choose a replacement image or browse</span>
+        <input type="file" id="draftThumbnail"
+               accept=".png,.jpg,.jpeg">
+    </label>
+    <p id="draftThumbnailStatus" role="status"></p>
+</div>
+
+        <div class="creator-details-grid">
+    {% for name, label, placeholder, input_type, options in dropdowns %}
+        <div class="creator-field">
+            <span id="draft-{{ name }}-label" class="upload-dropdown-label">
+                {{ label }}
+            </span>
+
+            <div class="upload-dropdown"
+                 data-placeholder="{{ placeholder }}">
+                <button type="button"
+                        class="upload-dropdown-toggle"
+                        aria-expanded="false"
+                        aria-controls="draft-{{ name }}-panel"
+                        aria-labelledby="draft-{{ name }}-label draft-{{ name }}-summary">
+                    <span id="draft-{{ name }}-summary"
+                          class="upload-dropdown-summary">
+                        {{ placeholder }}
+                    </span>
+                    <span aria-hidden="true">▾</span>
+                </button>
+
+                <div id="draft-{{ name }}-panel"
+                     class="upload-dropdown-panel"
+                     role="group"
+                     aria-labelledby="draft-{{ name }}-label"
+                     hidden>
+                    {% for value, text in options %}
+                        <label class="upload-dropdown-option">
+                            <input type="{{ input_type }}"
+                                   name="{{ name }}"
+                                   value="{{ value }}">
+                            <span>{{ text }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <p class="upload-dropdown-error" role="alert"></p>
+        </div>
+    {% endfor %}
+</div>
+
+        <p id="draftError" role="alert"></p>
+
+        <div class="creator-actions">
+            <button type="submit" value="save"
+                    class="creator-btn creator-btn-secondary">
+                Save draft
+            </button>
+
+            <button type="submit" value="publish"
+                    class="creator-btn creator-btn-primary">
+                Publish video
+            </button>
+
+            <button type="button" id="closeDraft"
+                    class="creator-btn creator-btn-cancel">
+                Cancel
+            </button>
+        </div>
+    </form>
+</dialog>
+
 
     <section class="creator-drafts">
-        <div class="creator-form-banner">YOUR DRAFTS</div>
-        <div class="creator-drafts-grid">
-            <article class="creator-draft-card">
-                <div class="creator-draft-art art-one">♫ <small>00:00</small></div>
-                <div class="creator-draft-info"><strong>Video Title (Draft)</strong><span>Sample preview</span></div>
+    <div class="creator-form-banner">YOUR DRAFTS</div>
+
+    <div class="mv-grid">
+        {% for draft in draft_list %}
+            <article class="mv-card">
+                <button type="button"
+                        class="draft-open"
+                        data-draft-index="{{ loop.index0 }}"
+                        aria-label="Edit draft {{ draft.title }}">
+                    <div class="mv-art">
+                        <div class="mv-vinyl" aria-hidden="true"></div>
+
+                        <div class="mv-thumb">
+                            {% if draft.thumbnail_url %}
+                                <img src="{{ draft.thumbnail_url }}"
+                                     alt="Thumbnail for {{ draft.title }}"
+                                     onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                                <span class="mv-thumb-empty" hidden>♫</span>
+                            {% else %}
+                                <span class="mv-thumb-empty">♫</span>
+                            {% endif %}
+
+                            {% if draft.duration is not none %}
+                                {% set seconds = draft.duration|int %}
+                                <span class="mv-duration">
+                                    {{ "%02d:%02d"|format(seconds // 60, seconds % 60) }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mv-info">
+                        <h2 class="mv-title">{{ draft.title }}</h2>
+                        <p class="mv-views">Draft</p>
+                    </div>
+                </button>
             </article>
-            <article class="creator-draft-card">
-                <div class="creator-draft-art art-two">♫ <small>00:00</small></div>
-                <div class="creator-draft-info"><strong>Video Title (Draft)</strong><span>Sample preview</span></div>
-            </article>
-            <article class="creator-draft-card">
-                <div class="creator-draft-art art-three">♫ <small>00:00</small></div>
-                <div class="creator-draft-info"><strong>Video Title (Draft)</strong><span>Sample preview</span></div>
-            </article>
-            <article class="creator-draft-card">
-                <div class="creator-draft-art art-four">♫ <small>00:00</small></div>
-                <div class="creator-draft-info"><strong>Video Title (Draft)</strong><span>Sample preview</span></div>
-            </article>
-        </div>
-    </section>
+        {% else %}
+            <p>No drafts saved yet.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+    .draft-open {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    #draftDialog {
+        width: min(600px, 90vw);
+        max-height: 85vh;
+        overflow-y: auto;
+        padding: 24px;
+        border: 0;
+        border-radius: 16px;
+    }
+
+    #draftDialog::backdrop {
+        background: rgb(0 0 0 / 50%);
+    }
+
+    #draftForm .creator-field {
+        margin-bottom: 16px;
+    }
+
+    #draftForm input[type="text"],
+    #draftForm textarea,
+    #draftForm select {
+        box-sizing: border-box;
+        width: 100%;
+    }
+</style>
 </div>
 <script>
 const form = document.getElementById("upload-video-form");
@@ -213,7 +369,11 @@ function setupUpload(type) {
 
 setupUpload("video");
 setupUpload("thumbnail");
-const dropdowns = [...form.querySelectorAll(".upload-dropdown")];
+const dropdowns = [
+    ...document.querySelectorAll(
+        "#upload-video-form .upload-dropdown, #draftForm .upload-dropdown"
+    )
+];
 
 function setDropdownOpen(dropdown, open) {
     dropdown.querySelector(".upload-dropdown-panel").hidden = !open;
@@ -301,7 +461,7 @@ document.addEventListener("click", event => {
 });
 
 function validateDropdowns() {
-    for (const dropdown of dropdowns) {
+    for (const dropdown of form.querySelectorAll(".upload-dropdown")) {
         if (dropdown.querySelector("input:checked")) continue;
 
         const toggle = dropdown.querySelector(".upload-dropdown-toggle");
@@ -352,6 +512,20 @@ form.addEventListener("submit", event => {
             "Please upload a video before continuing.";
         return;
     }
+    const titleInput = document.getElementById("video-title");
+
+if (!titleInput.value.trim()) {
+    event.preventDefault();
+    titleInput.value = "";
+    titleInput.setCustomValidity("Please enter a video title.");
+    titleInput.reportValidity();
+    return;
+}
+
+titleInput.setCustomValidity("");
+document.getElementById("video-title").addEventListener("input", event => {
+    event.target.setCustomValidity("");
+});
 
     // All remaining fields are optional for drafts.
     if (isDraft) return;
@@ -376,6 +550,126 @@ form.addEventListener("submit", event => {
 
     if (!validateDropdowns()) {
         event.preventDefault();
+    }
+});
+</script>
+<script>
+const savedDrafts = {{ draft_list | tojson }};
+const draftDialog = document.getElementById("draftDialog");
+const draftForm = document.getElementById("draftForm");
+const draftError = document.getElementById("draftError");
+
+// Keep a successfully uploaded replacement key if saving needs a retry.
+let replacementThumbnailKey = null;
+
+document.querySelectorAll("[data-draft-index]").forEach(button => {
+    button.addEventListener("click", () => {
+        const draft = savedDrafts[Number(button.dataset.draftIndex)];
+
+        draftForm.reset();
+        replacementThumbnailKey = null;
+        draftError.textContent = "";
+        document.getElementById("draftThumbnailStatus").textContent = "";
+
+        document.getElementById("draftId").value = draft.id;
+        document.getElementById("draftTitle").value = draft.title;
+        document.getElementById("draftDescription").value = draft.description;
+        const selectedGenres = (draft.genres || []).map(String);
+
+draftForm.querySelectorAll('[name="genre"]').forEach(input => {
+    input.checked = selectedGenres.includes(input.value);
+});
+
+draftForm.querySelectorAll('[name="video_type"]').forEach(input => {
+    input.checked = input.value === draft.video_type;
+});
+
+draftForm.querySelectorAll('[name="language"]').forEach(input => {
+    input.checked = input.value === draft.language;
+});
+
+draftForm.querySelectorAll(".upload-dropdown").forEach(dropdown => {
+    updateDropdown(dropdown);
+    setDropdownOpen(dropdown, false);
+});
+        draftDialog.showModal();
+    });
+});
+
+document.getElementById("closeDraft").addEventListener("click", () => {
+    draftDialog.close();
+});
+
+document.getElementById("draftThumbnail").addEventListener("change", () => {
+    replacementThumbnailKey = null;
+});
+
+draftForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    draftError.textContent = "";
+
+    const title = document.getElementById("draftTitle").value.trim();
+    if (!title) {
+        draftError.textContent = "A video title is required.";
+        return;
+    }
+
+    const buttons = draftForm.querySelectorAll("button");
+    buttons.forEach(button => button.disabled = true);
+
+    try {
+        const data = new FormData(draftForm);
+        data.set("title", title);
+
+        const file = document.getElementById("draftThumbnail").files[0];
+
+        if (file && replacementThumbnailKey === null) {
+            document.getElementById("draftThumbnailStatus").textContent =
+                "Uploading thumbnail…";
+
+            const uploadData = new FormData();
+            uploadData.append("thumbnail_file", file);
+
+            const response = await fetch(
+                "{{ url_for('uploadVideo.upload_thumbnail') }}",
+                { method: "POST", body: uploadData }
+            );
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok || !result.thumbnail_key) {
+                throw new Error(result.error || "Thumbnail upload failed.");
+            }
+
+            replacementThumbnailKey = result.thumbnail_key;
+            document.getElementById("draftThumbnailStatus").textContent =
+                "Thumbnail uploaded.";
+        }
+
+        if (replacementThumbnailKey !== null) {
+            data.set("thumbnail_key", replacementThumbnailKey);
+        }
+
+        const url = event.submitter?.value === "publish"
+            ? draftForm.dataset.publishUrl
+            : draftForm.dataset.saveUrl;
+
+        const response = await fetch(url, {
+            method: "POST",
+            body: data
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(result.error || "Could not save the draft.");
+        }
+
+        window.location.reload();
+    } catch (error) {
+        draftError.textContent = error.message;
+    } finally {
+        buttons.forEach(button => button.disabled = false);
     }
 });
 </script>
