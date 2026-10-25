@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/library-style.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
+
+
+<div class="home-placeholder">
+    {% include "searchBar.html" %}
+
+    <!-- Playlist -->
+    <div>
+        <h2>Playlists</h2>
+        <div class="playlist-row">
+            {% for playlist in playlists %}
+            <div class="playlist-card">
+                {% include "svg/playlist.html"%}
+                <div class="playlist-title">
+                    {{playlist.title}}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <!-- Saved Videos -->
+    <div class="saved-section">
+        <h2>Saved Videos</h2>
+        <div class="saved-row">
+            {% for video in saved_videos %}
+            <article class="mv-card saved-vid-card"
+                    data-title="{{ video.title }}"
+                    >
+
+                <button type="button" class="mv-dots vinyl-dots" aria-haspopup="menu" aria-expanded="false"
+                        aria-label="Options for {{ video.title }}">
+                    <span></span><span></span><span></span>
+                </button>
+
+                <div class="mv-art vinyl-art">
+                    <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
+                                    <div class="mv-thumb">
+                        {% if video.thumbnail_url %}
+                                                    <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                                class="{{ 'is-default' if video.is_default else '' }}"
+                                {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
+                                data-fallback="{{ default_thumbnail_url or '' }}"
+                                onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
+                        {% else %}
+                            <span class="mv-thumb-empty">♫</span>
+                        {% endif %}
+                        {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
+                    </div>
+                </div>
+
+                <div class="mv-info">
+                    <h2 class="mv-title">{{ video.title }}</h2>
+                    <div class="video-info">
+                        <div class="mv-views video-info-section">{{video.author}}</div>
+                        <div class="mv-views video-info-section video-info-section-time">Viewed {{ video.savedtime }} ago</div>
+                    </div>
+                </div>
+
+            </article>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Watch Later -->
+    <div class="saved-section">
+        <h2>Watch Later</h2>
+        <div class="saved-row">
+            {% for video in watchlater %}
+            <article class="mv-card saved-vid-card"
+                        data-title="{{ video.title }}"
+                        >
+
+                    <button type="button" class="mv-dots vinyl-dots" aria-haspopup="menu" aria-expanded="false"
+                            aria-label="Options for {{ video.title }}">
+                        <span></span><span></span><span></span>
+                    </button>
+
+                    <div class="mv-art vinyl-art">
+                        <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
+                                        <div class="mv-thumb">
+                            {% if video.thumbnail_url %}
+                                                        <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                                    class="{{ 'is-default' if video.is_default else '' }}"
+                                    {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
+                                    data-fallback="{{ default_thumbnail_url or '' }}"
+                                    onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
+                            {% else %}
+                                <span class="mv-thumb-empty">♫</span>
+                            {% endif %}
+                            {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
+                        </div>
+                    </div>
+
+                <div class="mv-info">
+                    <h2 class="mv-title">{{ video.title }}</h2>
+                    <div class="video-info">
+                        <div class="mv-views video-info-section">{{video.author}}</div>
+                        <div class="mv-views video-info-section video-info-section-time">Viewed {{ video.savedtime }} ago</div>
+                    </div>
+                </div>
+
+                </article>
+            {% endfor %}
+        </div>
+</div>
+{% endblock %}

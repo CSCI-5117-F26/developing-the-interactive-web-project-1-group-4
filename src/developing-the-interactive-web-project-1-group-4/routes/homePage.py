@@ -59,6 +59,84 @@ def search():
     return render_template("search.html", q=q, artist=artist, **results)
 
 
+@homePage_bp.get("/library")
+def library():
+    playlists = [
+    {
+        "title": "test title",
+        "number of videos": "5"
+    },
+    {
+        "title": "test title 2",
+        "number of videos": "120"
+    }
+    ]
+
+    saved_videos = [
+    {
+        "title": "testing save 1",
+        "duration_text": "03:10",
+        "author": "some dude",
+        "thumbnail_url": "",
+        "savedtime": "2 hours"
+    },
+    {
+        "title": "testing save 2",
+        "duration_text": "05:55",
+        "author": "some dude",
+        "thumbnail_url": "",
+        "savedtime": "2 hours"
+    },
+    {
+        "title": "testing save 3",
+        "duration_text": "02:30",
+        "author": "some dude",
+        "thumbnail_url": "",
+        "savedtime": "2 hours"
+    },
+    {
+        "title": "testing save 4",
+        "duration_text": "02:30",
+        "author": "some dude",
+        "thumbnail_url": "",
+        "savedtime": "2 hours"
+    }
+    ]
+
+    watchlater = [
+    {
+        "title": "testing watchlater 1",
+        "duration_text": "03:10",
+        "author": "some dude",
+        "thumbnail": "",
+        "savedtime": "2 hours"
+    },
+    {
+        "title": "testing watchlater 2",
+        "duration_text": "05:55",
+        "author": "some dude",
+        "thumbnail": "",
+        "savedtime": "2 hours"
+    },
+    {
+        "title": "testing watchlater 3",
+        "duration_text": "02:30",
+        "author": "some dude",
+        "thumbnail": "",
+        "savedtime": "2 hours"
+    }
+    ]
+    return render_template(
+        "library.html", playlists = playlists, saved_videos = saved_videos, watchlater = watchlater
+    )
+
+
+@homePage_bp.get("/activity")
+def activity():
+    return render_template(
+        "activity.html"
+    )
+
 # ---------------- JSON endpoints ----------------
 
 @homePage_bp.get("/api/search")
