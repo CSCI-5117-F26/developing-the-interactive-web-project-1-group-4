@@ -153,9 +153,14 @@
 
     // ----- Buttons -----
     btnPlay.addEventListener("click", () => {
-        const first = nextPlayable(0, 1);
-        if (first === -1) { showError("None of the videos in this playlist can be played right now."); return; }
-        playTrack(first);
+        const url = btnPlay.dataset.playUrl;
+
+        if (!url) {
+            showError("Playlist play URL is missing.");
+            return;
+        }
+
+        window.location.href = url;
     });
 
     btnPause.addEventListener("click", () => {
@@ -221,6 +226,8 @@
 
     document.querySelectorAll(".playlist-open").forEach((card) => {
         card.addEventListener("click", () => {
+            btnPlay.dataset.playUrl = card.dataset.playUrl;
+
             tracks = readTracks(card);
             stopAndReset();
             titleEl.textContent = card.dataset.playlistTitle || "Playlist";

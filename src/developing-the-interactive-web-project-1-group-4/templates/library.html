@@ -19,7 +19,8 @@
         <div class="playlist-row">
             {% for playlist in playlists %}
             <button type="button" class="playlist-card playlist-open"
-                    data-playlist-title="{{ playlist.title }}">
+                    data-playlist-title="{{ playlist.title }}"
+                    data-play-url="{{ url_for('library.play_playlist', playlist_id=playlist.id) }}">
                 {% include "svg/playlist.html"%}
                 <div class="playlist-title">
                     {{playlist.title}}
