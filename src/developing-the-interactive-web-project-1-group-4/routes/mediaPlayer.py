@@ -155,7 +155,6 @@ def watchVideo(videoId):
     return render_template(
         "watch.html",
         mode = mode,
-        comments = comments,
         recommendations=fetchRecommendations(video),
         comments=fetchComments(videoId),
         playlists=fetchPlaylists(user, videoId) if user else [],
