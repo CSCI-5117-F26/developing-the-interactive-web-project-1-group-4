@@ -1,0 +1,635 @@
+.main-page-colors {
+    background-color: var(--pageBackgroundColor);
+    color: var(--onPBC);
+}
+
+.row-container {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.search-bar-container{
+    margin-bottom: 1%;
+}
+
+.search-bar {
+    height: 45px;
+    width: 70%;
+    position: relative;
+    margin: .5rem 0;
+}
+
+.search-bar input {
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem 0.75rem 0.75rem;
+  border: 2px solid var(--menuBackgroundColor);
+  border-radius: 8px;
+  background-color: white;
+  font-family: inherit;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color .2s;
+}
+
+.search-bar input:focus {
+  border-color: #b8ff57;
+}
+
+.search-bar label {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  color: #88888f;
+  pointer-events: none;
+  transition: top .2s, font-size .2s, color .2s;
+}
+
+.search-bar input:focus + label,
+.search-bar input:not(:placeholder-shown) + label {
+  top: .5rem;
+  font-size: .75rem;
+  color: #b8ff57;
+  transform: none;
+}
+
+.tag-container{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2%;
+}
+
+.tag {
+    background-color: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    border: 2px solid var(--tagBorderColor);
+    border-radius: 17px;
+    padding: 6px 23px;
+    margin-right: 3%;
+}
+
+/* Selected genre tag looks darker */
+.tag.active {
+    background-color: var(--menuBackgroundColor);
+    color: var(--onMBC);
+}
+
+/* Hand cursor on the playable video */
+.container[data-video-url] {
+    cursor: pointer;
+}
+
+/* Profile form */
+.profile-card-body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 24px;
+    padding: 18px 16px;
+}
+
+.profile-picture-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--tagBorderColor);
+}
+
+.profile-avatar-empty {
+    display: grid;
+    place-items: center;
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    font-weight: 700;
+}
+
+.profile-avatar[hidden],
+.profile-avatar-empty[hidden] {
+    display: none;
+}
+
+.field-error {
+    margin: 2px 0 0;
+    color: #9b4034;
+    font-size: 11px;
+}
+
+.profile-success {
+    margin-bottom: 14px;
+    padding: 12px 16px;
+    border: 1px solid var(--tagBorderColor);
+    border-radius: 9px;
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+}
+
+.profile-success pre {
+    margin: 8px 0 0;
+    white-space: pre-wrap;
+    font-size: 12px;
+}
+
+@media (max-width: 700px) {
+    .profile-card-body {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== Search dropdown ===== */
+.search-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 200;                 /* above the vinyl cards (their images use 100) */
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 6px 0;
+    border: 2px solid var(--menuBackgroundColor);
+    border-radius: 8px;
+    background: #fffef9;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.search-dropdown[hidden] {
+    display: none;
+}
+
+.search-group + .search-group {
+    border-top: 1px solid #e0e2d3;
+}
+
+.search-group-title {
+    margin: 0;
+    padding: 8px 14px 4px;
+    color: var(--tagBorderColor);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 14px;
+    color: var(--onPBC);
+}
+
+.search-item:hover,
+.search-item:focus {
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    outline: none;
+}
+
+.search-item img {
+    width: 48px;
+    height: 36px;
+    flex: none;
+    border-radius: 4px;
+    background: var(--tagBackgroundColor);
+    object-fit: cover;
+}
+
+.search-item div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.search-item strong {
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-item small {
+    color: #77796e;
+    font-size: 12px;
+}
+
+.search-view-more {
+    display: block;
+    padding: 10px 14px;
+    border-top: 1px solid #e0e2d3;
+    color: var(--menuBackgroundColor);
+    font-weight: 700;
+}
+
+.search-empty {
+    margin: 0;
+    padding: 10px 14px;
+    color: #77796e;
+}
+
+/* ===== Search results page ===== */
+.search-section-title {
+    margin: 20px 0 10px;
+    font-size: 18px;
+}
+
+.artist-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 2%;
+}
+
+.artist-chip {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 16px;
+    border: 2px solid var(--tagBorderColor);
+    border-radius: 10px;
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+}
+
+.artist-chip span {
+    font-size: 12px;
+}
+
+/* ===== Genre tag scroller (same width as the search bar) ===== */
+.tag-scroller {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 70%;
+    margin-bottom: 2%;
+}
+
+.tag-scroller .tag-container {
+    flex: 1;
+    min-width: 0;                 /* lets it shrink so it can scroll */
+    gap: 12px;
+    margin-bottom: 0;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: none;        /* hide scrollbar (Firefox) */
+}
+
+.tag-scroller .tag-container::-webkit-scrollbar {
+    display: none;                /* hide scrollbar (Chrome, Safari) */
+}
+
+.tag-scroller .tag {
+    flex: none;
+    margin-right: 0;
+    white-space: nowrap;
+}
+
+.tag-arrow {
+    display: grid;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    place-items: center;
+    border: 2px solid var(--tagBorderColor);
+    border-radius: 50%;
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.tag-arrow:hover:not(:disabled) {
+    background: var(--menuBackgroundColor);
+    color: var(--onMBC);
+}
+
+.tag-arrow:disabled {
+    opacity: .35;
+    cursor: default;
+}
+
+/* ===== Video grid: 3 equal columns, cards centered ===== */
+.row-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-items: center;
+    gap: 48px 24px;               /* row gap, column gap */
+}
+
+.row-container .container {
+    width: 300px;                 /* same width as the vinyl artwork */
+    margin-bottom: 0;
+}
+
+.row-container .no-results {
+    grid-column: 1 / -1;          /* message spans the full row */
+}
+
+/* Fewer columns on smaller screens so cards never overlap */
+@media (max-width: 1300px) {
+    .row-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+    .row-container { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ===== Home grid: 3 rows that always fit the screen ===== */
+.home-placeholder {
+    padding: 30px 50px 20px;
+}
+
+.home-placeholder h1 {
+    margin: 0 0 4px;
+}
+
+.home-placeholder > p {
+    margin: 0 0 16px;
+}
+
+.home-grid {
+    /* screen height minus everything above the grid, split into 3 rows */
+    --card-h: clamp(110px, calc((100vh - 380px) / 3), 216px);
+    row-gap: 18px;
+}
+
+.home-grid .container,
+.row-container .container {
+    width: auto;
+    aspect-ratio: 300 / 216;          /* keeps the card's shape */
+}
+
+.home-grid .container {
+    height: var(--card-h);
+}
+
+.row-container .container {
+    height: 216px;                    /* normal size on the search page */
+}
+
+/* Scale the vinyl artwork and the photo together with the card */
+.row-container .container svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.row-container .video-img {
+    top: 24.07%;
+    left: 0.67%;
+    width: 60.6%;
+    height: 63.9%;
+    object-fit: cover;                /* fills the frame without stretching */
+}
+
+/* ===== Account settings: option list ===== */
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 70%;
+    max-width: 720px;
+    margin-top: 20px;
+}
+
+.settings-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid var(--tagBorderColor);
+    border-radius: 10px;
+    background: #fffef7;
+    color: var(--onPBC);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s;
+}
+
+.settings-item:hover,
+.settings-item:focus-visible {
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    outline: none;
+}
+
+.settings-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.settings-text small {
+    color: #77796e;
+    font-size: 12px;
+}
+
+.settings-arrow {
+    font-size: 22px;
+}
+
+.settings-avatar,
+.settings-icon {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+}
+
+.settings-avatar {
+    border: 2px solid var(--tagBorderColor);
+    object-fit: cover;
+}
+
+.settings-icon {
+    display: grid;
+    place-items: center;
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    font-size: 18px;
+}
+
+.settings-item-danger strong {
+    color: #9b4034;
+}
+
+.settings-status {
+    width: 70%;
+    max-width: 720px;
+    margin: 12px 0 0;
+    padding: 10px 16px;
+    border: 1px solid var(--tagBorderColor);
+    border-radius: 9px;
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    font-weight: 600;
+}
+
+.settings-status[hidden] {
+    display: none;
+}
+
+/* ===== Account settings: pop-ups ===== */
+.settings-dialog {
+    width: min(560px, 92vw);
+    padding: 0;
+    border: 2px solid var(--tagBorderColor);
+    border-radius: 12px;
+    background: #e8eedb;                       /* light green */
+    color: var(--onTBC);
+    box-shadow: 0 12px 32px rgba(39, 51, 26, .3);
+}
+
+.settings-dialog::backdrop {
+    background: rgba(39, 51, 26, .45);
+}
+
+.settings-dialog-banner {
+    padding: 12px 18px;
+    background: var(--tagBackgroundColor);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.settings-banner-danger {
+    background: #e7c9c2;
+    color: #6e2b22;
+}
+
+.settings-dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px;
+}
+
+.settings-dialog-body p {
+    margin: 0;
+}
+
+.settings-picture-body {
+    align-items: center;
+}
+
+.settings-picture-body .creator-dropzone {
+    width: 100%;
+}
+
+.settings-dialog .creator-details-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.settings-dialog .creator-field label {
+    font-size: 12px;
+}
+
+.settings-dialog .creator-field input,
+.settings-dialog .creator-field textarea {
+    font-size: 13px;
+}
+
+.settings-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0 18px 18px;
+}
+
+.settings-dialog .creator-btn {
+    min-width: 90px;
+    font-size: 12px;
+}
+
+.settings-btn-save {
+    background: var(--menuBackgroundColor);   /* dark green */
+    color: #fff;
+}
+
+.settings-btn-save:hover {
+    background: #344229;
+}
+
+.settings-btn-danger {
+    background: #9b4034;
+    color: #fff;
+}
+
+.settings-btn-save:disabled,
+.settings-btn-danger:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.char-count {
+    align-self: flex-end;
+    color: #5c6650;
+    font-size: 11px;
+}
+
+.field-error:empty {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .settings-list,
+    .settings-status {
+        width: 100%;
+    }
+
+    .settings-dialog .creator-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== Views & likes line on video cards ===== */
+.video-stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0 0;
+    color: #77796e;
+    font-size: 12px;
+}
+
+.video-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.video-stat svg {
+    flex: none;
+}
+
+.video-stat-likes svg {
+    color: #9b4034;              /* heart in the theme's red */
+}
+
+/* Vinyl cards (search, genre) with the stats line underneath */
+.row-container .vinyl-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+/* ---------- Center the search bar and the genre filters on every page ---------- */
+.search-bar-container .search-bar {
+    margin: .5rem auto;
+}
+
+main .tag-scroller {
+    margin: 0 auto 2%;
+}

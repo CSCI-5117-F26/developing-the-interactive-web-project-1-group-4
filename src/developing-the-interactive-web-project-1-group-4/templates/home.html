@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% from "videoStats.html" import videoStats %}
+{% block title %}Home - Generation{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
+
+<div class="home-placeholder">
+    <!-- search bar -->
+    {% include "searchBar.html" %}
+
+    <!-- tags area -->
+    <div class="tag-scroller">
+    <button type="button" class="tag-arrow tag-arrow-left" aria-label="Scroll genres left">‹</button>
+
+    <div class="tag-container">
+        {% for genre in genres %}
+            {% if genre.name == selected_genre %}
+                <a class="tag active" href="{{ url_for('homePage.home') }}">{{ genre.name }}</a>
+            {% else %}
+                <a class="tag" href="{{ url_for('homePage.home', genre=genre.name) }}">{{ genre.name }}</a>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <button type="button" class="tag-arrow tag-arrow-right" aria-label="Scroll genres right">›</button>
+</div>
+    
+    <h1>Welcome to Tune In</h1>
+    <p>Your space for music, videos, and creators.</p>
+
+    <div id="mvGrid" class="mv-grid">
+        {% for video in videos %}    
+        <article class="mv-card"
+         data-video-id="{{ video.id }}"
+         data-title="{{ video.title }}">
+
+    <button type="button" class="mv-dots"
+            aria-haspopup="menu" aria-expanded="false"
+            aria-label="Options for {{ video.title }}">
+        <span></span><span></span><span></span>
+    </button>
+
+    <div class="mv-menu" role="menu" hidden>
+        <button type="button" role="menuitem" data-action="playlist">
+            Add to playlist
+        </button>
+
+        <button type="button" role="menuitem"
+                data-action="watch-later"
+                data-url="{{ url_for('library.add_to_watch_later') }}">
+            Add to watch later
+        </button>
+
+        <button type="button" role="menuitem"
+                data-action="save"
+                data-url="{{ url_for('library.add_to_saved_videos') }}">
+            Save video
+        </button>
+    </div>
+
+    <!-- Keep your existing video link and artwork here. -->
+
+
+<p id="videoMenuStatus" role="status" hidden></p>
+
+    <!-- Your existing watch link, artwork and information -->
+
+            <a class="video-watch-link"
+   href="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}">
+
+    <div class="mv-art">
+        <div class="mv-vinyl" aria-hidden="true"></div>
+
+        <div class="mv-thumb">
+            <img class="video-img"
+                 src="{{ video.cover or url_for('static', filename='images/Rectangle_1.png') }}"
+                 alt="{{ video.title }}">
+
+            {% if video.durationText %}
+                <span class="mv-duration">
+                    {{ video.durationText }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mv-info">
+        <h2 class="mv-title">{{ video.title }}</h2>
+        {{ videoStats(video) }}
+    </div>
+</a>
+
+        </article>
+        {% else %}
+            <p class="no-results">No videos found{% if q %} for "{{ q }}"
+        {% endif %}.</p>
+        {% endfor %}
+    </div>
+<dialog id="playlistDialog">
+    <h2>Add to playlist</h2>
+
+    <div id="playlistChoices">
+        {% for playlist in playlists %}
+            {% if playlist.title not in ["Watch Later", "Saved Videos"] %}
+                <button type="button"
+                        data-url="{{ url_for('library.add_to_playlist', playlist_id=playlist.id) }}">
+                    {{ playlist.title }}
+                </button>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <p id="playlistMessage" role="status"></p>
+    <button type="button" id="closePlaylistDialog">Cancel</button>
+</dialog>
+    <video id="fullscreen-player" controls playsinline hidden></video>
+</div>
+
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% from "videoStats.html" import videoStats %}
+{% block title %}Manage Videos - Tune In{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
+
+<div class="mv-page">
+    {% include "searchBar.html" %}
+
+    <!-- genre filters (same as the home page) -->
+    <div class="tag-scroller">
+        <button type="button" class="tag-arrow tag-arrow-left" aria-label="Scroll genres left">‹</button>
+
+        <div class="tag-container">
+            {% for genre in genres %}
+                {% if genre.name == selected_genre %}
+                    <a class="tag active" href="{{ url_for('manageVideos.manage_videos') }}">{{ genre.name }}</a>
+                {% else %}
+                    <a class="tag" href="{{ url_for('manageVideos.manage_videos', genre=genre.name) }}">{{ genre.name }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <button type="button" class="tag-arrow tag-arrow-right" aria-label="Scroll genres right">›</button>
+    </div>
+
+    <header class="mv-head">
+        <div>
+            <p class="mv-eyebrow">CREATOR STUDIO</p>
+            <h1>Manage Videos</h1>
+            <!-- <p class="mv-sub">Keep your videos and thumbnails up to date.</p> -->
+        </div>
+        <span id="mvCount" class="mv-pill">{{ videos|length }} video{{ '' if videos|length == 1 else 's' }}</span>
+    </header>
+
+    <div id="mvGrid" class="mv-grid">
+        {% for video in videos %}
+        <article class="mv-card"
+                 data-title="{{ video.title }}"
+                 data-delete-url="{{ url_for('manageVideos.delete_video', video_id=video.id) }}">
+
+            <button type="button" class="mv-dots" aria-haspopup="menu" aria-expanded="false"
+                    aria-label="Options for {{ video.title }}">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="mv-menu" role="menu" hidden>
+                <a role="menuitem" href="{{ url_for('manageVideos.edit_video_page', video_id=video.id) }}">Edit video</a>
+                <button type="button" role="menuitem" class="mv-menu-danger" data-action="delete">Delete video</button>
+            </div>
+
+            <div class="mv-art">
+                <div class="mv-vinyl" aria-hidden="true"></div>
+                                <div class="mv-thumb">
+                    {% if video.thumbnail_url %}
+                                                <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                             class="{{ 'is-default' if video.is_default else '' }}"
+                             {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
+                             data-fallback="{{ default_thumbnail_url or '' }}"
+                             onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
+                    {% else %}
+                        <span class="mv-thumb-empty">♫</span>
+                    {% endif %}
+                    {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="mv-info">
+                <h2 class="mv-title">{{ video.title }}</h2>
+                {{ videoStats(video) }}
+            </div>
+
+        </article>
+        {% endfor %}
+    </div>
+
+    <div id="mvEmpty" class="mv-empty" {% if videos %}hidden{% endif %}>
+        {% if selected_genre %}
+            <p>You have no {{ selected_genre }} videos.</p>
+            <a class="mv-btn mv-btn-primary" href="{{ url_for('manageVideos.manage_videos') }}">Show all videos</a>
+        {% else %}
+            <p>You haven't uploaded any videos yet.</p>
+            <a class="mv-btn mv-btn-primary" href="{{ url_for('uploadVideo.new_video') }}">Upload your first video</a>
+        {% endif %}
+    </div>
+
+    <p id="mvToast" class="mv-toast" role="status" hidden></p>
+</div>
+
+<!-- ===== Delete confirmation ===== -->
+<dialog id="deleteDialog" class="mv-confirm" aria-labelledby="deleteQuestion">
+    <button type="button" class="mv-confirm-x" data-close aria-label="Close">✕</button>
+    <p id="deleteQuestion" class="mv-confirm-text">Are you sure you want to delete this video?</p>
+    <p class="mv-confirm-name" id="deleteName"></p>
+    <p class="mv-error" id="deleteError"></p>
+    <div class="mv-confirm-actions">
+        <button type="button" class="mv-btn mv-btn-light" data-close>No</button>
+        <button type="button" class="mv-btn mv-btn-danger" id="deleteYes">Yes</button>
+    </div>
+</dialog>
+
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tagScroller.js') }}"></script>
+<script src="{{ url_for('static', filename='js/manageVideos.js') }}?v=2"></script>
+{% endblock %}

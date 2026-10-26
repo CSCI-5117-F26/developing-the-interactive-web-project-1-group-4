@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% from "videoStats.html" import videoStats %}
+{% block title %}{{ genreName }} - Tune In{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/trending.css') }}">
+
+<div class="home-placeholder">
+    {% include "searchBar.html" %}
+
+    <a class="genre-back" href="{{ url_for('trending.trending') }}">‹ Back to Trending</a>
+    <h1>{{ genreName }}</h1>
+    <p>{{ videos | length }} video{{ "" if videos | length == 1 else "s" }} · most watched first</p>
+
+    <div class="row-container">
+        {% for video in videos %}
+            <div class="vinyl-item">
+                {% include "svg/vinyl_svg.html" %}
+                {{ videoStats(video) }}
+            </div>
+        {% else %}
+            <p class="no-results">No {{ genreName }} videos yet.</p>
+        {% endfor %}
+    </div>
+
+    <video id="fullscreen-player" controls playsinline hidden></video>
+</div>
+
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% set currentPage = request.endpoint or "" %}
+<aside class="sidebar">
+    <a class="sidebar-logo" href="/">Tune In</a>
+
+    <nav class="sidebar-nav">
+        <a href="/" class="sidebar-link" id="homeMenuOption"><span>⌂</span> Home</a>
+        <a href="{{ url_for('trending.trending') }}"
+            class="sidebar-link {% if currentPage in ['trending.trending', 'trending.genrePage'] %}active{% endif %}" id="trendingMenuOption">
+                <span>♫</span> Trending
+        </a>
+        {% if session.get('user') %}
+        <a href="{{ url_for('subscription.subscriptions_page') }}" class="sidebar-link" id="subscriptionsMenuOption"><span>▶</span> Subscriptions</a>
+        <!-- <a href="#" class="sidebar-link"><span></span> Library</a> -->
+        <a href="{{ url_for('library.library') }}" class="sidebar-link" id="libraryMenuOption"><span>□</span> Library</a>
+        <a href="{{ url_for('homePage.activity') }}" class="sidebar-link" id="activityMenuOption"><span>◷</span>Activity</a>
+        {% endif %}
+    </nav>
+    {% if session.get('user') %}
+
+    <div class="sidebar-section">
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-heading">CREATOR STUDIO</p>
+        <a href="{{ url_for('uploadVideo.new_video') }}" class="sidebar-link" id="uploadMenuOption">
+            <span>↑</span> Upload Video
+        </a>
+        <a href="{{ url_for('manageVideos.manage_videos') }}" class="sidebar-link" id="manageVideosMenuOption"><span>▷</span> Manage Videos</a>
+    </div>
+
+    <nav>
+        <div class="sidebar-section">
+            <div class="sidebar-divider"></div>
+            <p class="sidebar-heading">SETTINGS</p>
+            <a href="{{ url_for('profilePage.profile_page') }}" class="sidebar-link" id="profileMenuOption"><span>◉</span> Profile</a>
+            <a href="{{ url_for('accountSettings.accountSettings') }}"
+                class="sidebar-link {% if currentPage == 'accountSettings.accountSettings' %}active{% endif %}" id="accountSettingsMenuOption">
+                <span>⚙</span> Account Settings
+            </a>
+        </div>
+    </nav>
+    {% endif %}
+
+    {% if session.get('user') %}
+    <div class="sidebar-logout">
+        <a href="{{ url_for('logout') }}" class="sidebar-link"><span>↪</span> Logout</a>
+    </div>
+    {% endif %}
+    {% if not session.get('user') %}
+    <div class="sidebar-logout">
+        <a href="{{ url_for('login') }}" class="sidebar-link"><span>↪</span> Login/Signup</a>
+    </div>
+    {% endif %}
+</aside>
+
+<script>
+    const path = window.location.pathname;
+    let activeId = "homeMenuOption";
+
+    if (path.includes("new-video")) {
+        activeId = "uploadMenuOption";
+            } else if (path.includes("manage-videos")) {
+        activeId = "manageVideosMenuOption";
+            } else if (path === "/profile") {
+        activeId = "profileMenuOption";
+            } else if (path === "/subscriptions") {
+        activeId = "subscriptionsMenuOption";
+            } else if (path === "/trending") {
+        activeId = "trendingMenuOption";
+    } else if (path.includes("account-settings")) {
+        activeId = "accountSettingsMenuOption";
+    } else if (path.includes("library")){
+        activeId="libraryMenuOption"
+    } else if (path.includes("activity")){
+        activeId="activityMenuOption"
+    }
+
+    document.querySelectorAll(".sidebar-link").forEach(link => {
+        link.classList.remove("active");
+    });
+
+    const activeLink = document.getElementById(activeId);
+
+    if (activeLink) {
+        activeLink.classList.add("active");
+    }
+</script>

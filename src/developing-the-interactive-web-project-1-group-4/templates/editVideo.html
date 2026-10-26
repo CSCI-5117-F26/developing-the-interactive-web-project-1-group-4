@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Video - Tune In{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}">
+
+<div class="mv-page">
+    <header class="mv-head">
+        <div>
+            <p class="mv-eyebrow">CREATOR STUDIO</p>
+            <h1>Edit Video</h1>
+            <p class="mv-sub">Update the title, description or thumbnail.</p>
+        </div>
+        <a class="mv-pill mv-pill-link" href="{{ url_for('manageVideos.manage_videos') }}">← Back to videos</a>
+    </header>
+
+    <form id="editForm" class="mv-edit-card"
+          data-save-url="{{ url_for('manageVideos.edit_video', video_id=video.id) }}"
+          data-upload-url="{{ url_for('uploadVideo.upload_thumbnail') }}"
+          data-back-url="{{ url_for('manageVideos.manage_videos') }}">
+
+        <section class="creator-panel mv-thumb-panel">
+            <h2>Thumbnail</h2>
+            <p>Choose the cover image viewers will see.</p>
+
+            <label class="creator-dropzone">
+                <span class="creator-upload-icon">▧</span>
+                <strong>Upload thumbnail</strong>
+                <span>Choose an image or browse</span>
+                <input type="file" id="thumbFile" accept="image/*">
+            </label>
+            <p class="creator-file-note">Supported: PNG, JPG, JPEG</p>
+        </section>
+        <p class="mv-error" id="thumbError"></p>
+
+        <div class="mv-field">
+            <label for="titleInput">Title</label>
+            <div class="mv-input-row">
+                <input id="titleInput" type="text" maxlength="200" value="{{ video.title }}" required>
+                <button type="button" class="mv-pencil" data-focus="titleInput" aria-label="Edit title">✎</button>
+            </div>
+            <p class="mv-error" id="titleError"></p>
+        </div>
+
+        <div class="mv-field">
+            <label for="descInput">Description</label>
+            <div class="mv-input-row">
+                <textarea id="descInput" rows="5" maxlength="10000">{{ video.description or '' }}</textarea>
+                <button type="button" class="mv-pencil" data-focus="descInput" aria-label="Edit description">✎</button>
+            </div>
+        </div>
+
+        <p class="mv-error" id="formError"></p>
+
+        <div class="mv-edit-actions">
+            <a class="mv-btn mv-btn-light" href="{{ url_for('manageVideos.manage_videos') }}">Cancel</a>
+            <button type="submit" class="mv-btn mv-btn-primary" id="submitBtn">Submit</button>
+        </div>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/editVideo.js') }}"></script>
+{% endblock %}
