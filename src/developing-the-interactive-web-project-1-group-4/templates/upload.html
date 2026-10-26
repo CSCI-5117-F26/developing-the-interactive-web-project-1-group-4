@@ -303,8 +303,8 @@
     }
 </style>
 </div>
-<script>
 <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script>
 const form = document.getElementById("upload-video-form");
 const submitButtons = form.querySelectorAll('button[type="submit"]');
 let activeUploads = 0;
@@ -546,8 +546,6 @@ document.getElementById("video-title").addEventListener("input", event => {
         event.preventDefault();
     }
 });
-</script>
-<script>
 const savedDrafts = {{ draft_list | tojson }};
 const draftDialog = document.getElementById("draftDialog");
 const draftForm = document.getElementById("draftForm");

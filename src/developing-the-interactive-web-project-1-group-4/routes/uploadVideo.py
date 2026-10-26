@@ -96,15 +96,7 @@ def save_draft():
 
     # Temporary response to check the collected data.
 
-    return jsonify(
-        video_key=video_key,
-        thumbnail_key=thumbnail_key,
-        title=title,
-        description=description,
-        language=language,
-        video_type=video_type,
-        genres=genres,
-    ), 200
+    return redirect(url_for("uploadVideo.new_video"))
 @uploadVideo_bp.route("/publish", methods=["POST"])
 def publish():
     if session.get("user") is None:
@@ -140,7 +132,7 @@ def publish():
     )
 
     # Save the published video here.
-    return "Succesfully created video"
+    return redirect(url_for("homePage.home"))
 
 @uploadVideo_bp.route("/upload-video", methods=["POST"])
 def upload_video():
@@ -256,4 +248,4 @@ def publish_draft():
         db.session.rollback()
         raise
 
-    return jsonify(message="Video published."), 200
+    return redirect(url_for("homePage.home")), 200
