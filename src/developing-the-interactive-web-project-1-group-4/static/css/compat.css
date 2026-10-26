@@ -1,0 +1,67 @@
+/* Pure CSS is the main CSS framework (loaded in base.html). This file keeps
+   Pure's defaults from changing how the Tune In buttons already look, and
+   holds the grid rules for the video cards. */
+
+/* ---------- Buttons: use Pure's .pure-button, keep our colours and shapes ---------- */
+.pure-button:hover,
+.pure-button:focus,
+.pure-button-hover {
+    background-image: none;
+}
+
+.pure-button:active,
+.pure-button-active {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.pure-button:focus-visible {
+    outline: 2px solid #5c724a;
+    outline-offset: 2px;
+}
+
+.pure-button[disabled],
+.pure-button:disabled {
+    pointer-events: auto;
+    box-shadow: none;
+    opacity: 1;
+}
+
+/* ---------- Video card grid built with Pure's grid (.pure-g / .pure-u-*) ---------- */
+/* 3 cards per row on desktop, 2 on tablets, 1 on phones. The negative side
+   margin and the cell padding make the 28px gap across without moving the
+   outer edges; row-gap makes the 16px gap between rows. */
+.pure-g.mv-grid-pure {
+    margin: 0 -14px;
+    row-gap: 16px;
+}
+
+.mv-grid-pure > .mv-cell {
+    min-width: 0;
+    padding: 0 14px;
+}
+
+.mv-grid-pure > .mv-cell > .mv-card {
+    height: 100%;
+}
+
+/* ---------- Upload page layout built with Pure's grid ---------- */
+/* The two upload panels sit side by side (pure-u-md-1-2) with the details
+   panel full width below; on phones everything stacks (pure-u-1).
+   The panel borders come from style.css. */
+.pure-g.creator-upload-grid {
+    display: flex;
+}
+
+/* ---------- Upload details fields (Genres / Original-Cover / Language) in Pure's grid ---------- */
+/* Three fields side by side on tablets and desktops (pure-u-md-1-3), stacked on
+   phones. The padding makes the same 12px gap as before. */
+.pure-g.creator-details-grid {
+    display: flex;
+    gap: 12px 0;
+    margin: 0 -6px;
+}
+
+.pure-g.creator-details-grid > .creator-field {
+    padding: 0 6px;
+}

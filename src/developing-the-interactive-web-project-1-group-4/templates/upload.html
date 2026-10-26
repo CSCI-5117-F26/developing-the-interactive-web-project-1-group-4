@@ -14,8 +14,8 @@
     <form id="upload-video-form" action="{{ url_for('uploadVideo.publish') }}" class="creator-upload-form" method="POST" enctype="multipart/form-data">
         <div class="creator-form-banner">ADD NEW VIDEO</div>
 
-        <div class="creator-upload-grid">
-            <section class="creator-panel">
+        <div class="pure-g creator-upload-grid">
+            <section class="creator-panel pure-u-1 pure-u-md-1-2">
                 <h2>1. Upload Video <span class="required">*</span></h2>
                 <p>Select the video file you want to publish.</p>
                 <label class="creator-dropzone">
@@ -29,7 +29,7 @@
                 <p class="creator-file-note">Supported: MP4, MOV</p>
             </section>
 
-            <section class="creator-panel">
+            <section class="creator-panel pure-u-1 pure-u-md-1-2">
                 <h2>2. Upload Thumbnail <span class="required">*</span></h2>
                 <p>Choose the cover image viewers will see.</p>
                 <label class="creator-dropzone">
@@ -44,7 +44,7 @@
             </section>
 
 
-            <section class="creator-panel creator-details-panel">
+            <section class="creator-panel creator-details-panel pure-u-1">
                 <h2>3. Video Details</h2>
                 <div class="creator-field">
                     <label for="video-title">Title <span class="required">*</span></label>
@@ -71,9 +71,9 @@
     ])
 ] %}
 
-<div class="creator-details-grid">
+<div class="pure-g creator-details-grid">
     {% for name, label, placeholder, input_type, options in dropdowns %}
-    <div class="creator-field">
+    <div class="creator-field pure-u-1 pure-u-md-1-3">
         <span id="{{ name }}-label" class="upload-dropdown-label">
             {{ label }} <span class="required">*</span>
         </span>
@@ -116,11 +116,11 @@
     {% endfor %}
 </div>
                 <div class="creator-actions">
-                    <button class="creator-btn creator-btn-primary"
+                    <button class="pure-button creator-btn creator-btn-primary"
                             type="submit" name="action" value="publish">PUBLISH</button>
-                    <button class="creator-btn creator-btn-secondary"
+                    <button class="pure-button creator-btn creator-btn-secondary"
                             type="submit" name="action" value="draft" formaction="{{url_for('uploadVideo.save_draft')}}" formnovalidate>SAVE DRAFT</button>
-                    <a class="creator-btn creator-btn-cancel" href="/">CANCEL</a>
+                    <a class="pure-button creator-btn creator-btn-cancel" href="/">CANCEL</a>
                 </div>
             </section>
         </div>
@@ -157,9 +157,9 @@
     <p id="draftThumbnailStatus" role="status"></p>
 </div>
 
-        <div class="creator-details-grid">
+        <div class="pure-g creator-details-grid">
     {% for name, label, placeholder, input_type, options in dropdowns %}
-        <div class="creator-field">
+        <div class="creator-field pure-u-1 pure-u-md-1-3">
             <span id="draft-{{ name }}-label" class="upload-dropdown-label">
                 {{ label }}
             </span>
@@ -203,17 +203,17 @@
 
         <div class="creator-actions">
             <button type="submit" value="save"
-                    class="creator-btn creator-btn-secondary">
+                    class="pure-button creator-btn creator-btn-secondary">
                 Save draft
             </button>
 
             <button type="submit" value="publish"
-                    class="creator-btn creator-btn-primary">
+                    class="pure-button creator-btn creator-btn-primary">
                 Publish video
             </button>
 
             <button type="button" id="closeDraft"
-                    class="creator-btn creator-btn-cancel">
+                    class="pure-button creator-btn creator-btn-cancel">
                 Cancel
             </button>
         </div>
@@ -224,8 +224,9 @@
     <section class="creator-drafts">
     <div class="creator-form-banner">YOUR DRAFTS</div>
 
-    <div class="mv-grid">
+    <div class="pure-g mv-grid-pure">
         {% for draft in draft_list %}
+            <div class="mv-cell pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
             <article class="mv-card">
                 <button type="button"
                         class="draft-open"
@@ -259,8 +260,11 @@
                     </div>
                 </button>
             </article>
+            </div>
         {% else %}
-            <p>No drafts saved yet.</p>
+            <div class="mv-cell pure-u-1">
+                <p>No drafts saved yet.</p>
+            </div>
         {% endfor %}
     </div>
 </section>

@@ -74,7 +74,8 @@ deleteYes.addEventListener("click", async () => {
             deleteError.textContent = data.error || "Could not delete video.";
             return;
         }
-        cardToDelete.remove();
+        // remove the whole Pure grid cell, not just the card, so no empty gap is left
+        (cardToDelete.closest(".mv-cell") || cardToDelete).remove();
         cardToDelete = null;
         updateCount();
         dialog.close();
