@@ -12,22 +12,36 @@
     {% include "searchBar.html" %}
 
     <!-- ===== Section 1: Trending videos ===== -->
+    <div id="mvGrid">
     {% call carousel("Trending", "trendingVideos") %}
     
         {% for video in trendingVideos %}
             <div class="carousel-item">
                 <article class="mv-card"
                  data-title="{{ video.title }}"
-                 data-delete-url="{{ url_for('manageVideos.delete_video', video_id=video.id) }}">
+                 data-video-id="{{ video.id }}">
 
             <button type="button" class="mv-dots" aria-haspopup="menu" aria-expanded="false"
                     aria-label="Options for {{ video.title }}">
                 <span></span><span></span><span></span>
             </button>
-            <div class="mv-menu" role="menu" hidden>
-                <a role="menuitem" href="{{ url_for('manageVideos.edit_video_page', video_id=video.id) }}">Edit video</a>
-                <button type="button" role="menuitem" class="mv-menu-danger" data-action="delete">Delete video</button>
-            </div>
+    <div class="mv-menu" role="menu" hidden>
+        <button type="button" role="menuitem" data-action="playlist">
+            Add to playlist
+        </button>
+
+        <button type="button" role="menuitem"
+                data-action="watch-later"
+                data-url="{{ url_for('library.add_to_watch_later') }}">
+            Add to watch later
+        </button>
+
+        <button type="button" role="menuitem"
+                data-action="save"
+                data-url="{{ url_for('library.add_to_saved_videos') }}">
+            Save video
+        </button>
+    </div>
 
             <a class="video-watch-link"
    href="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}">
@@ -63,6 +77,8 @@
             <p class="carousel-empty">No videos yet.</p>
         {% endfor %}
     {% endcall %}
+    </div>
+    <p id="videoMenuStatus" role="status" hidden></p>
 
     <!-- ===== Section 2: Genres ===== -->
     {% call carousel("Genres", "genreCarousel") %}
@@ -93,6 +109,24 @@
             <p class="carousel-empty">No artists yet.</p>
         {% endfor %}
     {% endcall %}
+
+<dialog id="playlistDialog">
+    <h2>Add to playlist</h2>
+
+    <div id="playlistChoices">
+        {% for playlist in playlists %}
+            {% if playlist.title not in ["Watch Later", "Saved Videos"] %}
+                <button type="button"
+                        data-url="{{ url_for('library.add_to_playlist', playlist_id=playlist.id) }}">
+                    {{ playlist.title }}
+                </button>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <p id="playlistMessage" role="status"></p>
+    <button type="button" id="closePlaylistDialog">Cancel</button>
+</dialog>
 
     <video id="fullscreen-player" controls playsinline hidden></video>
 </div>

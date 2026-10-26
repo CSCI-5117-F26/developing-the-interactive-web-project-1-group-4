@@ -12,9 +12,13 @@
     <!-- Playlist -->
     <div>
         <h2>Playlists</h2>
+        <button type="button" id="newPlaylistButton"
+        class="mv-btn mv-btn-primary">
+    + New playlist
+</button>
         <div class="playlist-row">
             {% for playlist in playlists %}
-                        <button type="button" class="playlist-card playlist-open"
+            <button type="button" class="playlist-card playlist-open"
                     data-playlist-title="{{ playlist.title }}">
                 {% include "svg/playlist.html"%}
                 <div class="playlist-title">
@@ -122,6 +126,75 @@
             {% endfor %}
         </div>
 </div>
+<dialog id="newPlaylistDialog"
+        class="mv-confirm"
+        aria-labelledby="newPlaylistTitle">
+
+    <form action="{{ url_for('library.create_playlist') }}"
+          method="POST">
+
+        <h2 id="newPlaylistTitle">Create playlist</h2>
+
+        <div class="mv-field">
+            <label for="playlistTitle">Playlist title</label>
+
+            <div class="mv-input-row">
+                <input type="text"
+                       id="playlistTitle"
+                       name="title"
+                       maxlength="200"
+                       placeholder="Enter playlist title"
+                       required>
+            </div>
+        </div>
+
+        <div class="mv-confirm-actions">
+            <button type="button" id="cancelNewPlaylist"
+                    class="mv-btn mv-btn-light">
+                Cancel
+            </button>
+
+            <button type="submit" class="mv-btn mv-btn-primary">
+                Submit
+            </button>
+        </div>
+    </form>
+</dialog>
+
+<script>
+(() => {
+    const dialog = document.getElementById("newPlaylistDialog");
+    const form = dialog.querySelector("form");
+    const title = document.getElementById("playlistTitle");
+
+    document.getElementById("newPlaylistButton")
+        .addEventListener("click", () => {
+            form.reset();
+            title.setCustomValidity("");
+            dialog.showModal();
+            title.focus();
+        });
+
+    document.getElementById("cancelNewPlaylist")
+        .addEventListener("click", () => dialog.close());
+
+    title.addEventListener("input", () => {
+        title.setCustomValidity(
+            title.value.trim() ? "" : "Please enter a playlist title."
+        );
+    });
+
+    form.addEventListener("submit", event => {
+        title.value = title.value.trim();
+
+        if (!title.value) {
+            event.preventDefault();
+            title.setCustomValidity("Please enter a playlist title.");
+            title.reportValidity();
+        }
+    });
+})();
+</script>
 {% include "playlistPopup.html" %}
 <script src="{{ url_for('static', filename='js/playlistPopup.js') }}"></script>
 {% endblock %}

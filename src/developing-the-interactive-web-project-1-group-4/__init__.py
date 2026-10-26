@@ -4,13 +4,13 @@ from sqlalchemy import inspect
 from . import models
 from flask import Flask, render_template, request,jsonify, current_app , session, redirect , url_for
 from .database import db
-from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, upload_video_to_cloud, upload_thumbnail_to_cloud, get_upload_form_data, create_video_helper, create_draft_helper, mediaURL
+from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, mediaURL , get_current_user, create_default_playlists_for_all_users
 from botocore.exceptions import BotoCoreError, ClientError
 from .models import Ti_user
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
-from .routes import homePage_bp, profileInput_bp, uploadVideo_bp, profilePage_bp, manageVideos_bp , subscription_bp, mediaPlayer_bp, accountSettings_bp, trending_bp
+from .routes import homePage_bp, profileInput_bp, uploadVideo_bp, profilePage_bp, manageVideos_bp , subscription_bp, mediaPlayer_bp, accountSettings_bp, trending_bp, library_bp
 load_dotenv()
 from authlib.integrations.flask_client import OAuth
 app = Flask(__name__)
@@ -70,12 +70,16 @@ app.register_blueprint(subscription_bp)
 app.register_blueprint(mediaPlayer_bp)
 app.register_blueprint(accountSettings_bp)
 app.register_blueprint(trending_bp)
+app.register_blueprint(library_bp)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["Database_url"]
 db.init_app(app)
 with app.app_context():
     db.create_all()
     inspector = inspect(db.engine)
     print("Tables in the database:", inspector.get_table_names())
+with app.app_context():
+    count = create_default_playlists_for_all_users()
+    print(f"Default playlists checked for {count} users.")
 
 @app.cli.command("reset-db")
 def reset_db(): 

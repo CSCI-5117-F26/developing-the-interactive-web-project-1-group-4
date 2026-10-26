@@ -1,10 +1,10 @@
 import os, re, uuid
 from datetime import datetime, timezone
-
 from flask import render_template, request, current_app,jsonify, redirect, url_for, session
 from botocore.exceptions import BotoCoreError, ClientError
 from . import profileInput_bp
-from ..services import saveProfile, upload_profile_picture_to_cloud
+from ..services import saveProfile, upload_profile_picture_to_cloud , get_current_user, mediaURL, create_default_playlists
+
 
 fields = {
     # field name:        (max length, required?)
@@ -121,6 +121,7 @@ def createProfile():
                 errors={"profilePicture": error},
                 saved=None,
             ), 400
+    
 
     saveProfile(
         username=username,
@@ -133,5 +134,7 @@ def createProfile():
         profile_picture_key=picture_filename,
         contact_me=contact_me,
     )
+    user = get_current_user()
+    create_default_playlists(user.ti_user_id)
 
     return redirect(url_for("homePage.home"))

@@ -62,6 +62,7 @@ class Ti_user(db.Model):
     videos = relationship("videos", back_populates="uploader", cascade="all, delete-orphan")
     comments = relationship("Comments", back_populates="ti_user", cascade="all, delete-orphan")
     likes = relationship("Likes", back_populates="liker", cascade="all, delete-orphan")
+    playlists = relationship("Playlists",back_populates="creator",cascade = "all, delete-orphan")
 class Comments(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     parent_id: Mapped[int] = mapped_column(ForeignKey('comments.id',ondelete='CASCADE') ,nullable=True)
@@ -133,6 +134,7 @@ class Playlists(db.Model):
     videos = relationship("videos",secondary = playlist_videos,back_populates="playlists")
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now(),onupdate=func.now())
+    creator = relationship("Ti_user",back_populates="playlists")
 
 class Subscriptions(db.Model):
     __table_args__ = (
