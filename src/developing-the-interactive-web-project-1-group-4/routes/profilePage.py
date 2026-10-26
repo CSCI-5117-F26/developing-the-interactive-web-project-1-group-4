@@ -145,7 +145,7 @@ def profile_page(username):
     return render_template(
         "profilePage.html",
         profile=profile,
-        videos=[profile_video_card(v, default_url) for v in user_videos],
+        videos=addStats([profile_video_card(v, default_url) for v in user_videos]),
         default_thumbnail_url=default_url,
         is_own=is_own,
         is_logged_in=current is not None,

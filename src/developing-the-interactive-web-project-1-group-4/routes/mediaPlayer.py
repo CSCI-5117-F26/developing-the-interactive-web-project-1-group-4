@@ -93,7 +93,7 @@ def watchVideo(videoId):
     return render_template(
         "watch.html",
         video=videoDetails(video, user),
-        recommendations=recommendations,
+        recommendations=fetchRecommendations(video),
         comments=fetchComments(videoId),
         playlists=fetchPlaylists(user, videoId) if user else [],
         loggedIn=user is not None,

@@ -304,6 +304,43 @@ def textMatch(column, q, words):
     query = func.to_tsquery("simple", " & ".join(f"{w}:*" for w in words))
     return or_(vector.op("@@")(query), substring), func.ts_rank(vector, query)
 
+# ---------- Views & likes on video cards ----------
+
+def formatCount(n):
+    """856 -> '856', 1200 -> '1.2K', 2400000 -> '2.4M'"""
+    n = n or 0
+    if n < 1000:
+        return str(n)
+    if n < 1_000_000:
+        return f"{n / 1000:.1f}".rstrip("0").rstrip(".") + "K"
+    return f"{n / 1_000_000:.1f}".rstrip("0").rstrip(".") + "M"
+
+
+def likeCounts(videoIds):
+    """{videoId: likeCount} for many videos in ONE query."""
+    if not videoIds:
+        return {}
+    rows = db.session.execute(
+        select(Likes.video_id, func.count(Likes.id))
+        .where(Likes.video_id.in_(videoIds))
+        .group_by(Likes.video_id)
+    )
+    return dict(rows.all())
+
+
+def addStats(cards):
+    """Add views, likes, viewsText and likesText to every card (needs 'id' and 'views')."""
+    counts = likeCounts([card["id"] for card in cards])
+    for card in cards:
+        views = card.get("views") or 0
+        likes = counts.get(card["id"], 0)
+        card.update(
+            views=views,
+            likes=likes,
+            viewsText=formatCount(views),
+            likesText=formatCount(likes),
+        )
+    return cards
 
 # ---------- Turning database rows into page data ----------
 
@@ -352,7 +389,7 @@ def fetchVideos(genre="", limit=HOME_PAGE_LIMIT):
     stmt = videoQuery().order_by(Video.created_at.desc())
     if genre:
         stmt = stmt.where(Video.genres.any(Genres.name == genre))
-    return [videoCard(v) for v in db.session.scalars(stmt.limit(limit))]
+    return addStats([videoCard(v) for v in db.session.scalars(stmt.limit(limit))])
 
 
 def fetchGenres():
@@ -370,7 +407,7 @@ def fetchArtistVideos(username, limit=SEARCH_PAGE_LIMIT):
         .order_by(Video.created_at.desc())
         .limit(limit)
     )
-    videos = [videoCard(v) for v in db.session.scalars(stmt)]
+    videos = addStats([videoCard(v) for v in db.session.scalars(stmt)])
     return artistCard(user, len(videos)), videos
 
 
@@ -384,7 +421,7 @@ def searchVideos(q, words, limit):
         .order_by(rank.desc(), Video.views.desc(), Video.created_at.desc())
         .limit(limit)
     )
-    return [videoCard(v) for v in db.session.scalars(stmt)]
+    return addStats([videoCard(v) for v in db.session.scalars(stmt)])
 
 
 def searchArtists(q, words, limit):
@@ -517,7 +554,7 @@ def artistProfileURL(username):
 # ---------- Trending videos ----------
 def fetchTrendingVideos(limit=trendingVideoLimit):
     stmt = videoQuery().order_by(Video.views.desc(), Video.created_at.desc()).limit(limit)
-    return addTitleLines([videoCard(v) for v in db.session.scalars(stmt)])
+    return addTitleLines(addStats([videoCard(v) for v in db.session.scalars(stmt)]))
 
 
 # ---------- Genres ----------
@@ -569,7 +606,7 @@ def fetchGenreVideos(genreName, limit=genrePageLimit):
         .order_by(Video.views.desc(), Video.created_at.desc())
         .limit(limit)
     )
-    return addTitleLines([videoCard(v) for v in db.session.scalars(stmt)])
+    return addTitleLines(addStats([videoCard(v) for v in db.session.scalars(stmt)]))
 
 
 # ---------- Trending artists ----------

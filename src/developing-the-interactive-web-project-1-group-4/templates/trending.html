@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "carousel.html" import carousel %}
+{% from "videoStats.html" import videoStats %}
 
 {% block title %}Trending - Tune In{% endblock %}
 
@@ -50,14 +51,12 @@
 
     <div class="mv-info">
         <h2 class="mv-title">{{ video.title }}</h2>
-        <p class="mv-views">
-            {{ video.views_text }} view{{ '' if video.views == 1 else 's' }}
-        </p>
+        {{ videoStats(video) }}
     </div>
 </a>
 
         </article>
-                <p class="carousel-meta">{{ video.artist }} · {{ video.views }} views</p>
+                <p class="carousel-meta">{{ video.artist }}</p>
             </div>
         {% else %}
             <p class="carousel-empty">No videos yet.</p>

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% from "videoStats.html" import videoStats %}
 {% block title %}{{ genreName }} - Tune In{% endblock %}
 
 {% block content %}
@@ -14,7 +14,10 @@
 
     <div class="row-container">
         {% for video in videos %}
-            {% include "svg/vinyl_svg.html" %}
+            <div class="vinyl-item">
+                {% include "svg/vinyl_svg.html" %}
+                {{ videoStats(video) }}
+            </div>
         {% else %}
             <p class="no-results">No {{ genreName }} videos yet.</p>
         {% endfor %}

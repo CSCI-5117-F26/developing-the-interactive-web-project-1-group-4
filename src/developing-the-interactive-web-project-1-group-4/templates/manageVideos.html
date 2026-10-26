@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% from "videoStats.html" import videoStats %}
 {% block title %}Manage Videos - Tune In{% endblock %}
 
 {% block content %}
@@ -48,7 +48,7 @@
 
             <div class="mv-info">
                 <h2 class="mv-title">{{ video.title }}</h2>
-                <p class="mv-views">{{ video.views_text }} view{{ '' if video.views == 1 else 's' }}</p>
+                {{ videoStats(video) }}
             </div>
 
         </article>

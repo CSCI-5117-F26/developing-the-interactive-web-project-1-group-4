@@ -593,3 +593,36 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== Views & likes line on video cards ===== */
+.video-stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0 0;
+    color: #77796e;
+    font-size: 12px;
+}
+
+.video-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.video-stat svg {
+    flex: none;
+}
+
+.video-stat-likes svg {
+    color: #9b4034;              /* heart in the theme's red */
+}
+
+/* Vinyl cards (search, genre) with the stats line underneath */
+.row-container .vinyl-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

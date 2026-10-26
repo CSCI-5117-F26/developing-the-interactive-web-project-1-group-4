@@ -6,7 +6,7 @@ from .database import db
 from .models import (
     videos as Video, Genres, Comments, Likes, Playlists, video_genres,
 )
-from .services import mediaURL, videoCard, videoQuery
+from .services import mediaURL, videoCard, videoQuery, addStats
 
 recommendationLimit = 10
 commentPageSize = 20
@@ -78,6 +78,7 @@ def videoDetails(video, user):
         "likeCount": countLikes(video.id),
         "likedByMe": userLikedVideo(video.id, user),
     })
+    addStats([details])
     return details
 
 
@@ -125,7 +126,7 @@ def fetchRecommendations(video, limit=recommendationLimit):
         else:
             card["reason"] = "popular"
         cards.append(card)
-    return cards
+    return addStats(cards)
 
 
 # ---------------- Likes ----------------

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% from "videoStats.html" import videoStats %}
 {% block content %}
 
 <link rel="stylesheet"
@@ -11,6 +11,7 @@ href="{{ url_for('static', filename='css/manage-videos.css') }}">
     {% include "searchBar.html" %}
     <div class="video-title">
         <h1>{{ video.title }}</h1>
+        {{ videoStats(video) }}
     </div>
     <div class="video-player-row">
         <div class="record-player">
@@ -42,22 +43,22 @@ href="{{ url_for('static', filename='css/manage-videos.css') }}">
                 <div class="mv-art vinyl-art-repositioning">
                     <div class="mv-vinyl vinyl-positioning" aria-hidden="true"></div>
                         <div class="mv-thumb">
-                        {% if video.thumbnail_url %}
-                                                    <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                        {% if video.cover %}
+                                                    <img src="{{ video.cover }}" alt="Thumbnail for {{ video.title }}"
                                 class="{{ 'is-default' if video.is_default else '' }}"
                                 {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
-                                data-fallback="{{ default_thumbnail_url or '' }}"
+                                data-fallback="{{ video.fallbackCover or '' }}"
                                 onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
                         {% else %}
                             <span class="mv-thumb-empty">♫</span>
                         {% endif %}
-                        {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
+                        {% if video.durationText %}<span class="mv-duration">{{ video.durationText }}</span>{% endif %}
                     </div>
                 </div>
 
                 <div class="mv-info">
                     <h2 class="mv-title">{{ video.title }}</h2>
-                    <p class="mv-views">{{ video.views_text }} view{{ '' if video.views == 1 else 's' }}</p>
+                    {{ videoStats(video) }}
                 </div>
 
             </article>

@@ -52,7 +52,7 @@ def manage_videos():
     default_url = defaultCoverURL()
     return render_template(
         "manageVideos.html",
-        videos=[video_dict(v, default_url) for v in user.videos],
+        videos=addStats([video_dict(v, default_url) for v in user.videos]),
         default_thumbnail_url=default_url,
     )
 
@@ -88,7 +88,7 @@ def manage_videos_api():
     if user is None:
         return jsonify(error="Please log in and create your profile"), 401
     default_url = defaultCoverURL()
-    return jsonify(videos=[video_dict(v, default_url) for v in user.videos])
+    return jsonify(videos=addStats([video_dict(v, default_url) for v in user.videos]))
 
 
 @manageVideos_bp.route("/edit-video/<int:video_id>", methods=["PATCH"])

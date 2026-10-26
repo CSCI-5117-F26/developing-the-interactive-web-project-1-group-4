@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% from "videoStats.html" import videoStats %}
 {% block title %}Search - Tune In{% endblock %}
 
 {% block content %}
@@ -37,7 +37,10 @@
     <h2 class="search-section-title">Videos</h2>
     <div class="row-container">
         {% for video in videos %}
-            {% include "svg/vinyl_svg.html" %}
+            <div class="vinyl-item">
+                {% include "svg/vinyl_svg.html" %}
+                {{ videoStats(video) }}
+            </div>
         {% else %}
             <p class="no-results">No videos found.</p>
         {% endfor %}
