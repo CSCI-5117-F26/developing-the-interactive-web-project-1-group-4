@@ -705,7 +705,7 @@ def apply_draft_form(draft):
     draft.genres = genres
 
 def create_default_playlists(user_id):
-    titles = ("Watch Later", "Saved Videos")
+    titles = (os.environ["WATCH_LATER"], os.environ["SAVED_VIDEOS"])
 
     existing = db.session.execute(
         db.select(Playlists).where(
