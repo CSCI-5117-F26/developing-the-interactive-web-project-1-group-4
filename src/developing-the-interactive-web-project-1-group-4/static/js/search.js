@@ -34,8 +34,7 @@ function buildGroup(title, items, buildItem) {
 
 function videoItem(video) {
     const link = el("a", "search-item");
-    link.href = "#";
-    if (video.videoURL) link.dataset.videoUrl = video.videoURL;   // home.js plays it
+    link.href = video.watchURL;
 
     const img = el("img");
     img.src = video.cover || "";
