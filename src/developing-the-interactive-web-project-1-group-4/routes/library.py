@@ -6,6 +6,9 @@ from ..services import (
     SEARCH_PREVIEW_LIMIT, SEARCH_PAGE_LIMIT, get_current_user
 )
 from ..database import db
+from dotenv import load_dotenv
+load_dotenv()
+import os
 @library_bp.get("/library")
 def library():
     user = get_current_user()
@@ -18,9 +21,9 @@ def library():
     watchlater = []
 
     for playlist in user.playlists:
-        if playlist.title == "Watch Later":
+        if playlist.title == os.environ["WATCH_LATER"]:
             watchlater.extend(playlist.videos)
-        elif playlist.title == "Saved Videos":
+        elif playlist.title == os.environ["SAVED_VIDEOS"]:
             saved_videos.extend(playlist.videos)
         else:
             playlists.append(playlist)
@@ -53,7 +56,7 @@ def add_to_watch_later():
     playlist = db.session.execute(
         db.select(Playlists).where(
             Playlists.ti_user == user.ti_user_id,
-            Playlists.title == "Watch Later",
+            Playlists.title == os.environ["WATCH_LATER"],
         )
     ).scalar_one_or_none()
 
@@ -64,7 +67,7 @@ def add_to_watch_later():
         if playlist is None:
             playlist = Playlists(
                 ti_user=user.ti_user_id,
-                title="Watch Later",
+                title=os.environ["WATCH_LATER"],
             )
             db.session.add(playlist)
 
@@ -98,7 +101,7 @@ def add_to_saved_videos():
     playlist = db.session.execute(
         db.select(Playlists).where(
             Playlists.ti_user == user.ti_user_id,
-            Playlists.title == "Saved Videos",
+            Playlists.title == os.environ["SAVED_VIDEOS"],
         )
     ).scalar_one_or_none()
 
@@ -109,7 +112,7 @@ def add_to_saved_videos():
         if playlist is None:
             playlist = Playlists(
                 ti_user=user.ti_user_id,
-                title="Saved Videos",
+                title=os.environ["SAVED_VIDEOS"],
             )
             db.session.add(playlist)
 
@@ -173,7 +176,7 @@ def create_playlist():
         return jsonify(error="Title must be 200 characters or fewer."), 400
 
     # Reserve these exact names for the default playlists.
-    if title in ("Watch Later", "Saved Videos"):
+    if title in (os.environ["WATCH_LATER"], os.environ["SAVED_VIDEOS"]):
         return jsonify(error="This playlist title is reserved."), 400
 
     playlist = Playlists(
