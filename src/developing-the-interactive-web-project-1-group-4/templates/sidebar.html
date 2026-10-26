@@ -12,7 +12,7 @@
         <a href="{{ url_for('subscription.subscriptions_page') }}" class="sidebar-link" id="subscriptionsMenuOption"><span>▶</span> Subscriptions</a>
         <!-- <a href="#" class="sidebar-link"><span></span> Library</a> -->
         <a href="{{ url_for('library.library') }}" class="sidebar-link" id="libraryMenuOption"><span>□</span> Library</a>
-        <a href="{{ url_for('homePage.activity') }}" class="sidebar-link" id="activityMenuOption"><span>◷</span>Activity</a>
+        <a href="{{ url_for('activity.activity') }}" class="sidebar-link" id="activityMenuOption"><span>◷</span>Activity</a>
         {% endif %}
     </nav>
     {% if session.get('user') %}
