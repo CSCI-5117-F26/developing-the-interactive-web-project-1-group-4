@@ -7,30 +7,60 @@
 <link rel="stylesheet"
 href="{{ url_for('static', filename='css/manage-videos.css') }}">
 
-<div class="home-placeholder">
+<div class="page-placeholder">
     {% include "searchBar.html" %}
     <div class="video-title">
         <h1>{{ video.title }}</h1>
     </div>
+</div>
+
     <div class="video-player-row">
-        <div class="record-player">
-            {% include "svg/turntable_svg.html" %}
+        <div class="record-player-controls">
+            <div class="knob-controls">
+                <div class="knob-symbol heart-symbol">
+                    &#9825;   
+                </div>
+            </div>
+            <div class="knob-controls">
+                <div class="knob-symbol cross-symbol">
+                    &#43;   
+                </div>
+            </div>
+            <div class="author-section">
+                <div class="author-controls">
+                </div>
+                <div>Some Youtuber</div>
+            </div>
+        </div>
+
+        <div class="record-player-section">
             <div class="video-container">
                 <video controls playsinline>
                     <source src="{{ video.videoURL }}" type="video/mp4">
                 </video>
             </div>
+            {% include "svg/turntable_needle_svg.html" %}
         </div>
 
         <div class="recommended-section">
-            <h2 class="recommended-title">Recommended</h2>
+            {% if 'Playlist' in mode %}
+                <div class="playlist-row">
+                    <h2 class="recommended-title">Playlist</h2>
+                    <div class="playlist-button-row">
+                        <a href="#" class="prev">&#9664;</a>
+                        <a href="#" class="next">&#9654;</a>
+                    </div>
+                </div>
+            {% else %}
+                <h2 class="recommended-title">Recommended</h2>
+            {% endif %}
             <div class="recommended-scrollable">
             {% for video in recommendations %}
-            <article class="mv-card"
+            <article class="mv-card local-card"
                     data-title="{{ video.title }}"
                     data-delete-url="{{ url_for('manageVideos.delete_video', video_id=video.id) }}">
 
-                <button type="button" class="mv-dots" aria-haspopup="menu" aria-expanded="false"
+                <button type="button" class="mv-dots local-dots" aria-haspopup="menu" aria-expanded="false"
                         aria-label="Options for {{ video.title }}">
                     <span></span><span></span><span></span>
                 </button>
@@ -40,8 +70,8 @@ href="{{ url_for('static', filename='css/manage-videos.css') }}">
                 </div>
 
                 <div class="mv-art vinyl-art-repositioning">
-                    <div class="mv-vinyl vinyl-positioning" aria-hidden="true"></div>
-                        <div class="mv-thumb">
+                    <div class="mv-vinyl vinyl-positioning local-positioning" aria-hidden="true"></div>
+                        <div class="mv-thumb local-thumb">
                         {% if video.thumbnail_url %}
                                                     <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
                                 class="{{ 'is-default' if video.is_default else '' }}"
@@ -66,9 +96,32 @@ href="{{ url_for('static', filename='css/manage-videos.css') }}">
         </div>
     </div>
 
+<div class="page-placeholder">
     <div class="comment-section">
+        <h3 class="comments-title">Comments</h3>
 
+        {% for comment in comments %}
+            <article class="comment-card">
+                <div class="comment-header">
+                    <strong class="comment-author">
+                        {{comment.author}}
+                    </strong>
+
+                    <span class="commented-time">
+                        {{comment.timecommented}}
+                    </span>
+
+                </div>
+                <p class="comment-text">
+                    {{comment.comment}}
+                </p>
+            </article>
+
+            {% else %}
+            <p class="no-comments">No comments yet.</p>
+        {% endfor %}
     </div>
 </div>
+
 
 {% endblock %}

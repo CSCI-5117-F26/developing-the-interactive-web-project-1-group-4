@@ -84,6 +84,21 @@ def handleConflict(error):
 
 @mediaPlayer_bp.get("/watch/<int:videoId>")
 def watchVideo(videoId):
+    # dummy variables
+    mode = "Playlist"
+    comments = [
+        {
+            "author": "Taylor Slow",
+            "comment": ("The high notes were a master class in talent, please teach me your ways"),
+            "timecommented": "5 hours ago"
+        },
+        {
+            "author": "Taylor Fast",
+            "comment": ("The high notes were a master class in talent, please teach me your ways"),
+            "timecommented": "5 hours ago"
+        }
+    ]
+
     try:
         video = getVideo(videoId)
     except NotFoundError:
@@ -139,9 +154,11 @@ def watchVideo(videoId):
             )
     return render_template(
         "watch.html",
+        mode = mode,
+        comments = comments,
         video=videoDetails(video, user),
         recommendations=recommendations,
-        comments=fetchComments(videoId),
+        # comments=fetchComments(videoId),
         playlist=playlist,
         previous_video_url=previous_video_url,
         next_video_url=next_video_url,
