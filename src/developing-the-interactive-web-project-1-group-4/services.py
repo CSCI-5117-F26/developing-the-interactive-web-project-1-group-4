@@ -13,6 +13,8 @@ from sqlalchemy import func, or_, select, func
 from sqlalchemy.orm import selectinload
 from .models import videos as Video, Genres, Ti_user, video_genres, Drafts
 import av
+import requests
+import tempfile
 
 trendingVideoLimit = 20
 trendingArtistLimit = 20
@@ -207,6 +209,7 @@ def getVideoDuration(video):
         text=True,
     )
     """
+    """
     with av.open(video) as container:
         if container.duration is not None:
             return float(container.duration / av.time_base)
@@ -215,6 +218,33 @@ def getVideoDuration(video):
             if stream.duration is not None and stream.time_base is not None:
                 return float(stream.duration * stream.time_base)
     #duration = float(result.stdout.strip())
+    raise ValueError("Could not determine video duration.")
+    """
+
+
+def getVideoDuration(video_url):
+    with tempfile.TemporaryFile(mode="w+b") as video_file:
+        with requests.get(
+            video_url,
+            stream=True,
+            timeout=(10, 120),
+        ) as response:
+            response.raise_for_status()
+
+            for chunk in response.iter_content(chunk_size=1024 * 1024):
+                if chunk:
+                    video_file.write(chunk)
+
+        video_file.seek(0)
+
+        with av.open(video_file) as container:
+            if container.duration is not None:
+                return float(container.duration / av.time_base)
+
+            for stream in container.streams.video:
+                if stream.duration is not None and stream.time_base is not None:
+                    return float(stream.duration * stream.time_base)
+
     raise ValueError("Could not determine video duration.")
 
 def saveProfile(
