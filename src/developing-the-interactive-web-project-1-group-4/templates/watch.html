@@ -1,68 +1,89 @@
 {% extends "base.html" %}
 {% from "videoStats.html" import videoStats %}
-{% block content %}
 
-<link rel="stylesheet"
-    href="{{ url_for('static', filename='css/vidplay-style.css') }}">
-<link rel="stylesheet"
-href="{{ url_for('static', filename='css/manage-videos.css') }}">
+{% block title %}{{ video.title }} - Tune In{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vidplay-style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}">
 
 <div class="page-placeholder">
     {% include "searchBar.html" %}
     <div class="video-title">
-        <h1>{{ video.title }}</h1>
-        {{ videoStats(video) }}
+    <h1>{{ video.title }}</h1>
+    {{ videoStats(video) }}
+
+    {% if video.description %}
+        <div class="video-description-box">
+            <p id="videoDescription" class="video-description">{{ video.description }}</p>
+            <button type="button" id="descriptionToggle" class="description-toggle" hidden>Show more</button>
+        </div>
+    {% endif %}
     </div>
 </div>
 
-    <div class="video-player-row">
-        <div class="record-player-controls">
-            <div class="knob-controls">
-                <div class="knob-symbol heart-symbol">
-                    &#9825;   
-                </div>
-            </div>
-            <div class="knob-controls">
-                <div class="knob-symbol cross-symbol">
-                    &#43;   
-                </div>
-            </div>
-            <div class="author-section">
-                <div class="author-controls">
-                </div>
-                <div>Some Youtuber</div>
-            </div>
+<div class="video-player-row" id="watchPage"
+     data-likes-url="{{ url_for('mediaPlayer.likeVideo', videoId=video.id) }}"
+     data-comments-url="{{ url_for('mediaPlayer.postComment', videoId=video.id) }}"
+     data-login-url="{{ url_for('login') }}"
+     data-logged-in="{{ 'true' if loggedIn else 'false' }}">
+
+    <!-- ===== Left: like, add, artist ===== -->
+    <div class="record-player-controls">
+        <div class="knob-controls">
+            <button type="button" id="likeButton"
+                    class="knob-symbol heart-symbol like-button {{ 'liked' if video.likedByMe else '' }}"
+                    aria-pressed="{{ 'true' if video.likedByMe else 'false' }}"
+                    aria-label="{{ 'Unlike' if video.likedByMe else 'Like' }} this video">
+                {{ '♥' if video.likedByMe else '♡' }}
+            </button>
+        </div>
+        <div class="knob-controls">
+            <div class="knob-symbol cross-symbol">&#43;</div>
         </div>
 
-        <div class="record-player-section">
-            <div class="video-container">
-                <video controls playsinline>
-                    <source src="{{ video.videoURL }}" type="video/mp4">
-                </video>
+        {% if video.artist %}
+        <a class="author-section" href="{{ url_for('profilePage.profile_page', username=video.artist) }}"
+           title="View {{ video.artist }}'s profile">
+            <div class="author-controls">
+                <img class="author-picture" src="{{ video.artistPicture or video.fallbackCover }}" alt=""
+                     onerror="this.onerror=null; this.src='{{ video.fallbackCover }}';">
             </div>
-            {% include "svg/turntable_needle_svg.html" %}
+            <div class="author-name">{{ video.artistName or video.artist }}</div>
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- ===== Middle: the player ===== -->
+    <div class="record-player-section">
+        <div class="video-container">
+            <video id="mainVideo" controls playsinline preload="metadata"
+                   src="{{ video.videoURL }}" poster="{{ video.cover }}">
+                Your browser can't play this video.
+            </video>
         </div>
+        {% include "svg/turntable_needle_svg.html" %}
+    </div>
 
-        <div class="recommended-section">
-            {% if 'Playlist' in mode %}
-                <div class="playlist-row">
-                    <h2 class="recommended-title">Playlist</h2>
-                    <div class="playlist-button-row">
-                        <a href="#" class="prev">&#9664;</a>
-                        <a href="#" class="next">&#9654;</a>
-                    </div>
+    <!-- ===== Right: recommended / playlist ===== -->
+    <div class="recommended-section">
+        {% if mode == 'Playlist' %}
+            <div class="playlist-row">
+                <h2 class="recommended-title">Playlist</h2>
+                <div class="playlist-button-row">
+                    {% if previous_video_url %}<a href="{{ previous_video_url }}" class="prev" aria-label="Previous video">&#9664;</a>{% endif %}
+                    {% if next_video_url %}<a href="{{ next_video_url }}" class="next" aria-label="Next video">&#9654;</a>{% endif %}
                 </div>
-            {% else %}
-                <h2 class="recommended-title">Recommended</h2>
-            {% endif %}
-            <div class="recommended-scrollable">
-            {% for video in recommendations %}
-            <article class="mv-card local-card"
-                    data-title="{{ video.title }}"
-                    data-delete-url="{{ url_for('manageVideos.delete_video', video_id=video.id) }}">
+            </div>
+        {% else %}
+            <h2 class="recommended-title">Recommended</h2>
+        {% endif %}
 
+        <div class="recommended-scrollable">
+        {% for rec in recommendations %}
+            <article class="mv-card local-card" data-title="{{ rec.title }}">
                 <button type="button" class="mv-dots local-dots" aria-haspopup="menu" aria-expanded="false"
-                        aria-label="Options for {{ video.title }}">
+                        aria-label="Options for {{ rec.title }}">
                     <span></span><span></span><span></span>
                 </button>
                 <div class="mv-menu" role="menu" hidden>
@@ -70,59 +91,67 @@ href="{{ url_for('static', filename='css/manage-videos.css') }}">
                     <button type="button" role="menuitem" class="mv-menu">Add to Watch Later</button>
                 </div>
 
-                <div class="mv-art vinyl-art-repositioning">
-                    <div class="mv-vinyl vinyl-positioning" aria-hidden="true"></div>
+                <a class="rec-link" href="{{ rec.watchURL }}">
+                    <div class="mv-art vinyl-art-repositioning">
+                        <div class="mv-vinyl vinyl-positioning" aria-hidden="true"></div>
                         <div class="mv-thumb">
-                        {% if video.cover %}
-                                                    <img src="{{ video.cover }}" alt="Thumbnail for {{ video.title }}"
-                                class="{{ 'is-default' if video.is_default else '' }}"
-                                {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
-                                data-fallback="{{ video.fallbackCover or '' }}"
-                                onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
-                        {% else %}
-                            <span class="mv-thumb-empty">♫</span>
-                        {% endif %}
-                        {% if video.durationText %}<span class="mv-duration">{{ video.durationText }}</span>{% endif %}
+                            <img src="{{ rec.cover }}" alt="Thumbnail for {{ rec.title }}"
+                                 onerror="this.onerror=null; this.src='{{ rec.fallbackCover }}';">
+                            {% if rec.durationText %}<span class="mv-duration">{{ rec.durationText }}</span>{% endif %}
+                        </div>
                     </div>
-                </div>
-
-                <div class="mv-info">
-                    <h2 class="mv-title">{{ video.title }}</h2>
-                    {{ videoStats(video) }}
-                </div>
-
+                    <div class="mv-info">
+                        <h2 class="mv-title">{{ rec.title }}</h2>
+                        {{ videoStats(rec) }}
+                    </div>
+                </a>
             </article>
-            {% endfor %}
-            </div>
-        </div>
-    </div>
-
-<div class="page-placeholder">
-    <div class="comment-section">
-        <h3 class="comments-title">Comments</h3>
-
-        {% for comment in comments %}
-            <article class="comment-card">
-                <div class="comment-header">
-                    <strong class="comment-author">
-                        {{comment.author}}
-                    </strong>
-
-                    <span class="commented-time">
-                        {{comment.timecommented}}
-                    </span>
-
-                </div>
-                <p class="comment-text">
-                    {{comment.comment}}
-                </p>
-            </article>
-
-            {% else %}
-            <p class="no-comments">No comments yet.</p>
+        {% else %}
+            <p class="no-comments">No recommendations yet.</p>
         {% endfor %}
+        </div>
     </div>
 </div>
 
+<!-- ===== Comments ===== -->
+<div class="page-placeholder">
+    <div class="comment-section">
+        <h3 class="comments-title">Comments (<span id="commentCount">{{ comments.total }}</span>)</h3>
 
+        {% if loggedIn %}
+            <form id="commentForm" class="comment-form">
+                <textarea id="commentInput" name="comment" rows="3" maxlength="2000"
+                          placeholder="Add a comment..." required></textarea>
+                <p id="commentError" class="comment-error" hidden></p>
+                <div class="comment-form-actions">
+                    <button type="submit" class="comment-submit">Comment</button>
+                </div>
+            </form>
+        {% else %}
+            <p class="comment-login"><a href="{{ url_for('login') }}">Log in</a> to like and comment.</p>
+        {% endif %}
+
+        <div id="commentList">
+            {% for c in comments.comments %}
+                <article class="comment-card">
+                    <div class="comment-header">
+                        <strong class="comment-author">{{ c.username }}</strong>
+                        <span class="commented-time" title="{{ c.createdAt }}">{{ c.timeAgo }}</span>
+                    </div>
+                    <p class="comment-text">{{ c.comment }}</p>
+                </article>
+            {% endfor %}
+        </div>
+
+        <p id="noComments" class="no-comments" {% if comments.comments %}hidden{% endif %}>No comments yet.</p>
+
+        {% if comments.hasMore %}
+            <button type="button" id="loadMoreComments" class="comment-more"
+                    data-url="{{ url_for('mediaPlayer.getComments', videoId=video.id) }}"
+                    data-offset="{{ comments.comments | length }}">Show more comments</button>
+        {% endif %}
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/watch.js') }}"></script>
 {% endblock %}

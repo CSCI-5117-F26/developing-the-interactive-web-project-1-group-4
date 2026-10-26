@@ -287,3 +287,132 @@
     color: #666666;
     font-size: 14px;
 }
+
+/* ===== Like button (keeps the knob look) ===== */
+.like-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform .15s, color .15s;
+}
+
+.like-button:hover {
+    transform: scale(1.1);
+}
+
+.like-button.liked {
+    color: #d64545;
+}
+
+.like-button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+/* ===== Artist picture in the round slot ===== */
+a.author-section {
+    color: inherit;
+    text-decoration: none;
+}
+
+.author-controls {
+    overflow: hidden;
+}
+
+.author-picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.author-name {
+    text-align: center;
+}
+
+/* ===== The video fills its box ===== */
+.video-container video {
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+/* ===== Recommended cards are links ===== */
+.rec-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* ===== Comment form ===== */
+.comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--tagBorderColor);
+    border-radius: 8px;
+    background: #fffef9;
+    font: inherit;
+    resize: vertical;
+}
+
+.comment-form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.comment-submit,
+.comment-more {
+    padding: 8px 18px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--menuBackgroundColor);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.comment-submit:disabled,
+.comment-more:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.comment-more {
+    display: block;
+    margin: 14px auto 0;
+}
+
+.comment-error {
+    margin: 0;
+    color: #9b4034;
+    font-size: 13px;
+}
+
+.comment-login a {
+    color: var(--menuBackgroundColor);
+    font-weight: 700;
+}
+
+/* Video description: plain text under the title */
+.video-description {
+    max-width: 900px;
+    margin: 8px 0 16px;
+    background: none;
+    color: var(--onPBC);
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-line;      /* keeps the line breaks the creator typed */
+}
