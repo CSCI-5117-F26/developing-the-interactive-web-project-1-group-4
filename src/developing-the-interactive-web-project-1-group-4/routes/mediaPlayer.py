@@ -85,7 +85,6 @@ def handleConflict(error):
 @mediaPlayer_bp.get("/watch/<int:videoId>")
 def watchVideo(videoId):
     # dummy variables
-    mode = "Playlist"
     comments = [
         {
             "author": "Taylor Slow",
@@ -104,7 +103,6 @@ def watchVideo(videoId):
     except NotFoundError:
         abort(404)
 
-    addView(videoId)
     user = currentUser()
     playlist = None
     previous_video_url = None
@@ -152,9 +150,12 @@ def watchVideo(videoId):
                 videoId=video_ids[index + 1],
                 playlist_id=playlist.id,
             )
+    mode = "Playlist" if playlist is not None else "Video"
+    addView(videoId)
     return render_template(
         "watch.html",
         mode = mode,
+        video=video,
         recommendations=fetchRecommendations(video),
         comments=fetchComments(videoId),
         playlists=fetchPlaylists(user, videoId) if user else [],
