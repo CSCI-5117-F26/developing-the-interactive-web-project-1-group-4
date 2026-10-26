@@ -10,5 +10,6 @@ mediaPlayer_bp = Blueprint("mediaPlayer", __name__)
 accountSettings_bp = Blueprint("accountSettings", __name__)
 trending_bp = Blueprint("trending", __name__)
 library_bp = Blueprint("library", __name__)
-from . import homePage, profileInput, uploadVideo, profilePage, manageVideos, subscription, mediaPlayer, accountSettings, trending, library
+activity_bp = Blueprint("activity",__name__)
+from . import homePage, profileInput, uploadVideo, profilePage, manageVideos, subscription, mediaPlayer, accountSettings, trending, library, activity
 

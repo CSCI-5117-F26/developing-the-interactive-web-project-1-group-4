@@ -62,7 +62,7 @@ def search():
 
 
 
-
+"""
 @homePage_bp.get("/activity")
 def activity():
     liked_videos = [
@@ -124,7 +124,7 @@ def activity():
     return render_template(
         "activity.html", liked_videos = liked_videos, commented_videos = commented_videos
     )
-
+"""
 # ---------------- JSON endpoints ----------------
 
 @homePage_bp.get("/api/search")
