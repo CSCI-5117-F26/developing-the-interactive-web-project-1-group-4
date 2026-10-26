@@ -38,6 +38,11 @@
     animation: tune-toast-in .25s ease-out;
 }
 
+/* Pure's .pure-g wraps its items; keep the icon, text and close button on one line */
+.tune-toast.pure-g {
+    flex-wrap: nowrap;
+}
+
 .tune-toast.is-leaving {
     opacity: 0;
     transform: translateY(-8px);
@@ -67,6 +72,7 @@
     flex: none;
     width: 26px;
     height: 26px;
+    padding: 0;
     border: 0;
     border-radius: 50%;
     background: transparent;

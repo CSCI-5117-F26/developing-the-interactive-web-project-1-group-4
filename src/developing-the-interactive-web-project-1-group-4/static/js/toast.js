@@ -43,21 +43,21 @@
         kind = kind === "error" ? "error" : "success";
 
         var el = document.createElement("div");
-        el.className = "tune-toast is-" + kind;
+        el.className = "tune-toast pure-g is-" + kind;
         el.setAttribute("role", kind === "error" ? "alert" : "status");
 
         var icon = document.createElement("span");
-        icon.className = "tune-toast-icon";
+        icon.className = "tune-toast-icon pure-u";
         icon.setAttribute("aria-hidden", "true");
         icon.textContent = kind === "error" ? "!" : "\u2713";
 
         var text = document.createElement("span");
-        text.className = "tune-toast-text";
+        text.className = "tune-toast-text pure-u-1";
         text.textContent = message;
 
         var close = document.createElement("button");
         close.type = "button";
-        close.className = "tune-toast-close";
+        close.className = "tune-toast-close pure-button pure-u";
         close.setAttribute("aria-label", "Dismiss message");
         close.textContent = "\u2715";
         close.addEventListener("click", function () { dismiss(el); });
@@ -78,6 +78,11 @@
 
     window.tuneToast = toast;
     window.tuneToastNext = toastNext;
+
+    // ---- Use Pure CSS buttons for the Add to playlist pop-up (Home + Trending) ----
+    document.querySelectorAll("#playlistChoices button, #closePlaylistDialog").forEach(function (b) {
+        b.classList.add("pure-button");
+    });
 
     // ---- 1. A message saved by the previous page ----
     try {
