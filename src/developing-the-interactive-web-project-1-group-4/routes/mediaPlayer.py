@@ -1,6 +1,7 @@
-from flask import render_template, request, jsonify, abort, session
-
+from flask import render_template, request, jsonify, abort, session,url_for, redirect
+from ..database import db
 from . import mediaPlayer_bp
+from ..models import Playlists
 from ..services import get_current_user
 from ..mediaPlayerServices import (
     NotFoundError, ValidationError, ConflictError,
@@ -90,12 +91,60 @@ def watchVideo(videoId):
 
     addView(videoId)
     user = currentUser()
+    playlist = None
+    previous_video_url = None
+    next_video_url = None
+
+    playlist_id = request.args.get("playlist_id", type=int)
+
+    if "playlist_id" in request.args:
+        if playlist_id is None:
+            abort(400, description="Invalid playlist ID.")
+
+        user = get_current_user()
+
+        if user is None:
+            return redirect(url_for("login"))
+
+        playlist = db.session.execute(
+            db.select(Playlists).where(
+                Playlists.id == playlist_id,
+                Playlists.ti_user == user.ti_user_id,
+            )
+        ).scalar_one_or_none()
+
+        if playlist is None:
+            abort(404, description="Playlist not found.")
+
+        ordered_videos = sorted(playlist.videos, key=lambda video: video.id)
+        video_ids = [video.id for video in ordered_videos]
+
+        if videoId not in video_ids:
+            abort(404, description="Video not found in this playlist.")
+
+        index = video_ids.index(videoId)
+
+        if index > 0:
+            previous_video_url = url_for(
+                "mediaPlayer.watchVideo",
+                videoId=video_ids[index - 1],
+                playlist_id=playlist.id,
+            )
+
+        if index < len(video_ids) - 1:
+            next_video_url = url_for(
+                "mediaPlayer.watchVideo",
+                videoId=video_ids[index + 1],
+                playlist_id=playlist.id,
+            )
     return render_template(
         "watch.html",
         video=videoDetails(video, user),
         recommendations=recommendations,
         comments=fetchComments(videoId),
-        playlists=fetchPlaylists(user, videoId) if user else [],
+        playlist=playlist,
+        previous_video_url=previous_video_url,
+        next_video_url=next_video_url,
         loggedIn=user is not None,
     )
 

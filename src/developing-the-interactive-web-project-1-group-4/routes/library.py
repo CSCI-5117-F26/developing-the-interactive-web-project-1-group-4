@@ -2,7 +2,7 @@ from flask import render_template, request, jsonify, url_for, redirect, abort
 from ..models import Playlists, videos
 from . import library_bp
 from ..services import (
-    fetchVideos, fetchGenres, fetchArtistVideos, searchAll, text_wrap,
+    fetchVideos, fetchGenres, fetchArtistVideos, searchAll, text_wrap,mediaURL,
     SEARCH_PREVIEW_LIMIT, SEARCH_PAGE_LIMIT, get_current_user
 )
 from ..database import db
@@ -189,3 +189,32 @@ def create_playlist():
         raise
 
     return redirect(url_for("library.library"), code=303)
+
+
+@library_bp.get("/playlists/<int:playlist_id>/play")
+def play_playlist(playlist_id):
+    user = get_current_user()
+
+    if user is None:
+        return redirect(url_for("login"))
+
+    playlist = db.session.execute(
+        db.select(Playlists).where(
+            Playlists.id == playlist_id,
+            Playlists.ti_user == user.ti_user_id,
+        )
+    ).scalar_one_or_none()
+
+    if playlist is None:
+        abort(404, description="Playlist not found.")
+
+    ordered_videos = sorted(playlist.videos, key=lambda video: video.id)
+
+    if not ordered_videos:
+        return redirect(url_for("library.library"))
+
+    return redirect(url_for(
+        "mediaPlayer.watchVideo",
+        videoId=ordered_videos[0].id,
+        playlist_id=playlist.id,
+    ))
