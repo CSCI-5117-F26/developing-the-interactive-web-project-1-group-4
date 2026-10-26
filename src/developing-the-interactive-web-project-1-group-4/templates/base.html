@@ -9,6 +9,8 @@
           href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet"
         href="{{ url_for('static', filename='css/main-style.css') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/feedback.css') }}">
 </head>
 <body>
     {% block sidebar %}
@@ -18,5 +20,7 @@
     <main class="main-page-colors">
         {% block content %}{% endblock %}
     </main>
+
+    <script src="{{ url_for('static', filename='js/toast.js') }}"></script>
 </body>
 </html>
