@@ -3,7 +3,7 @@ from flask import render_template, jsonify, abort
 from . import trending_bp
 from ..services import (
     fetchTrendingVideos, fetchGenreCards, fetchTrendingArtists,
-    getGenre, fetchGenreVideos,
+    getGenre, fetchGenreVideos,get_current_user
 )
 
 
@@ -11,12 +11,14 @@ from ..services import (
 
 @trending_bp.get("/trending")
 def trending():
+    user = get_current_user()
     return render_template(
         "trending.html",
         q="",
         trendingVideos=fetchTrendingVideos(),
         genres=fetchGenreCards(),
         artists=fetchTrendingArtists(),
+        playlists=user.playlists if user else [],
     )
 
 
