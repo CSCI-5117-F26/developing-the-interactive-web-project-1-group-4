@@ -703,3 +703,45 @@ def apply_draft_form(draft):
     )
     draft.thumbnail_key = thumbnail_key
     draft.genres = genres
+
+def create_default_playlists(user_id):
+    titles = ("Watch Later", "Saved Videos")
+
+    existing = db.session.execute(
+        db.select(Playlists).where(
+            Playlists.ti_user == user_id,
+            Playlists.title.in_(titles),
+        )
+    ).scalars().all()
+
+    playlists_by_title = {
+        playlist.title: playlist for playlist in existing
+    }
+
+    try:
+        for title in titles:
+            if title not in playlists_by_title:
+                playlist = Playlists(
+                    ti_user=user_id,
+                    title=title,
+                )
+                db.session.add(playlist)
+                playlists_by_title[title] = playlist
+
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+    return playlists_by_title
+
+def create_default_playlists_for_all_users():
+    user_ids = db.session.scalars(
+        db.select(Ti_user.ti_user_id)
+    ).all()
+
+    for user_id in user_ids:
+        create_default_playlists(user_id)
+
+    return len(user_ids)
+

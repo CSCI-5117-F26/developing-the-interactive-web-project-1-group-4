@@ -9,5 +9,6 @@ subscription_bp = Blueprint("subscription", __name__)
 mediaPlayer_bp = Blueprint("mediaPlayer", __name__)
 accountSettings_bp = Blueprint("accountSettings", __name__)
 trending_bp = Blueprint("trending", __name__)
-from . import homePage, profileInput, uploadVideo, profilePage, manageVideos, subscription, mediaPlayer, accountSettings, trending
+library_bp = Blueprint("library", __name__)
+from . import homePage, profileInput, uploadVideo, profilePage, manageVideos, subscription, mediaPlayer, accountSettings, trending, library
 

@@ -37,15 +37,18 @@
         </div>
 
         {% if profile.bio %}
-            <p class="pf-bio">{{ profile.bio }}</p>
+        <div class="pf-bio-wrap">
+            <p class="pf-bio-title">BIO</p>
+            <p class="pf-bio-text">{{ profile.bio }}</p>
+        </div>
         {% endif %}
 
-        
+        {% if profile.contact_me %}
         <div class="pf-contact">
-            <p class="pf-bio">Contact Me</p>
-                <p>{{ profile.contact_me }}</p>
+            <p class="pf-contact-title">CONTACT ME</p>
+            <p>{{ profile.contact_me }}</p>
         </div>
-        
+        {% endif %}
 
         <div class="pf-action">
             {% if is_own %}

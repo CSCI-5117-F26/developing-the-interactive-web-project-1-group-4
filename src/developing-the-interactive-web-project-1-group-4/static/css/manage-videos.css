@@ -498,3 +498,30 @@ main:has(.mv-page) {
 a.mv-btn {
     text-decoration: none;
 }
+/* ---------- Upload page: use the full width, no empty space on the right ---------- */
+@media (min-width: 1101px) {
+    .creator-page {
+        padding: 28px 48px 30px;
+    }
+
+    .creator-upload-grid > .creator-panel {
+        grid-column: span 3;
+    }
+
+    .creator-upload-grid > .creator-details-panel {
+        grid-column: span 6;
+    }
+
+    .creator-upload-grid > .creator-panel:nth-child(2) {
+        border-right: 0;
+    }
+}
+
+/* Space between the search bar and the page heading (Manage Videos + Upload) */
+.mv-page > .search-bar-container + .mv-head {
+    margin-top: 22px;
+}
+
+.creator-page > .search-bar-container + .creator-heading {
+    margin-top: 22px;
+}

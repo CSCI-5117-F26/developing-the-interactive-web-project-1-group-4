@@ -625,4 +625,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+/* ---------- Center the search bar and the genre filters on every page ---------- */
+.search-bar-container .search-bar {
+    margin: .5rem auto;
+}
+
+main .tag-scroller {
+    margin: 0 auto 2%;
 }
