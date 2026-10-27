@@ -1,0 +1,72 @@
+/* Library page: playlists, saved videos and watch later scroll sideways with
+   arrow buttons on both sides (same arrows as the Trending page). */
+
+/* Playlists title with the "+ New playlist" button beside it */
+.lib-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 0 0 12px;
+}
+
+.lib-head h2 {
+    margin: 0;
+}
+
+/* Arrows on either side of a row */
+.lib-carousel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.lib-carousel .carousel-track {
+    flex: 1;
+    min-width: 0;                       /* lets the row shrink so it can scroll */
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+
+.lib-carousel .carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.lib-carousel .carousel-arrow {
+    display: grid;
+    flex: none;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    place-items: center;
+    border: 2px solid var(--tagBorderColor);
+    border-radius: 50%;
+    background: var(--tagBackgroundColor);
+    color: var(--onTBC);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.lib-carousel .carousel-arrow:hover:not(:disabled) {
+    background: var(--menuBackgroundColor);
+    color: var(--onMBC);
+}
+
+.lib-carousel .carousel-arrow:disabled {
+    opacity: .35;
+    cursor: default;
+}
+
+/* Playlists: one row of 4 visible at a time, swipe for the rest */
+.lib-carousel .playlist-row {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 84px) / 4);   /* 3 gaps of 28px */
+    padding: 10px 6px;                            /* room for the hover zoom */
+    scroll-snap-type: x proximity;
+}
+
+.lib-carousel .playlist-card {
+    scroll-snap-align: start;
+}
