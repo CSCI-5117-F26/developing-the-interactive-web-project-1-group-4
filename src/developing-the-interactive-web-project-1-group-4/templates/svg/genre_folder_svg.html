@@ -15,7 +15,7 @@
 {% set lines = video.title_lines or [video.title] %}
 {% set longest = lines|map('length')|max %}
 {% set fs = 26 if longest <= 10 else (21 if longest <= 16 else 17) %}
-<text text-anchor="middle" font-family="inherit" font-weight="700" font-size="{{ fs }}" fill="fcfcee">
+<text text-anchor="middle" font-family="inherit" font-weight="700" font-size="{{ fs }}" fill="#fcfcee">
 {% for line in lines[:2] %}<tspan x="135.5" y="{{ 100 - ((lines[:2]|length - 1) * (fs * 0.6)) + loop.index0 * (fs * 1.2) }}">{{ line }}</tspan>{% endfor %}
 </text>
 <defs>
