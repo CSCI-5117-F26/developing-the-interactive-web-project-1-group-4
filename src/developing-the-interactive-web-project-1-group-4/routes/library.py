@@ -191,6 +191,10 @@ def create_playlist():
         db.session.rollback()
         raise
 
+    # The Add to playlist pop-up creates a playlist with fetch() and needs its id back.
+    if request.headers.get("X-Requested-With") == "fetch":
+        return jsonify(id=playlist.id, title=playlist.title), 201
+
     return redirect(url_for("library.library"), code=303)
 
 

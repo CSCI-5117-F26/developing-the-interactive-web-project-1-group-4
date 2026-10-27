@@ -123,6 +123,8 @@
         {% endfor %}
     </div>
 
+    {% include "playlistCreate.html" %}
+
     <p id="playlistMessage" role="status"></p>
     <button type="button" id="closePlaylistDialog">Cancel</button>
 </dialog>
@@ -131,6 +133,7 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<script src="{{ url_for('static', filename='js/playlistCreate.js') }}"></script>
 <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 <script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
 {% endblock %}
