@@ -1,0 +1,47 @@
+/* One video card size on every page: the Trending card (300px wide).
+   Loaded last (end of base.html), so it only sets the width/layout.
+   Change --vcard-w to resize every video card on the site at once. */
+:root { --vcard-w: 300px; }
+
+/* every card is exactly the same width */
+.mv-card {
+    box-sizing: border-box;
+    width: var(--vcard-w);
+    max-width: 100%;
+}
+
+/* Grids (Home, Search, Genre): fixed-width columns, left aligned */
+.mv-grid {
+    grid-template-columns: repeat(auto-fill, var(--vcard-w));
+    justify-content: start;
+}
+
+/* Pure grids (Manage Videos, Profile, Subscriptions, Upload): each cell is one card + 14px each side */
+.mv-grid-pure > .mv-cell {
+    flex: 0 0 calc(var(--vcard-w) + 28px);
+    width: calc(var(--vcard-w) + 28px);
+    max-width: 100%;
+}
+
+/* Rows with arrows (Library, Activity): fixed-width cards, scroll sideways */
+.lib-carousel .saved-row,
+.lib-carousel .playlist-row {
+    grid-auto-columns: var(--vcard-w);
+}
+
+/* Library / Activity had an extra author + "Viewed ... ago" line that made their
+   cards taller than the Trending card; hidden so every card has the same height.
+   (Delete this rule to show that line again.) */
+.mv-card .video-info {
+    display: none;
+}
+
+/* Trending carousel */
+#trendingVideos .carousel-item {
+    flex: 0 0 var(--vcard-w);
+    width: var(--vcard-w);
+}
+
+/* Same artwork box inside every card */
+.mv-art { width: auto; max-width: none; }
+.mv-thumb { aspect-ratio: 1 / 1; }
