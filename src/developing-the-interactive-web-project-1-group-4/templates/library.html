@@ -30,8 +30,13 @@
                 <div class="playlist-title">
                     {{playlist.title}}
                 </div>
-                <div class="playlist-count">
-                    {{ playlist.videos|length }} video{{ '' if playlist.videos|length == 1 else 's' }}
+                                <div class="playlist-count">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 6h12M3 12h12M3 18h7"/>
+                        <path d="M16 14l6 4-6 4z"/>
+                    </svg>
+                    <span>{{ playlist.videos|length }} video{{ '' if playlist.videos|length == 1 else 's' }}</span>
                 </div>
                 <!-- videos in this playlist, read by playlistPopup.js -->
                 <template class="playlist-videos">
