@@ -44,6 +44,25 @@ app.register_blueprint(library_bp)
 app.register_blueprint(activity_bp)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["Database_url"]
 db.init_app(app)
+@app.context_processor
+def inject_nav_user():
+    # Gives every template `nav_user` for the top-right avatar (None when logged out).
+    try:
+        user = get_current_user()
+        if user is None:
+            return {"nav_user": None}
+        name = user.username or ""
+        return {"nav_user": {
+            "username": name,
+            "initial": name[:1].upper() or "?",
+            "picture": mediaURL(user.Profile_picture_key),
+        }}
+    except Exception:
+        return {"nav_user": None}
+
+with app.app_context():
+    db.create_all()
+    ...
 with app.app_context():
     db.create_all()
     inspector = inspect(db.engine)

@@ -1,6 +1,6 @@
 {% set currentPage = request.endpoint or "" %}
 <aside class="sidebar">
-    <a class="sidebar-logo" href="/">Tune In</a>
+            <a class="sidebar-logo" href="/"><img class="sidebar-logo-img" src="{{ url_for('static', filename='images/logo-note.png') }}" alt=""><span>Tune In</span></a>
 
     <nav class="sidebar-nav">
         <a href="/" class="sidebar-link" id="homeMenuOption"><span>⌂</span> Home</a>
