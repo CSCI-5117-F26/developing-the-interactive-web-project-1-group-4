@@ -27,11 +27,13 @@ def genrePage(genreName):
     genre = getGenre(genreName)
     if genre is None:
         abort(404)
+    user = get_current_user()
     return render_template(
         "genre.html",
         q="",
         genreName=genre.name,
         videos=fetchGenreVideos(genre.name),
+        playlists=user.playlists if user else [],
     )
 
 
