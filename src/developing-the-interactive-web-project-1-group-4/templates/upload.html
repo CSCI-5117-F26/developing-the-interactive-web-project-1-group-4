@@ -30,7 +30,7 @@
             </section>
 
             <section class="creator-panel pure-u-1 pure-u-md-1-2">
-                <h2>2. Upload Thumbnail <span class="required">*</span></h2>
+                <h2>2. Upload Thumbnail <span>(optional)</span></h2>
                 <p>Choose the cover image viewers will see.</p>
                 <label class="creator-dropzone">
                     <span class="creator-upload-icon">▧</span>
@@ -527,13 +527,6 @@ document.getElementById("video-title").addEventListener("input", event => {
 
     // All remaining fields are optional for drafts.
     if (isDraft) return;
-
-    if (!document.getElementById("thumbnail-key").value.trim()) {
-        event.preventDefault();
-        document.getElementById("upload-status-thumbnail").textContent =
-            "Please upload a thumbnail before publishing.";
-        return;
-    }
 
     for (const id of ["video-title", "video-description"]) {
         const field = document.getElementById(id);

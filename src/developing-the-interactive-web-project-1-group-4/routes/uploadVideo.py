@@ -104,8 +104,8 @@ def publish():
     data = get_upload_form_data()
 
     required = (
-        "video_key", "thumbnail_key", "title",
-        "description", "genres", "video_type", "language",
+        "video_key", "title", "description",
+        "genres", "video_type", "language",
     )
     missing = [field for field in required if not data[field]]
 
@@ -128,7 +128,7 @@ def publish():
         genres=data["genres"],
         video_key=data["video_key"],
         language=data["language"],
-        original=request.form.get("original", "false").lower() == "true"
+        original=data["video_type"] == "original",
     )
 
     # Save the published video here.
@@ -215,15 +215,14 @@ def publish_draft():
 
         if (
             not draft.video_key
-            or not draft.thumbnail_key
             or not draft.description
             or not draft.genres
             or not draft.language
             or draft.Original is None
         ):
             raise ValueError(
-                "Publishing requires a video, thumbnail, title, "
-                "description, genre, Original/Cover selection and language."
+                "Publishing requires a video, title, description, genre, "
+                "Original/Cover selection and language."
             )
 
         create_video_helper(
