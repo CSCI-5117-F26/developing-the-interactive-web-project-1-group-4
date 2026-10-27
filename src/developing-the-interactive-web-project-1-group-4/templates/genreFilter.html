@@ -2,7 +2,6 @@
    then a "+N more" button that opens a panel with every genre.
    items = list of {name, url, active}. #}
 {% macro genreFilter(items) %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/genre-filter.css') }}">
 <div class="genre-filter" data-genre-filter>
     <div class="gf-bar">
         {% for item in items %}
