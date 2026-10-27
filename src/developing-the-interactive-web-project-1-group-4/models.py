@@ -99,7 +99,7 @@ class videos(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     ti_user: Mapped[int] = mapped_column(ForeignKey('ti_user.ti_user_id',ondelete='CASCADE'), nullable=False)
     uploader = relationship("Ti_user", back_populates="videos")
-    thumbnail_key: Mapped[str] = mapped_column(String(200), nullable=False)
+    thumbnail_key: Mapped[str | None] = mapped_column(String(200), nullable=True)
     duration: Mapped[int] = mapped_column(Integer, nullable=False)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     description: Mapped[str] = mapped_column(String(10000), nullable=True)
