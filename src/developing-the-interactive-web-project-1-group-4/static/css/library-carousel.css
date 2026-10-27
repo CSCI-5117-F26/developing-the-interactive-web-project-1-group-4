@@ -91,6 +91,37 @@
     margin: 0 auto;
 }
 
+/* Title and video count start exactly where the picture starts (left edge) */
+.lib-carousel .playlist-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lib-carousel .playlist-title,
+.lib-carousel .playlist-count {
+    box-sizing: border-box;
+    width: 230px;                                 /* same width as the picture */
+    max-width: 100%;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lib-carousel .playlist-title {
+    margin-top: 10px;
+    color: #1f2a16;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.lib-carousel .playlist-count {
+    margin-top: 2px;
+    color: #77796e;
+    font-size: 12px;
+}
+
 .lib-carousel .playlist-card:hover {
     transform: translateY(-3px);                  /* lift instead of zoom, so nothing is clipped */
 }
