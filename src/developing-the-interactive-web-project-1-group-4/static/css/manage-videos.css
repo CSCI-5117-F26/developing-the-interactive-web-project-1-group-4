@@ -98,8 +98,8 @@ main:has(.mv-page) {
 
 .mv-vinyl {
     position: absolute;
-    top: 20%;
-    left: 69%;
+    top: 14%;
+    left: 67%;
     width: 150px;
     aspect-ratio: 1;
     transform: translateX(-50%);
