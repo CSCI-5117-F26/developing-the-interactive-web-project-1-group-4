@@ -33,6 +33,7 @@ def library():
         playlists=playlists,
         saved_videos=saved_videos,
         watchlater=watchlater,
+        mediaURL=mediaURL,
     )
 
 @library_bp.post("/add-to-watch-later")

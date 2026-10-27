@@ -32,7 +32,7 @@
                         data-artist="{{ video.artist or (video.uploader.username if video.uploader else '') }}"
                         data-duration-text="{{ video.duration_text }}"
                         data-seconds="{{ video.duration }}"
-                        data-thumb="{{ video.thumbnail_url }}"
+                        data-thumb="{{ mediaURL(video.thumbnail_key) or '' }}"
                         data-src="{{ video.video_url }}"></li>
                     {% endfor %}
                 </template>
@@ -59,8 +59,9 @@
                 <div class="mv-art vinyl-art">
                     <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
                                     <div class="mv-thumb">
-                        {% if video.thumbnail_url %}
-                                                    <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                        {% set thumbnail_url = mediaURL(video.thumbnail_key) %}
+                        {% if thumbnail_url %}
+                                                    <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
                                 class="{{ 'is-default' if video.is_default else '' }}"
                                 {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
                                 data-fallback="{{ default_thumbnail_url or '' }}"
@@ -103,8 +104,9 @@
                     <div class="mv-art vinyl-art">
                         <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
                                         <div class="mv-thumb">
-                            {% if video.thumbnail_url %}
-                                                        <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                            {% set thumbnail_url = mediaURL(video.thumbnail_key) %}
+                            {% if thumbnail_url %}
+                                                        <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
                                     class="{{ 'is-default' if video.is_default else '' }}"
                                     {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
                                     data-fallback="{{ default_thumbnail_url or '' }}"
