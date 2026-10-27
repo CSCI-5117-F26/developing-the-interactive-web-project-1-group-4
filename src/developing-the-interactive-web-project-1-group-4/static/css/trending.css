@@ -167,11 +167,35 @@
     object-fit: cover;
     display: block;
 }
+
+#trendingVideosTitle {
+    display: inline-block;
+    background-image: linear-gradient(90deg,
+    #60421F 0%,
+    #C05A24 30%,
+    #7A2948 50%,
+    #C05A24 70%,
+    #60421F 100%
+    );  
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer-sweep 2s linear infinite;
+
+}
+
+@keyframes shimmer-sweep {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
 /* Only the Trending videos carousel */
 #trendingVideos .carousel-item {
     flex: 0 0 300px;
     width: 300px;
     min-width: 0;
+    text-align: center;
 }
 
 #trendingVideos .mv-card {
@@ -195,4 +219,14 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.carousel-meta a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.carousel-meta a:hover,
+.carousel-meta a:focus-visible {
+    text-decoration: underline;
 }

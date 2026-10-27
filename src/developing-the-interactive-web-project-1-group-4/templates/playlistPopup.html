@@ -37,5 +37,17 @@
         </svg>
         Play
     </button>
+
+    <button type="button" class="pure-button pl-btn pl-btn-danger" id="plDelete">
+        Delete playlist
+    </button>
+</div>
+
+<div class="pl-confirm" id="plConfirm" role="alertdialog" aria-labelledby="plConfirmText" hidden>
+    <p id="plConfirmText">Delete this playlist? The videos stay on Tune In. This can't be undone.</p>
+    <div class="pl-confirm-actions">
+        <button type="button" class="pure-button pl-btn" id="plConfirmNo">Cancel</button>
+        <button type="button" class="pure-button pl-btn pl-btn-danger-solid" id="plConfirmYes">Delete</button>
+    </div>
 </div>
 </dialog>

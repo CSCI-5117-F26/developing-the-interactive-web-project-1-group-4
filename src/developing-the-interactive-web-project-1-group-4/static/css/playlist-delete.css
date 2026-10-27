@@ -1,0 +1,45 @@
+/* Delete playlist button + confirmation inside the playlist pop-up */
+.pl-btn-danger {
+    background: #f3e3df;
+    color: #9b4034;
+}
+
+.pl-btn-danger:hover:not(:disabled) {
+    background: #ecd0ca;
+}
+
+.pl-btn-danger-solid {
+    background: #9b4034;
+    color: #fff;
+}
+
+.pl-btn-danger-solid:hover:not(:disabled) {
+    background: #7f3329;
+}
+
+.pl-confirm {
+    padding: 14px 24px 18px;
+    border-top: 1px solid #e3c9c3;
+    background: #fbeeea;
+    text-align: center;
+}
+
+.pl-confirm[hidden] {
+    display: none;
+}
+
+.pl-confirm p {
+    margin: 0 0 10px;
+    color: #6d2c22;
+    font-size: 14px;
+}
+
+.pl-confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pl-btn[hidden] {
+    display: none;
+}

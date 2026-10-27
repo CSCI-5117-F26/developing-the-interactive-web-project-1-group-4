@@ -63,6 +63,7 @@
                 <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll your comments left">‹</button>
         <div class="carousel-track saved-row">
             {% for video in commented_videos %}
+            <div class="act-item">
             <article class="mv-card saved-vid-card"
                         data-title="{{ video.title }}"
                         data-watch-url="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}"
@@ -96,6 +97,8 @@
                     {{ videoStats(video) }}
                 </div>
 
+                </article>
+
                 <div class="comment-container">
                     {% for comment in video.comments %}
                     <div class="mv-comment">
@@ -108,8 +111,7 @@
                     </div>
                     {% endfor %}
                 </div>
-
-                </article>
+            </div>
             {% endfor %}
         </div>
          <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll your comments right">›</button>

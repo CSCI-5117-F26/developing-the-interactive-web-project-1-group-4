@@ -71,7 +71,12 @@
         <!-- ===== Middle: the player ===== -->
         <div class="record-player-section">
             <div class="video-container">
+                <p id="autoplayMessage" role="status" hidden>
+                    Your browser blocked autoplay. Press Play to start this video.
+                </p>
+
                 <video id="mainVideo" controls playsinline preload="metadata"
+                    {% if autoplay %}autoplay{% endif %}
                     src="{{ video.videoURL }}" poster="{{ video.cover }}">
                     Your browser can't play this video.
                 </video>
@@ -84,7 +89,9 @@
     <div class="recommended-section">
         {% if mode == 'Playlist' %}
             <div class="playlist-row">
-                <h2 class="recommended-title local-title">Playlist</h2>
+                <h2 class="recommended-title local-title">
+                    {{ 'Next Playing' if mode == 'Playlist' else 'Recommended' }}
+                </h2>
                 <div class="playlist-button-row">
                     {% if previous_video_url %}<a href="{{ previous_video_url }}" class="prev" aria-label="Previous video">&#9664;</a>{% endif %}
                     {% if next_video_url %}<a href="{{ next_video_url }}" class="next" aria-label="Next video">&#9654;</a>{% endif %}

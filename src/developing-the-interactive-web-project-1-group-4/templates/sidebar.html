@@ -53,34 +53,53 @@
 </aside>
 
 <script>
+(() => {
     const path = window.location.pathname;
-    let activeId = "homeMenuOption";
+    const originKey = "tuneIn.watchOriginNav";
+    const isWatchPage = (pathname) => pathname.startsWith("/watch/");
 
-    if (path.includes("new-video")) {
-        activeId = "uploadMenuOption";
-            } else if (path.includes("manage-videos")) {
-        activeId = "manageVideosMenuOption";
-            } else if (path === "/profile") {
-        activeId = "profileMenuOption";
-            } else if (path === "/subscriptions") {
-        activeId = "subscriptionsMenuOption";
-            } else if (path === "/trending" || path.startsWith("/genre")) {
-        activeId = "trendingMenuOption";
-    } else if (path.includes("account-settings")) {
-        activeId = "accountSettingsMenuOption";
-    } else if (path.includes("library")){
-        activeId="libraryMenuOption"
-    } else if (path.includes("activity")){
-        activeId="activityMenuOption"
+    function navForPath(pathname) {
+        if (pathname.includes("new-video")) return "uploadMenuOption";
+        if (pathname.includes("manage-videos")) return "manageVideosMenuOption";
+        if (pathname === "/subscriptions") return "subscriptionsMenuOption";
+        if (pathname === "/trending" || pathname.startsWith("/genre")) {
+            return "trendingMenuOption";
+        }
+        if (pathname.includes("account-settings")) return "accountSettingsMenuOption";
+        if (pathname.includes("library")) return "libraryMenuOption";
+        if (pathname.includes("activity")) return "activityMenuOption";
+        if (pathname === "/profile") return "profileMenuOption";
+
+        // Home is also the sidebar category for search and other pages
+        // that don't have a dedicated sidebar item.
+        return "homeMenuOption";
     }
 
-    document.querySelectorAll(".sidebar-link").forEach(link => {
+    let activeId;
+
+    if (isWatchPage(path)) {
+        const referrer = document.referrer ? new URL(document.referrer) : null;
+
+        if (
+            referrer &&
+            referrer.origin === window.location.origin &&
+            !isWatchPage(referrer.pathname)
+        ) {
+            activeId = navForPath(referrer.pathname);
+            sessionStorage.setItem(originKey, activeId);
+        } else {
+            // Keep the original section while moving between video pages.
+            activeId = sessionStorage.getItem(originKey) || "homeMenuOption";
+        }
+    } else {
+        activeId = navForPath(path);
+        sessionStorage.setItem(originKey, activeId);
+    }
+
+    document.querySelectorAll(".sidebar-link").forEach((link) => {
         link.classList.remove("active");
     });
 
-    const activeLink = document.getElementById(activeId);
-
-    if (activeLink) {
-        activeLink.classList.add("active");
-    }
+    document.getElementById(activeId)?.classList.add("active");
+})();
 </script>

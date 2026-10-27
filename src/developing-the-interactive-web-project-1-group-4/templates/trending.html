@@ -7,6 +7,7 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/svg-style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/trending.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/trending-align.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
 
 <div class="home-placeholder trending-page">
@@ -14,9 +15,7 @@
 
     <!-- ===== Section 1: Trending videos ===== -->
     <div id="mvGrid">
-    {% call carousel("Trending", "trendingVideos") %}
-    
-        {% for video in trendingVideos %}
+        {% call carousel("Trending", "trendingVideos") %}        {% for video in trendingVideos %}
             <div class="carousel-item">
                 <article class="mv-card"
                  data-title="{{ video.title }}"
@@ -70,7 +69,16 @@
 </a>
 
         </article>
-                <p class="carousel-meta">{{ video.artist }}</p>
+                <p class="carousel-meta">
+                    {% if video.artist %}
+                        <a href="{{ url_for('profilePage.profile_page', username=video.artist) }}"
+                        aria-label="View {{ video.artist }}'s profile">
+                            {{ video.artist }}
+                        </a>
+                    {% else %}
+                        Unknown artist
+                    {% endif %}
+                </p>
             </div>
         {% else %}
             <p class="carousel-empty">No videos yet.</p>
@@ -98,8 +106,13 @@
     {% call carousel("Trending Artists", "artistCarousel") %}
         {% for artist in artists %}
             <a class="carousel-item artist-tile" href="{{ artist.url }}" title="{{ artist.displayName }}">
-                <img class="artist-avatar" src="{{ artist.picture }}" alt="{{ artist.displayName }}"
-                    onerror="this.onerror=null; this.src='{{ artist.fallbackPicture }}';">
+                {% if artist.picture and artist.picture != artist.fallbackPicture %}
+                    <img class="artist-avatar" src="{{ artist.picture }}" alt="{{ artist.displayName }}"
+                        onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                    <span class="artist-avatar artist-initial" aria-hidden="true" hidden>{{ (artist.username or "?")[:1]|upper }}</span>
+                {% else %}
+                    <span class="artist-avatar artist-initial" aria-hidden="true">{{ (artist.username or "?")[:1]|upper }}</span>
+                {% endif %}
                 <strong>{{ artist.displayName }}</strong>
                 <span>@{{ artist.username }}</span>
                 <small>{{ artist.totalViews }} views · {{ artist.videoCount }} video{{ "" if artist.videoCount == 1 else "s" }}</small>
