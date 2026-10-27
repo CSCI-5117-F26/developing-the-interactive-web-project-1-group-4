@@ -42,13 +42,18 @@
                 </div>
                 <!-- videos in this playlist, read by playlistPopup.js -->
                 <template class="playlist-videos">
-                    {% for video in playlist.videos %}
+                    {% for video in playlist.videos|sort(attribute='id') %}
                     <li data-title="{{ video.title }}"
                         data-artist="{{ video.artist or (video.uploader.username if video.uploader else '') }}"
                         data-duration-text="{{ video.duration_text }}"
                         data-seconds="{{ video.duration }}"
                         data-thumb="{{ mediaURL(video.thumbnail_key) or default_thumbnail_url or '' }}"
-                        data-src="{{ video.video_url }}"></li>
+                        data-src="{{ video.video_url }}"
+                        data-play-url="{{ url_for(
+                            'library.play_playlist',
+                            playlist_id=playlist.id,
+                            video_id=video.id
+                        ) }}"></li>
                     {% endfor %}
                 </template>
             </button>

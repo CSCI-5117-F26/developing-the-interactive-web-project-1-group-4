@@ -36,7 +36,8 @@
                 artist: li.dataset.artist || "",
                 duration: li.dataset.durationText || (seconds ? fmt(seconds) : ""),
                 seconds,
-                thumb: li.dataset.thumb || ""
+                thumb: li.dataset.thumb || "",
+                playUrl: li.dataset.playUrl || ""
             };
         });
     }
@@ -46,6 +47,10 @@
 
         tracks.forEach((track, index) => {
             const item = document.createElement("li");
+            item.dataset.playUrl = track.playUrl;
+            item.tabIndex = 0;
+            item.setAttribute("role", "link");
+            item.setAttribute("aria-label", `Play ${track.title}`);
 
             const row = document.createElement("div");
             row.className = "pl-row";
@@ -85,6 +90,21 @@
             listEl.appendChild(item);
         });
     }
+
+    function openTrack(event) {
+        const item = event.target.closest("#plList li[data-play-url]");
+        if (!item || !item.dataset.playUrl) return;
+
+        if (event.type === "keydown") {
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+        }
+
+        window.location.assign(item.dataset.playUrl);
+    }
+
+    listEl.addEventListener("click", openTrack);
+    listEl.addEventListener("keydown", openTrack);
 
     document.querySelectorAll(".playlist-open").forEach(card => {
         card.addEventListener("click", () => {

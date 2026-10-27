@@ -2,7 +2,7 @@ from flask import render_template, request, jsonify, abort, session,url_for, red
 from ..database import db
 from . import mediaPlayer_bp
 from ..models import Playlists
-from ..services import get_current_user
+from ..services import get_current_user, videoCard, addStats
 from ..mediaPlayerServices import (
     NotFoundError, ValidationError, ConflictError, ForbiddenError,
     getVideo, addView, videoDetails, fetchRecommendations,
@@ -64,6 +64,7 @@ def watchVideo(videoId):
 
     user = currentUser()
     playlist = None
+    next_playing = []
     previous_video_url = None
     next_video_url = None
 
@@ -84,27 +85,56 @@ def watchVideo(videoId):
         if playlist is None:
             abort(404, description="Playlist not found.")
 
-        video_ids = [v.id for v in sorted(playlist.videos, key=lambda v: v.id)]
+        ordered_playlist_videos = sorted(
+            playlist.videos,
+            key=lambda video: video.id,
+        )
+        video_ids = [video.id for video in ordered_playlist_videos]
+
         if videoId not in video_ids:
             abort(404, description="Video not found in this playlist.")
 
         index = video_ids.index(videoId)
-        if index > 0:
-            previous_video_url = url_for("mediaPlayer.watchVideo",
-                                         videoId=video_ids[index - 1], playlist_id=playlist.id)
-        if index < len(video_ids) - 1:
-            next_video_url = url_for("mediaPlayer.watchVideo",
-                                     videoId=video_ids[index + 1], playlist_id=playlist.id)
 
+        next_playing = addStats([
+            videoCard(playlist_video)
+            for playlist_video in ordered_playlist_videos[index + 1:]
+        ])
+
+        for queue_video in next_playing:
+            queue_video["watchURL"] = url_for(
+                "mediaPlayer.watchVideo",
+                videoId=queue_video["id"],
+                playlist_id=playlist.id,
+                autoplay=1,
+            )
+
+        if index > 0:
+            previous_video_url = url_for(
+                "mediaPlayer.watchVideo",
+                videoId=video_ids[index - 1],
+                playlist_id=playlist.id,
+            )
+
+        if index < len(video_ids) - 1:
+            next_video_url = url_for(
+                "mediaPlayer.watchVideo",
+                videoId=video_ids[index + 1],
+                playlist_id=playlist.id,
+            )
     # Count this visit FIRST, so the number on the page includes it
     addView(videoId)
     video = getVideo(videoId)
+
+    autoplay = request.args.get("autoplay") == "1"
+    watch_list = next_playing if playlist is not None else fetchRecommendations(video)
 
     return render_template(
         "watch.html",
         mode="Playlist" if playlist is not None else "Video",
         video=videoDetails(video, user),          # page-ready data: videoURL, artist, likes, ...
-        recommendations=fetchRecommendations(video),
+        recommendations=watch_list,
+        autoplay=autoplay,
         comments=fetchComments(videoId, user),
         previous_video_url=previous_video_url,
         next_video_url=next_video_url,

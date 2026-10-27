@@ -301,8 +301,20 @@ def play_playlist(playlist_id):
     if not ordered_videos:
         return redirect(url_for("library.library"))
 
+    if "video_id" in request.args:
+        selected_video_id = request.args.get("video_id", type=int)
+
+        if selected_video_id is None:
+            abort(400, description="Invalid video ID.")
+
+        if selected_video_id not in {video.id for video in ordered_videos}:
+            abort(404, description="Video not found in this playlist.")
+    else:
+        selected_video_id = ordered_videos[0].id
+
     return redirect(url_for(
         "mediaPlayer.watchVideo",
-        videoId=ordered_videos[0].id,
+        videoId=selected_video_id,
         playlist_id=playlist.id,
+        autoplay=1,
     ))

@@ -473,3 +473,12 @@ if (description && descriptionToggle) {
         descriptionToggle.textContent = collapsed ? "Show more" : "Show less";
     });
 }
+
+const mainVideo = document.getElementById("mainVideo");
+const autoplayMessage = document.getElementById("autoplayMessage");
+
+if (mainVideo?.hasAttribute("autoplay")) {
+    mainVideo.play().catch(() => {
+        autoplayMessage.hidden = false;
+    });
+}
