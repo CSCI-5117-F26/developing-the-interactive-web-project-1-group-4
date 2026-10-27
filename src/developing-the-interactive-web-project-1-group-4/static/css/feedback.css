@@ -220,3 +220,60 @@
 #playlistDialog #closePlaylistDialog:hover {
     background: #d6ddbb;
 }
+/* ---------- Create a playlist inside the Add to playlist pop-up ---------- */
+#playlistDialog .quick-playlist {
+    margin: 0;
+    padding: 12px 24px 6px;
+    border-top: 1px solid #e3e8cf;
+}
+
+.quick-playlist label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    color: #465738;
+}
+
+.quick-playlist .qp-input {
+    padding-right: 8px;
+}
+
+.quick-playlist input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 2px solid #b7c6a4;
+    border-radius: 10px;
+    background: #fff;
+    color: #1f2a16;
+    font: inherit;
+    font-size: 14px;
+}
+
+.quick-playlist input:focus {
+    border-color: #5c724a;
+    outline: none;
+}
+
+.quick-playlist button {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: #465738;
+    color: #fcfcee;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.quick-playlist button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
