@@ -30,6 +30,9 @@
                 <div class="playlist-title">
                     {{playlist.title}}
                 </div>
+                <div class="playlist-count">
+                    {{ playlist.videos|length }} video{{ '' if playlist.videos|length == 1 else 's' }}
+                </div>
                 <!-- videos in this playlist, read by playlistPopup.js -->
                 <template class="playlist-videos">
                     {% for video in playlist.videos %}
