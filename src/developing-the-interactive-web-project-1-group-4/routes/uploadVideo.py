@@ -81,7 +81,7 @@ def save_draft():
     create_draft_helper(
         ti_user=user_id,
         thumbnail_key=thumbnail_key,
-        duration=150,
+        duration=getVideoDuration(mediaURL(video_key)),
         title=title,
         description=description,
         genres=genres,
