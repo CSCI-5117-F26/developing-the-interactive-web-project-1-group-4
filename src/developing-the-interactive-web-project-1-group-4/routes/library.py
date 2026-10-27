@@ -3,7 +3,7 @@ from ..models import Playlists, videos
 from . import library_bp
 from ..services import (
     fetchVideos, fetchGenres, fetchArtistVideos, searchAll, text_wrap,mediaURL,
-    SEARCH_PREVIEW_LIMIT, SEARCH_PAGE_LIMIT, get_current_user
+    SEARCH_PREVIEW_LIMIT, SEARCH_PAGE_LIMIT, get_current_user, defaultCoverURL
 )
 from ..database import db
 from dotenv import load_dotenv
@@ -34,6 +34,7 @@ def library():
         saved_videos=saved_videos,
         watchlater=watchlater,
         mediaURL=mediaURL,
+        default_thumbnail_url=defaultCoverURL(),
     )
 
 @library_bp.post("/add-to-watch-later")

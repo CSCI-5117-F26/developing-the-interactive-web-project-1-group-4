@@ -23,8 +23,9 @@
                 <div class="mv-art vinyl-art">
                     <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
                                     <div class="mv-thumb">
-                        {% if video.thumbnail_url %}
-                                                    <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                        {% set thumbnail_url = video.thumbnail_url or default_thumbnail_url %}
+                        {% if thumbnail_url %}
+                                                    <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
                                 class="{{ 'is-default' if video.is_default else '' }}"
                                 {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
                                 data-fallback="{{ default_thumbnail_url or '' }}"
@@ -65,8 +66,9 @@
                     <div class="mv-art vinyl-art">
                         <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
                                         <div class="mv-thumb">
-                            {% if video.thumbnail_url %}
-                                                        <img src="{{ video.thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                            {% set thumbnail_url = video.thumbnail_url or default_thumbnail_url %}
+                            {% if thumbnail_url %}
+                                                        <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
                                     class="{{ 'is-default' if video.is_default else '' }}"
                                     {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
                                     data-fallback="{{ default_thumbnail_url or '' }}"

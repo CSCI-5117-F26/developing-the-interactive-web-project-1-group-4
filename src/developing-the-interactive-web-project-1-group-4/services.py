@@ -493,7 +493,7 @@ def searchAll(q, limit):
 
 def defaultCoverURL():
     """Default thumbnail: the R2 file named in DEFAULT_THUMBNAIL_KEY (.env)."""
-    key = os.environ.get("DEFAULT_THUMBNAIL_KEY", "").strip()
+    key = os.environ["DEFAULT_THUMBNAIL_KEY"].strip()
     if key:
         return mediaURL(key)
     # Safety net if the setting is missing: the static placeholder image
@@ -774,4 +774,3 @@ def create_default_playlists_for_all_users():
         create_default_playlists(user_id)
 
     return len(user_ids)
-

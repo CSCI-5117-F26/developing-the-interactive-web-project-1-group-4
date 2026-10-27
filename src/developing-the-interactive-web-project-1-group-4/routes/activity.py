@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from .. services import mediaURL, get_current_user
+from .. services import mediaURL, get_current_user, defaultCoverURL
 from flask import Blueprint, redirect, render_template, url_for
 from sqlalchemy.orm import joinedload, selectinload
 from . import activity_bp
@@ -113,5 +113,5 @@ def activity():
         "activity.html",
         liked_videos=liked_videos,
         commented_videos=list(commented_by_id.values()),
-        default_thumbnail_url=None,
+        default_thumbnail_url=defaultCoverURL(),
     )

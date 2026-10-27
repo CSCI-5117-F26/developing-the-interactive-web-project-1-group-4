@@ -32,7 +32,7 @@
                         data-artist="{{ video.artist or (video.uploader.username if video.uploader else '') }}"
                         data-duration-text="{{ video.duration_text }}"
                         data-seconds="{{ video.duration }}"
-                        data-thumb="{{ mediaURL(video.thumbnail_key) or '' }}"
+                        data-thumb="{{ mediaURL(video.thumbnail_key) or default_thumbnail_url or '' }}"
                         data-src="{{ video.video_url }}"></li>
                     {% endfor %}
                 </template>
@@ -59,11 +59,11 @@
                 <div class="mv-art vinyl-art">
                     <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
                                     <div class="mv-thumb">
-                        {% set thumbnail_url = mediaURL(video.thumbnail_key) %}
+                        {% set thumbnail_url = mediaURL(video.thumbnail_key) or default_thumbnail_url %}
                         {% if thumbnail_url %}
                                                     <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
-                                class="{{ 'is-default' if video.is_default else '' }}"
-                                {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
+                                class="{{ 'is-default' if not video.thumbnail_key else '' }}"
+                                {% if not video.thumbnail_key %}style="object-fit: contain; background: #fff;"{% endif %}
                                 data-fallback="{{ default_thumbnail_url or '' }}"
                                 onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
                         {% else %}
@@ -104,11 +104,11 @@
                     <div class="mv-art vinyl-art">
                         <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
                                         <div class="mv-thumb">
-                            {% set thumbnail_url = mediaURL(video.thumbnail_key) %}
+                            {% set thumbnail_url = mediaURL(video.thumbnail_key) or default_thumbnail_url %}
                             {% if thumbnail_url %}
                                                         <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
-                                    class="{{ 'is-default' if video.is_default else '' }}"
-                                    {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
+                                    class="{{ 'is-default' if not video.thumbnail_key else '' }}"
+                                    {% if not video.thumbnail_key %}style="object-fit: contain; background: #fff;"{% endif %}
                                     data-fallback="{{ default_thumbnail_url or '' }}"
                                     onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
                             {% else %}

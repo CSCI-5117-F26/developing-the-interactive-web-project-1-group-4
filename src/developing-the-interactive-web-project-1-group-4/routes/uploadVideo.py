@@ -31,7 +31,7 @@ def new_video():
             "duration": draft.duration,
             "thumbnail_url": (
                 mediaURL(draft.thumbnail_key)
-                if draft.thumbnail_key else None
+                if draft.thumbnail_key else mediaURL(os.environ["DEFAULT_THUMBNAIL_KEY"])
             ),
             "language": draft.language or "",
             "video_type": (
