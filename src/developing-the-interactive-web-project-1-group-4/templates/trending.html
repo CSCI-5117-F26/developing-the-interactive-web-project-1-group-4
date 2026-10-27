@@ -69,7 +69,16 @@
 </a>
 
         </article>
-                <p class="carousel-meta">{{ video.artist }}</p>
+                <p class="carousel-meta">
+                    {% if video.artist %}
+                        <a href="{{ url_for('profilePage.profile_page', username=video.artist) }}"
+                        aria-label="View {{ video.artist }}'s profile">
+                            {{ video.artist }}
+                        </a>
+                    {% else %}
+                        Unknown artist
+                    {% endif %}
+                </p>
             </div>
         {% else %}
             <p class="carousel-empty">No videos yet.</p>
