@@ -61,7 +61,7 @@
                         data-subscribed="{{ 'true' if is_subscribed else 'false' }}"
                         data-subscribe-url="{{ url_for('subscription.subscribe') }}"
                         data-unsubscribe-url="{{ url_for('subscription.unsubscribe') }}">
-                    {{ 'Subscribed' if is_subscribed else 'Subscribe' }}
+                    {{ 'Unsubscribe' if is_subscribed else 'Subscribe' }}
                 </button>
                 <p class="mv-error" id="pfError"></p>
             {% else %}
