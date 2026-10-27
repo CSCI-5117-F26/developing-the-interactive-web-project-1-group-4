@@ -1,0 +1,26 @@
+{# Genre filter under the search bar: as many genres as fit in the search bar's width,
+   then a "+N more" button that opens a panel with every genre.
+   items = list of {name, url, active}. #}
+{% macro genreFilter(items) %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/genre-filter.css') }}">
+<div class="genre-filter" data-genre-filter>
+    <div class="gf-bar">
+        {% for item in items %}
+            <a class="gf-chip pure-button{{ ' active' if item.active }}" href="{{ item.url }}">{{ item.name }}</a>
+        {% endfor %}
+        <button type="button" class="gf-chip gf-more pure-button" aria-expanded="false" aria-controls="gfPanel" hidden>
+            +<span class="gf-count">0</span> more <span aria-hidden="true">&#9662;</span>
+        </button>
+    </div>
+
+    <div class="gf-panel" id="gfPanel" hidden>
+        <p class="gf-title">ALL GENRES</p>
+        <div class="gf-all">
+            {% for item in items %}
+                <a class="gf-chip pure-button{{ ' active' if item.active }}" href="{{ item.url }}">{{ item.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/genreFilter.js') }}"></script>
+{% endmacro %}

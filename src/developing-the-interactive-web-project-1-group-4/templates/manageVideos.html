@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "videoStats.html" import videoStats %}
+{% from "genreFilter.html" import genreFilter %}
 {% block title %}Manage Videos - Tune In{% endblock %}
 
 {% block content %}
@@ -9,21 +10,15 @@
     {% include "searchBar.html" %}
 
     <!-- genre filters (same as the home page) -->
-    <div class="tag-scroller">
-        <button type="button" class="tag-arrow tag-arrow-left" aria-label="Scroll genres left">‹</button>
-
-        <div class="tag-container">
-            {% for genre in genres %}
-                {% if genre.name == selected_genre %}
-                    <a class="tag active" href="{{ url_for('manageVideos.manage_videos') }}">{{ genre.name }}</a>
-                {% else %}
-                    <a class="tag" href="{{ url_for('manageVideos.manage_videos', genre=genre.name) }}">{{ genre.name }}</a>
-                {% endif %}
-            {% endfor %}
-        </div>
-
-        <button type="button" class="tag-arrow tag-arrow-right" aria-label="Scroll genres right">›</button>
-    </div>
+    {% set genreItems = [] %}
+    {% for genre in genres %}
+        {% set _ = genreItems.append({
+            "name": genre.name,
+            "active": genre.name == selected_genre,
+            "url": url_for('manageVideos.manage_videos') if genre.name == selected_genre else url_for('manageVideos.manage_videos', genre=genre.name)
+        }) %}
+    {% endfor %}
+    {{ genreFilter(genreItems) }}
 
     <header class="mv-head">
         <div>
