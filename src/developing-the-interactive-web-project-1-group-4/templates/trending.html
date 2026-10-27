@@ -107,7 +107,13 @@
         {% for artist in artists %}
             <a class="carousel-item artist-tile" href="{{ artist.url }}" title="{{ artist.displayName }}">
                 <img class="artist-avatar" src="{{ artist.picture }}" alt="{{ artist.displayName }}"
-                    onerror="this.onerror=null; this.src='{{ artist.fallbackPicture }}';">
+                                    {% if artist.picture and artist.picture != artist.fallbackPicture %}
+                    <img class="artist-avatar" src="{{ artist.picture }}" alt="{{ artist.displayName }}"
+                        onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                    <span class="artist-avatar artist-initial" aria-hidden="true" hidden>{{ (artist.username or "?")[:1]|upper }}</span>
+                {% else %}
+                    <span class="artist-avatar artist-initial" aria-hidden="true">{{ (artist.username or "?")[:1]|upper }}</span>
+                {% endif %}
                 <strong>{{ artist.displayName }}</strong>
                 <span>@{{ artist.username }}</span>
                 <small>{{ artist.totalViews }} views · {{ artist.videoCount }} video{{ "" if artist.videoCount == 1 else "s" }}</small>
