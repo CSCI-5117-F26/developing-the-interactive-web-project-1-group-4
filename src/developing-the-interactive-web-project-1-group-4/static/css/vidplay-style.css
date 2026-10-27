@@ -1,17 +1,31 @@
 .page-placeholder {
-    padding: 30px 60px 0px 60px;
+    padding: 30px 60px 1vw 60px;
+}
+
+.inner-page-placeholder {
+    padding: 0% 2%;
 }
 
 .video-player-row{
-    display: grid;
-    grid-template-columns: 12fr 64fr 24fr;
-    gap: 16px;
+    display: flex;
+    flex-direction: row;
+    gap: 1%;
     margin-bottom: 1%;
-    background-color: #7D4A2E;
-    /* align-items: stretch; */
-    align-items: center;
     width: 100%;
     padding: 0 1%;
+}
+
+.vinyl-player-row{
+    flex: 0 1 73%;
+    display: flex;
+    flex-direction: row;
+    background-color: #7D4A2E;
+    gap: 2%;
+    margin-bottom: 1%;
+    align-items: stretch;
+    width: 100%;
+    padding: 3% 1%;
+    box-sizing: border-box;
 }
 
 .video-title {
@@ -40,14 +54,23 @@
 }
 
 .record-player-controls {
-    height: 87%;
     background-color: #171816;
-    padding: 40% 0%;
+    display: flex;
+    flex-direction: column;
+    padding: 5% 2%;
+    flex: 0 0 12%;
+    margin-right: 1.5%;
+    height: auto;
+    align-items: center;
+    align-self: stretch;
+    box-sizing: border-box;
+    justify-content: space-between;
+    flex-wrap: nowrap;
 }
 
 .knob-controls {
-    width: 50px;
-    height: 50px;
+    width: 44px;
+    height: 44px;
     background-image: linear-gradient(135deg, rgb(255, 255, 255, 0.08), rgb(204, 204, 204, 0.4), rgb(51, 51, 51, 0.65));  
     border-radius: 50%;
     border: 3px solid white;
@@ -56,7 +79,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 3.5rem;
+    position: relative;
 }
 
 .knob-controls:hover {
@@ -84,13 +107,11 @@
 }
 
 .knob-symbol {
-    font-size: 2.5rem;
+    font-size: 2rem;
     text-align: center;
     color: white;
-}
-
-.cross-symbol {
-    padding-bottom: 27%;
+    background-color: transparent;
+    border: 0px;
 }
 
 .heart-symbol {
@@ -109,8 +130,15 @@
     border: 6px solid black;
     border-radius: 20px;
     padding: 1% 1%;
-    display: inline-flex;
+    display: flex;
     max-height: 500px;
+    flex-basis: 86%;
+
+    align-items:center;
+    gap: 1%;
+    flex: 1 1 0;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .record-player {
@@ -118,37 +146,33 @@
     width: 100%;
     min-width: 0;
     margin-right: 0%;
-    /* aspect-ratio: 966/649; */
 }
 
 .record-player-section > svg {
-    height: 90%;
+    /* height: 90%; */
     align-self: center;
-    flex-basis: 13%;
+    flex: 0 1 13%;
+    
+    width: 13%;
+    max-width: 13%;
+    height: auto;
 }
 
 .recommended-section ::-webkit-scrollbar {
-    background-color: aquamarine;
-    color: white;
     width:10px;
 }
 
-.recommended-section ::-webkit-scrollbar-thumb {
-    background-color: black;
-}
-
 .recommended-section {
+    flex-basis: 26%;
     min-width: 0;
-    height: 86%;
+    max-height: 540px;
     background-color: #171816;
     display: flex;
     flex-direction: column;
-    /* align-self: stretch;
-    box-sizing: border-box; */
     overflow: hidden;
     padding: 4px;
-    width: fit-content;
-    padding: 0% 7% 0% 2%;
+    max-width: fit-content;
+    padding: 0% 1% 0% 1%;
 }
 
 .local-card {
@@ -158,14 +182,8 @@
     margin: 0 !important;
     position: relative;
     flex: 0 0 auto; 
-    padding: 12px 64px 10px 10px !important;
+    padding: 4% 5% 4% 5% !important;    
     box-sizing: border-box;
-    /* display: grid;
-    grid-template-columns: minmax(0,1fr);
-    gap: 6px;
-    padding: 6px;
-    border-radius: 12px;
-    box-sizing: border-box; */
 }
 
 .local-dots {
@@ -174,10 +192,12 @@
 }
 
 .local-thumb {
-    display: block;
-    width: 100% !important;
-    max-width: 150px;
-    aspect-ratio: 1;
+    min-width: 68% !important;
+}
+
+.local-title {
+    font-size: 1.6vw;
+    color: var(--tagBorderColor)
 }
 
 .local-positioning {
@@ -202,8 +222,9 @@
 
 .vinyl-positioning {
     top: 13% !important;
-    left: 82% !important;
+    left: 69% !important;
     max-width: 130px !important;
+    width: 60% !important;
 }
 
 .vinyl-art-repositioning {
@@ -219,14 +240,18 @@
 
 .video-container {
     align-self: center;
-    flex-basis: 86%;
+    /* flex: 1 1 86%; */
     justify-items: center;
+    width: 100%;
+
+    flex: 1 1 0;
+    min-width: 0
 }
 
 .video-container video {
     display: block;
-    height: 100%;
-    width: 98%;
+    height: auto;
+    width: 100%;
     object-fit: contain;
     margin-top: 2%;
     background-color: black;
@@ -293,7 +318,8 @@
     padding: 0;
     border: 0;
     background: none;
-    color: inherit;
+    color: white;
+    font-size: 1.5rem !important;
     font: inherit;
     line-height: 1;
     cursor: pointer;
@@ -333,6 +359,7 @@ a.author-section {
 
 .author-name {
     text-align: center;
+    font-weight: bold;
 }
 
 /* ===== The video fills its box ===== */
@@ -407,14 +434,81 @@ a.author-section {
 }
 
 /* Video description: plain text under the title */
+/* .video-description-box {
+    background-color: var(--tagBackgroundColor);
+} */
+
+.menu-styling {
+    top: -32px !important;
+    right: -162px !important;
+}
+
 .video-description {
-    max-width: 900px;
+    max-width: 100%;
     margin: 8px 0 16px;
-    background: none;
-    color: var(--onPBC);
+    padding: 1%;
+    background-color: var(--tagBackgroundColor);
+    color: var(--onTBC);
     font-size: 14px;
-    line-height: 1.5;
+    /* line-height: 0.5; */
+    height: fit-content;
     white-space: pre-line;      /* keeps the line breaks the creator typed */
+}
+
+@media screen and (max-width: 1200px) {
+    .video-container video {
+        aspect-ratio: 9 / 9;
+    }
+
+}
+
+/* sizing for smaller screens */
+@media screen and (max-width: 980px) {
+    .video-player-row {
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+    }
+
+    .recommended-section {
+        flex-basis: 100%;
+        grid-column: 1;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        max-height: none;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow-y: scroll;
+        overflow-x: visible;
+    }
+
+    .local-card {
+        max-width: 16%;
+        padding: 2% 1% 2% 1% !important;
+    }
+
+    .recommended-scrollable {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        gap: 14px;
+
+        overflow-x: auto;
+        padding: 4px 12px 16px;
+        box-sizing: border-box;
+    }
+
+    .local-title{
+        font-size: 24px;
+    }
+}
+
+@media screen and (max-width: 840px) {
+    .record-player-section{
+        height: fit-content;
+        align-self: center;
+    }
 }
 
 /* ===== Comments with avatars, likes and replies ===== */
