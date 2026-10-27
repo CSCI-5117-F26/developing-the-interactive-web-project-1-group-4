@@ -4,10 +4,10 @@ from . import mediaPlayer_bp
 from ..models import Playlists
 from ..services import get_current_user
 from ..mediaPlayerServices import (
-    NotFoundError, ValidationError, ConflictError,
+    NotFoundError, ValidationError, ConflictError, ForbiddenError,
     getVideo, addView, videoDetails, fetchRecommendations,
     countLikes, userLikedVideo, setLike,
-    fetchComments, addComment, commentPageSize,
+    fetchComments, addComment, editComment, deleteComment, commentPageSize, changeCommentLikes,
     fetchPlaylists, createPlaylist, addVideoToPlaylist, removeVideoFromPlaylist,
 )
 
@@ -49,6 +49,9 @@ def handleValidation(error):
 def handleConflict(error):
     return jsonify(error=str(error)), 409
 
+@mediaPlayer_bp.errorhandler(ForbiddenError)
+def handleForbidden(error):
+    return jsonify(error=str(error)), 403
 
 # ---------------- Page ----------------
 
@@ -102,7 +105,7 @@ def watchVideo(videoId):
         mode="Playlist" if playlist is not None else "Video",
         video=videoDetails(video, user),          # page-ready data: videoURL, artist, likes, ...
         recommendations=fetchRecommendations(video),
-        comments=fetchComments(videoId),
+        comments=fetchComments(videoId, user),
         previous_video_url=previous_video_url,
         next_video_url=next_video_url,
         loggedIn=user is not None,
@@ -151,8 +154,7 @@ def unlikeVideo(videoId):
 def getComments(videoId):
     offset = max(0, readInt(request.args.get("offset"), 0))
     limit = min(50, max(1, readInt(request.args.get("limit"), commentPageSize)))
-    return jsonify(fetchComments(videoId, offset, limit))
-
+    return jsonify(fetchComments(videoId, currentUser(), offset, limit))
 
 @mediaPlayer_bp.post("/api/videos/<int:videoId>/comments")
 def postComment(videoId):
@@ -163,6 +165,33 @@ def postComment(videoId):
     comment = addComment(videoId, user, data.get("comment"), readInt(data.get("parentId")))
     return jsonify(comment), 201
 
+@mediaPlayer_bp.post("/api/comments/<int:commentId>/likes")
+def likeComment(commentId):
+    if currentUser() is None:
+        return loginRequired()
+    return jsonify(likes=changeCommentLikes(commentId, +1))
+
+
+@mediaPlayer_bp.delete("/api/comments/<int:commentId>/likes")
+def unlikeComment(commentId):
+    if currentUser() is None:
+        return loginRequired()
+    return jsonify(likes=changeCommentLikes(commentId, -1))
+
+@mediaPlayer_bp.patch("/api/comments/<int:commentId>")
+def updateComment(commentId):
+    user = currentUser()
+    if user is None:
+        return loginRequired()
+    return jsonify(editComment(commentId, user, readJson().get("comment")))
+
+
+@mediaPlayer_bp.delete("/api/comments/<int:commentId>")
+def removeComment(commentId):
+    user = currentUser()
+    if user is None:
+        return loginRequired()
+    return jsonify(deleted=deleteComment(commentId, user))
 
 # ---------------- Playlists ----------------
 """

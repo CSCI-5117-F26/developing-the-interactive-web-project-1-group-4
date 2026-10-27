@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "videoStats.html" import videoStats %}
-
+{% from "commentMacros.html" import commentItem %}
 {% block title %}{{ video.title }} - Tune In{% endblock %}
 
 {% block content %}
@@ -116,7 +116,7 @@
 <!-- ===== Comments ===== -->
 <div class="page-placeholder">
     <div class="comment-section">
-        <h3 class="comments-title">Comments (<span id="commentCount">{{ comments.total }}</span>)</h3>
+        <h3 class="comments-title">Comments (<span id="commentCount">{{ comments.totalWithReplies }}</span>)</h3>
 
         {% if loggedIn %}
             <form id="commentForm" class="comment-form">
@@ -131,19 +131,32 @@
             <p class="comment-login"><a href="{{ url_for('login') }}">Log in</a> to like and comment.</p>
         {% endif %}
 
-        <div id="commentList">
-            {% for c in comments.comments %}
-                <article class="comment-card">
-                    <div class="comment-header">
-                        <strong class="comment-author">{{ c.username }}</strong>
-                        <span class="commented-time" title="{{ c.createdAt }}">{{ c.timeAgo }}</span>
-                    </div>
-                    <p class="comment-text">{{ c.comment }}</p>
-                </article>
-            {% endfor %}
-        </div>
+        <!-- Your comments (top) -->
+        <section id="myCommentsSection" class="comment-group comment-group-mine"
+                {% if not comments.myComments %}hidden{% endif %}>
+            <h4 class="comment-group-title">Your comments</h4>
+            <div id="myCommentList">
+                {% for c in comments.myComments %}
+                    {{ commentItem(c, loggedIn) }}
+                {% endfor %}
+            </div>
+        </section>
 
-        <p id="noComments" class="no-comments" {% if comments.comments %}hidden{% endif %}>No comments yet.</p>
+        <!-- Everyone else's comments (below) -->
+        <section class="comment-group">
+            {% if loggedIn %}
+                <h4 id="otherCommentsTitle" class="comment-group-title"
+                    {% if not comments.myComments %}hidden{% endif %}>Other comments</h4>
+            {% endif %}
+            <div id="commentList">
+                {% for c in comments.comments %}
+                    {{ commentItem(c, loggedIn) }}
+                {% endfor %}
+            </div>
+        </section>
+
+        <p id="noComments" class="no-comments"
+        {% if comments.totalWithReplies %}hidden{% endif %}>No comments yet.</p>
 
         {% if comments.hasMore %}
             <button type="button" id="loadMoreComments" class="comment-more"
@@ -152,6 +165,17 @@
         {% endif %}
     </div>
 </div>
+
+<dialog id="commentDeleteDialog" class="mv-confirm" aria-labelledby="commentDeleteQuestion">
+    <button type="button" class="mv-confirm-x" data-close aria-label="Close">✕</button>
+    <p id="commentDeleteQuestion" class="mv-confirm-text"></p>
+    <p class="mv-confirm-name" id="commentDeleteText"></p>
+    <p class="mv-error" id="commentDeleteError"></p>
+    <div class="mv-confirm-actions">
+        <button type="button" class="pure-button mv-btn mv-btn-light" data-close>No</button>
+        <button type="button" class="pure-button mv-btn mv-btn-danger" id="commentDeleteYes">Yes</button>
+    </div>
+</dialog>
 
 <script src="{{ url_for('static', filename='js/watch.js') }}"></script>
 {% endblock %}

@@ -238,7 +238,7 @@
     flex-direction: column;
     background-color: antiquewhite;
     width: 100%;
-    height: 100px;
+    height: auto;
     padding: 20px;
 }
 
@@ -415,4 +415,219 @@ a.author-section {
     font-size: 14px;
     line-height: 1.5;
     white-space: pre-line;      /* keeps the line breaks the creator typed */
+}
+
+/* ===== Comments with avatars, likes and replies ===== */
+.comment-card {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.comment-avatar {
+    flex: none;
+}
+
+.comment-avatar img {
+    display: block;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--tagBorderColor);
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--tagBackgroundColor);
+}
+
+.comment-body {
+    flex: 1;
+    min-width: 0;
+}
+
+a.comment-author {
+    color: #111111;
+    text-decoration: none;
+}
+
+a.comment-author:hover {
+    text-decoration: underline;
+}
+
+.comment-text {
+    margin: 0 0 8px;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+
+.comment-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.comment-like,
+.comment-reply-button,
+.comment-cancel {
+    padding: 2px 4px;
+    border: 0;
+    background: none;
+    color: #555;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.comment-like {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.comment-like.liked {
+    color: #d64545;
+}
+
+.comment-like:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.comment-reply-button:hover,
+.comment-cancel:hover {
+    color: #111;
+    text-decoration: underline;
+}
+
+/* Replies: indented, lighter, smaller avatar */
+.comment-replies {
+    margin-top: 10px;
+}
+
+.comment-replies:empty {
+    display: none;
+}
+
+.comment-card.comment-reply {
+    margin-bottom: 8px;
+    padding: 10px 14px;
+    background-color: #ececec;
+}
+
+.comment-reply .comment-avatar img {
+    width: 30px;
+    height: 30px;
+}
+
+.reply-form {
+    margin: 10px 0 4px;
+}
+
+.reply-form .comment-form-actions {
+    gap: 8px;
+}
+
+/* ===== "Your comments" / "Other comments" sections ===== */
+.comment-group-mine {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border: 2px solid var(--tagBorderColor);
+    border-radius: 10px;
+    background: #f3f6e6;
+}
+
+.comment-group-mine[hidden] {
+    display: none;
+}
+
+.comment-group-title {
+    margin: 0 0 10px;
+    color: #465738;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+}
+
+/* ===== ⋮ menu on your own comments ===== */
+.comment-menu-wrap {
+    position: relative;
+    flex: none;
+}
+
+.comment-dots {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+}
+
+.comment-dots span {
+    width: 3.5px;
+    height: 3.5px;
+    border-radius: 50%;
+    background: #3b4430;
+}
+
+.comment-dots:hover,
+.comment-dots[aria-expanded="true"] {
+    background: rgba(0, 0, 0, .08);
+}
+
+.comment-menu {
+    position: absolute;
+    z-index: 10;
+    top: 30px;
+    right: 0;
+    min-width: 120px;
+    padding: 6px;
+    border: 1px solid #cfd6b6;
+    border-radius: 10px;
+    background: #fffff4;
+    box-shadow: 0 8px 22px rgba(39, 51, 26, .25);
+}
+
+.comment-menu[hidden] {
+    display: none;
+}
+
+.comment-menu button {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 7px;
+    background: none;
+    color: #263321;
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.comment-menu button:hover {
+    background: #e9edd6;
+}
+
+.comment-menu .comment-delete {
+    color: #9b4034;
+}
+
+/* ===== Edit form replaces the text while editing ===== */
+.edit-form {
+    margin: 4px 0 8px;
+}
+
+.edit-form .comment-form-actions {
+    gap: 8px;
+}
+
+.comment-text[hidden] {
+    display: none;
 }

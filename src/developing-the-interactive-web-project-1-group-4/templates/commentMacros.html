@@ -1,0 +1,51 @@
+{% macro commentItem(c, loggedIn) %}
+<article class="comment-card{% if c.isReply %} comment-reply{% endif %}"
+         data-comment-id="{{ c.id }}"
+         {% if c.isMine %}data-manage-url="{{ c.manageURL }}"{% endif %}>
+    <a class="comment-avatar" href="{{ c.profileURL }}" title="{{ c.username }}">
+        <img src="{{ c.userPicture }}" alt=""
+             onerror="this.onerror=null; this.src='{{ c.fallbackPicture }}';">
+    </a>
+
+    <div class="comment-body">
+        <div class="comment-header">
+            <a class="comment-author" href="{{ c.profileURL }}">{{ c.username }}</a>
+            <span class="commented-time" title="{{ c.createdAt }}">{{ c.timeAgo }}</span>
+
+            {% if c.isMine %}
+                <div class="comment-menu-wrap">
+                    <button type="button" class="comment-dots" aria-haspopup="menu" aria-expanded="false"
+                            aria-label="Comment options">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <div class="comment-menu" role="menu" hidden>
+                        <button type="button" role="menuitem" class="comment-edit">Edit</button>
+                        <button type="button" role="menuitem" class="comment-delete">Delete</button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <p class="comment-text">{{ c.comment }}</p>
+
+        <div class="comment-actions">
+            <button type="button" class="comment-like" data-like-url="{{ c.likeURL }}"
+                    aria-pressed="false" aria-label="Like this comment">
+                <span class="comment-like-icon">♡</span>
+                <span class="comment-like-count">{{ c.likes }}</span>
+            </button>
+            {% if not c.isReply %}
+                <button type="button" class="comment-reply-button">Reply</button>
+            {% endif %}
+        </div>
+
+        {% if not c.isReply %}
+            <div class="comment-replies">
+                {% for r in c.replies %}
+                    {{ commentItem(r, loggedIn) }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</article>
+{% endmacro %}

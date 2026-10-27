@@ -71,6 +71,7 @@ class Comments(db.Model):
     video = relationship("videos", back_populates="comments")
     ti_user = relationship("Ti_user", back_populates="comments")
     comment: Mapped[str] = mapped_column(String(10000), nullable=False)
+    likes: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now(),onupdate=func.now())
 
