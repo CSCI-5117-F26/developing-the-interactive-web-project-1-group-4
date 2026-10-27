@@ -1,6 +1,6 @@
 {% set currentPage = request.endpoint or "" %}
 <aside class="sidebar">
-    <a class="sidebar-logo" href="/">Tune In</a>
+            <a class="sidebar-logo" href="/"><img class="sidebar-logo-img" src="{{ url_for('static', filename='images/logo-note.png') }}" alt=""><span>Tune In</span></a>
 
     <nav class="sidebar-nav">
         <a href="/" class="sidebar-link" id="homeMenuOption"><span>⌂</span> Home</a>
@@ -12,7 +12,7 @@
         <a href="{{ url_for('subscription.subscriptions_page') }}" class="sidebar-link" id="subscriptionsMenuOption"><span>▶</span> Subscriptions</a>
         <!-- <a href="#" class="sidebar-link"><span></span> Library</a> -->
         <a href="{{ url_for('library.library') }}" class="sidebar-link" id="libraryMenuOption"><span>□</span> Library</a>
-        <a href="{{ url_for('homePage.activity') }}" class="sidebar-link" id="activityMenuOption"><span>◷</span>Activity</a>
+        <a href="{{ url_for('activity.activity') }}" class="sidebar-link" id="activityMenuOption"><span>◷</span>Activity</a>
         {% endif %}
     </nav>
     {% if session.get('user') %}
@@ -39,8 +39,9 @@
     </nav>
     {% endif %}
 
-    {% if session.get('user') %}
-    <div class="sidebar-logout">
+        {% if session.get('user') %}
+    <div class="sidebar-logout has-avatar">
+        {% with avatar_class="in-sidebar" %}{% include "navAvatar.html" %}{% endwith %}
         <a href="{{ url_for('logout') }}" class="sidebar-link"><span>↪</span> Logout</a>
     </div>
     {% endif %}
@@ -63,7 +64,7 @@
         activeId = "profileMenuOption";
             } else if (path === "/subscriptions") {
         activeId = "subscriptionsMenuOption";
-            } else if (path === "/trending") {
+            } else if (path === "/trending" || path.startsWith("/genre")) {
         activeId = "trendingMenuOption";
     } else if (path.includes("account-settings")) {
         activeId = "accountSettingsMenuOption";

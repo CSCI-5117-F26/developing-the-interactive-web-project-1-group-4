@@ -3,7 +3,7 @@ from ..models import Playlists, videos
 from . import library_bp
 from ..services import (
     fetchVideos, fetchGenres, fetchArtistVideos, searchAll, text_wrap,mediaURL,
-    SEARCH_PREVIEW_LIMIT, SEARCH_PAGE_LIMIT, get_current_user
+    SEARCH_PREVIEW_LIMIT, SEARCH_PAGE_LIMIT, get_current_user, defaultCoverURL
 )
 from ..database import db
 from dotenv import load_dotenv
@@ -33,6 +33,8 @@ def library():
         playlists=playlists,
         saved_videos=saved_videos,
         watchlater=watchlater,
+        mediaURL=mediaURL,
+        default_thumbnail_url=defaultCoverURL(),
     )
 
 @library_bp.post("/add-to-watch-later")
@@ -190,6 +192,10 @@ def create_playlist():
     except Exception:
         db.session.rollback()
         raise
+
+    # The Add to playlist pop-up creates a playlist with fetch() and needs its id back.
+    if request.headers.get("X-Requested-With") == "fetch":
+        return jsonify(id=playlist.id, title=playlist.title), 201
 
     return redirect(url_for("library.library"), code=303)
 

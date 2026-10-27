@@ -5,6 +5,7 @@ from ..models import *
 from flask import render_template, request, jsonify, current_app, session, redirect, url_for
 from ..services import *
 from botocore.exceptions import BotoCoreError, ClientError
+from sqlalchemy.exc import SQLAlchemyError
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -31,7 +32,7 @@ def new_video():
             "duration": draft.duration,
             "thumbnail_url": (
                 mediaURL(draft.thumbnail_key)
-                if draft.thumbnail_key else None
+                if draft.thumbnail_key else mediaURL(os.environ["DEFAULT_THUMBNAIL_KEY"])
             ),
             "language": draft.language or "",
             "video_type": (
@@ -81,7 +82,7 @@ def save_draft():
     create_draft_helper(
         ti_user=user_id,
         thumbnail_key=thumbnail_key,
-        duration=150,
+        duration=getVideoDuration(mediaURL(video_key)),
         title=title,
         description=description,
         genres=genres,
@@ -104,8 +105,8 @@ def publish():
     data = get_upload_form_data()
 
     required = (
-        "video_key", "thumbnail_key", "title",
-        "description", "genres", "video_type", "language",
+        "video_key", "title", "description",
+        "genres", "video_type", "language",
     )
     missing = [field for field in required if not data[field]]
 
@@ -128,7 +129,7 @@ def publish():
         genres=data["genres"],
         video_key=data["video_key"],
         language=data["language"],
-        original=request.form.get("original", "false").lower() == "true"
+        original=data["video_type"] == "original",
     )
 
     # Save the published video here.
@@ -197,6 +198,66 @@ def update_draft():
 
     return jsonify(message="Draft updated."), 200
 
+@uploadVideo_bp.route("/delete-draft", methods=["POST"])
+def delete_draft():
+    if session.get("user") is None:
+        return jsonify(error="Please log in."), 401
+
+    user = get_current_user()
+    if user is None:
+        return jsonify(error="Please create your profile."), 403
+
+    draft = get_owned_draft(user)
+    if draft is None:
+        return jsonify(error="Draft not found."), 404
+
+    default_thumbnail_key = os.environ.get(
+        "DEFAULT_THUMBNAIL_KEY", ""
+    ).strip()
+    file_keys = {
+        key
+        for key in (draft.video_key, draft.thumbnail_key)
+        if key and key != default_thumbnail_key
+    }
+    draft_id = draft.id
+
+    try:
+        db.session.delete(draft)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        current_app.logger.exception("Draft deletion failed")
+        return jsonify(error="Could not delete draft."), 500
+
+    cleanup_failed = False
+    if file_keys:
+        try:
+            from ..storage import r2, bucket_name
+        except KeyError:
+            cleanup_failed = True
+            current_app.logger.exception(
+                "Cloud cleanup configuration missing for deleted draft %s",
+                draft_id,
+            )
+        else:
+            for key in file_keys:
+                try:
+                    r2.delete_object(Bucket=bucket_name, Key=key)
+                except (BotoCoreError, ClientError):
+                    cleanup_failed = True
+                    current_app.logger.exception(
+                        "Cloud cleanup failed for deleted draft %s, key %s",
+                        draft_id, key,
+                    )
+
+    if cleanup_failed:
+        return jsonify(
+            message="Draft deleted, but some cloud files could not be removed.",
+            cleanup_required=True,
+        ), 200
+
+    return jsonify(message="Draft and uploaded files deleted."), 200
+
 @uploadVideo_bp.route("/publish-draft", methods=["POST"])
 def publish_draft():
     if session.get("user") is None:
@@ -215,15 +276,14 @@ def publish_draft():
 
         if (
             not draft.video_key
-            or not draft.thumbnail_key
             or not draft.description
             or not draft.genres
             or not draft.language
             or draft.Original is None
         ):
             raise ValueError(
-                "Publishing requires a video, thumbnail, title, "
-                "description, genre, Original/Cover selection and language."
+                "Publishing requires a video, title, description, genre, "
+                "Original/Cover selection and language."
             )
 
         create_video_helper(

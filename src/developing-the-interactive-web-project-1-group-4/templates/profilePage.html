@@ -52,19 +52,19 @@
 
         <div class="pf-action">
             {% if is_own %}
-                <a class="pf-btn pf-btn-primary" href="{{ url_for('accountSettings.accountSettings') }}">Edit profile</a>
+                <a class="pure-button pf-btn pf-btn-primary" href="{{ url_for('accountSettings.accountSettings') }}">Edit profile</a>
             {% elif is_logged_in %}
                 <button type="button" id="subscribeBtn"
-                        class="pf-btn {{ 'pf-btn-light' if is_subscribed else 'pf-btn-primary' }}"
+                        class="pure-button pf-btn {{ 'pf-btn-light' if is_subscribed else 'pf-btn-primary' }}"
                         data-channel-id="{{ profile.id }}"
                         data-subscribed="{{ 'true' if is_subscribed else 'false' }}"
                         data-subscribe-url="{{ url_for('subscription.subscribe') }}"
                         data-unsubscribe-url="{{ url_for('subscription.unsubscribe') }}">
-                    {{ 'Subscribed' if is_subscribed else 'Subscribe' }}
+                    {{ 'Unsubscribe' if is_subscribed else 'Subscribe' }}
                 </button>
                 <p class="mv-error" id="pfError"></p>
             {% else %}
-                <a class="pf-btn pf-btn-primary" href="{{ url_for('login') }}">Log in to subscribe</a>
+                <a class="pure-button pf-btn pf-btn-primary" href="{{ url_for('login') }}">Log in to subscribe</a>
             {% endif %}
         </div>
     </section>
@@ -76,8 +76,9 @@
     </div>
 
     {% if videos %}
-    <div class="mv-grid">
+    <div class="pure-g mv-grid-pure">
         {% for video in videos %}
+        <div class="mv-cell pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
         <article class="mv-card">
             <a class="pf-card-link" href="{{ video.watch_url }}">
                 <div class="mv-art">
@@ -98,13 +99,14 @@
                 {{ videoStats(video) }}
             </a>
         </article>
+        </div>
         {% endfor %}
     </div>
     {% else %}
     <div class="mv-empty">
         <p>{{ "You haven't uploaded any videos yet." if is_own else "No videos yet." }}</p>
         {% if is_own %}
-            <a class="mv-btn mv-btn-primary" href="{{ url_for('uploadVideo.new_video') }}">Upload your first video</a>
+            <a class="pure-button mv-btn mv-btn-primary" href="{{ url_for('uploadVideo.new_video') }}">Upload your first video</a>
         {% endif %}
     </div>
     {% endif %}

@@ -1,0 +1,24 @@
+/* Manage Videos, Profile and Subscriptions: the search bar + genre filter are the
+   same size as on the Home page, and the content starts at the same left edge.
+   The page is no longer capped at 1200px. */
+.mv-page.mv-search-wide {
+    max-width: none;
+    padding: 30px 50px 60px;     /* same side padding as the Home page */
+}
+
+/* Profile only (add the class "mv-capped"): the profile box and its cards keep
+   the old 1104px width, centred. */
+.mv-page.mv-capped > .pf-card,
+.mv-page.mv-capped > .pf-posts-head,
+.mv-page.mv-capped > .mv-empty {
+    max-width: 1104px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mv-page.mv-capped > .mv-grid-pure {
+    /* cards line up with the profile box: 1104px wide, centred; the grid's own
+       -14px side overhang is kept when the window is narrower than that */
+    margin-left: max(-14px, calc((100% - 1104px) / 2 - 14px));
+    margin-right: max(-14px, calc((100% - 1104px) / 2 - 14px));
+}

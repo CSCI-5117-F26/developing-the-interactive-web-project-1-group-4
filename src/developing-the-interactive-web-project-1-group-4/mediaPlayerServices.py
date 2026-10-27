@@ -1,4 +1,5 @@
-from sqlalchemy import select, func, case, or_, update
+from flask import url_for
+from sqlalchemy import select, func, case, or_, update, delete
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import selectinload
 
@@ -6,13 +7,12 @@ from .database import db
 from .models import (
     videos as Video, Genres, Comments, Likes, Playlists, video_genres,
 )
-from .services import mediaURL, videoCard, videoQuery, addStats
-
+from .services import mediaURL, videoCard, videoQuery, addStats, defaultCoverURL
 recommendationLimit = 10
 commentPageSize = 20
 commentMaxLength = 2000
 playlistTitleMaxLength = 200 
-
+myCommentLimit = 50
 
 # ---------------- Errors the routes turn into HTTP responses ----------------
 class NotFoundError(Exception):      # -> 404
@@ -24,6 +24,8 @@ class ValidationError(Exception):    # -> 400
 class ConflictError(Exception):      # -> 409
     pass
 
+class ForbiddenError(Exception):     # -> 403
+    pass
 
 # ---------------- Time helpers ----------------
 def databaseNow():
@@ -163,59 +165,162 @@ def setLike(videoId, user, liked):
 
 
 # ---------------- Comments ----------------
-def commentCard(comment, now):
+def commentCard(comment, now, fallback=None, userId=None):
+    fallback = fallback or defaultCoverURL()
     author = comment.ti_user
     return {
         "id": comment.id,
         "parentId": comment.parent_id,
+        "isReply": comment.parent_id is not None,
+        "isMine": userId is not None and comment.user_id == userId,
         "comment": comment.comment,
         "username": author.username if author else "",
-        "userPicture": (mediaURL(author.Profile_picture_key) if author else None) or "",
+        "profileURL": url_for("profilePage.profile_page", username=author.username) if author else "",
+        "userPicture": (mediaURL(author.Profile_picture_key) if author else None) or fallback,
+        "fallbackPicture": fallback,
+        "likes": comment.likes or 0,
+        "likeURL": url_for("mediaPlayer.likeComment", commentId=comment.id),
+        "manageURL": url_for("mediaPlayer.updateComment", commentId=comment.id),
         "createdAt": comment.created_at.isoformat(),
         "timeAgo": timeAgo(comment.created_at, now),
+        "replies": [],
     }
 
 
-def fetchComments(videoId, offset=0, limit=commentPageSize):
-    getVideo(videoId)
-    total = db.session.scalar(
-        select(func.count()).select_from(Comments).where(Comments.video_id == videoId)
-    )
-    stmt = (
+def buildThreads(parents, now, fallback, userId):
+    """Top-level comment cards, each with all its replies (oldest first), in ONE replies query."""
+    repliesByParent = {}
+    if parents:
+        replies = db.session.scalars(
+            select(Comments)
+            .options(selectinload(Comments.ti_user))
+            .where(Comments.parent_id.in_([p.id for p in parents]))
+            .order_by(Comments.created_at, Comments.id)
+        )
+        for reply in replies:
+            repliesByParent.setdefault(reply.parent_id, []).append(reply)
+
+    threads = []
+    for parent in parents:
+        card = commentCard(parent, now, fallback, userId)
+        card["replies"] = [commentCard(r, now, fallback, userId) for r in repliesByParent.get(parent.id, [])]
+        threads.append(card)
+    return threads
+
+
+def topLevelComments(*conditions):
+    return (
         select(Comments)
         .options(selectinload(Comments.ti_user))
-        .where(Comments.video_id == videoId)
+        .where(*conditions)
         .order_by(Comments.created_at.desc(), Comments.id.desc())
-        .offset(offset)
-        .limit(limit)
     )
+
+
+def fetchComments(videoId, user=None, offset=0, limit=commentPageSize):
+    """
+    myComments: the viewer's own top-level comments (first page only).
+    comments:   everyone else's top-level comments, paged.
+    """
+    getVideo(videoId)
+    userId = user.ti_user_id if user else None
+
+    isTopLevel = [Comments.video_id == videoId, Comments.parent_id.is_(None)]
+    isOthers = isTopLevel + ([Comments.user_id != userId] if userId else [])
+
+    total = db.session.scalar(select(func.count()).select_from(Comments).where(*isOthers))
+    totalWithReplies = db.session.scalar(
+        select(func.count()).select_from(Comments).where(Comments.video_id == videoId)
+    )
+
+    others = list(db.session.scalars(topLevelComments(*isOthers).offset(offset).limit(limit)))
+    mine = []
+    if userId and offset == 0:
+        mine = list(db.session.scalars(
+            topLevelComments(*isTopLevel, Comments.user_id == userId).limit(myCommentLimit)
+        ))
+
     now = databaseNow()
-    comments = [commentCard(c, now) for c in db.session.scalars(stmt)]
+    fallback = defaultCoverURL()
     return {
-        "comments": comments,
-        "total": total,
-        "hasMore": offset + len(comments) < total,
+        "myComments": buildThreads(mine, now, fallback, userId),
+        "comments": buildThreads(others, now, fallback, userId),
+        "total": total,                        # other people's top-level comments (for paging)
+        "totalWithReplies": totalWithReplies,  # everything, for the "Comments (N)" heading
+        "hasMore": offset + len(others) < total,
     }
 
 
-def addComment(videoId, user, text, parentId=None):
-    getVideo(videoId)
+def cleanCommentText(text):
     text = (text or "").strip()
     if not text:
         raise ValidationError("Comment can't be empty.")
     if len(text) > commentMaxLength:
         raise ValidationError(f"Comment must be {commentMaxLength} characters or fewer.")
+    return text
+
+
+def addComment(videoId, user, text, parentId=None):
+    getVideo(videoId)
+    text = cleanCommentText(text)
 
     if parentId is not None:
         parent = db.session.get(Comments, parentId)
         if parent is None or parent.video_id != videoId:
             raise ValidationError("You can only reply to a comment on this video.")
+        if parent.parent_id is not None:
+            raise ValidationError("You can't reply to a reply.")     # one level only
 
     comment = Comments(video_id=videoId, user_id=user.ti_user_id, comment=text, parent_id=parentId)
     db.session.add(comment)
     db.session.commit()
-    return commentCard(comment, databaseNow())
+    return commentCard(comment, databaseNow(), userId=user.ti_user_id)
 
+
+def getOwnComment(commentId, user):
+    """The comment, but only if this user wrote it."""
+    comment = db.session.get(Comments, commentId)
+    if comment is None:
+        raise NotFoundError("Comment not found.")
+    if comment.user_id != user.ti_user_id:
+        raise ForbiddenError("You can only change your own comments.")
+    return comment
+
+
+def editComment(commentId, user, text):
+    comment = getOwnComment(commentId, user)
+    comment.comment = cleanCommentText(text)
+    db.session.commit()
+    return commentCard(comment, databaseNow(), userId=user.ti_user_id)
+
+
+def deleteComment(commentId, user):
+    """Delete the comment and its replies. Returns how many comments were removed."""
+    comment = getOwnComment(commentId, user)
+    result = db.session.execute(
+        delete(Comments)
+        .where(or_(Comments.id == comment.id, Comments.parent_id == comment.id))
+        .execution_options(synchronize_session=False)
+    )
+    db.session.commit()
+    return result.rowcount
+
+
+def changeCommentLikes(commentId, change):
+    """change=+1 to like, -1 to unlike. Done inside the database; never goes below 0."""
+    newValue = Comments.likes + 1 if change > 0 else func.greatest(Comments.likes - 1, 0)
+    likes = db.session.execute(
+        update(Comments)
+        .where(Comments.id == commentId)
+        .values(likes=newValue)
+        .returning(Comments.likes)
+    ).scalar_one_or_none()
+
+    if likes is None:
+        db.session.rollback()
+        raise NotFoundError("Comment not found.")
+    db.session.commit()
+    return likes
 
 # ---------------- Playlists ----------------
 def playlistCard(playlist, videoId=None):

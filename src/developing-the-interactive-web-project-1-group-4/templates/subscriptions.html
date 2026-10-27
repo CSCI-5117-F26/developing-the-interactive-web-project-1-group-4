@@ -5,8 +5,8 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/subscriptions.css') }}">
-
-<div class="mv-page sub-page">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos-wide.css') }}">
+<div class="mv-page sub-page mv-search-wide">
     {% include "searchBar.html" %}
 
     {% if artists %}
@@ -29,7 +29,7 @@
     {% else %}
     <div class="mv-empty">
         <p>You haven't subscribed to any artists yet.</p>
-        <a class="mv-btn mv-btn-primary" href="{{ url_for('homePage.home') }}">Discover artists</a>
+        <a class="pure-button mv-btn mv-btn-primary" href="{{ url_for('homePage.home') }}">Discover artists</a>
     </div>
     {% endif %}
 </div>

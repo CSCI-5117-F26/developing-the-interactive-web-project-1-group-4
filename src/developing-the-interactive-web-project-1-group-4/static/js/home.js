@@ -37,12 +37,24 @@ player.addEventListener("ended", () => {
     else stopPlayer();
 });
 
-// One listener for the whole page: works for video cards AND dropdown results
+// Clicking (or pressing Enter on) a video card opens the media player page
+function openCard(card) {
+    window.location.href = card.dataset.watchUrl;
+}
+
 document.addEventListener("click", (e) => {
-    const target = e.target.closest("[data-video-url]");
-    if (!target) return;
+    const card = e.target.closest("[data-watch-url]");
+    if (!card) return;
     e.preventDefault();
-    playFullscreen(target.dataset.videoUrl);
+    openCard(card);
+});
+
+document.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const card = e.target.closest("[data-watch-url]");
+    if (!card) return;
+    e.preventDefault();
+    openCard(card);
 });
 
 // Keyboard support for the vinyl cards (Enter or Space)

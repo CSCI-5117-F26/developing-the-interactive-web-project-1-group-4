@@ -10,43 +10,13 @@ from .models import Ti_user
 from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
-from .routes import homePage_bp, profileInput_bp, uploadVideo_bp, profilePage_bp, manageVideos_bp , subscription_bp, mediaPlayer_bp, accountSettings_bp, trending_bp, library_bp
+from .routes import homePage_bp, profileInput_bp, uploadVideo_bp, profilePage_bp, manageVideos_bp , subscription_bp, mediaPlayer_bp, accountSettings_bp, trending_bp, library_bp,activity_bp
 load_dotenv()
 from authlib.integrations.flask_client import OAuth
 app = Flask(__name__)
 app.secret_key = os.environ["FLASK_SECRET"]
 oauth = OAuth(app)
 
-# temp
-recommendations = [
-    {
-        "id": 12,
-        "title": "Introduction to Python",
-        "thumbnail_url": "/static/images/python.jpg",
-        "description": "Learn Python basics.",
-        "duration_text": "03:10",
-        "author": "unknown",
-        "author_url": "hehe", 
-    },
-    {
-        "id": 15,
-        "title": "Flask Web Development",
-        "thumbnail": "/static/images/flask.jpg",
-        "description": "Build web apps with Flask.",
-        "duration_text": "03:10",
-        "author": "unknown",
-        "author_url": "hehe", 
-    },
-    {
-        "id": 15,
-        "title": "Flask Web Development",
-        "thumbnail": "/static/images/flask.jpg",
-        "description": "Build web apps with Flask.",
-        "duration_text": "03:10",
-        "author": "unknown",
-        "author_url": "hehe", 
-    }
-]
 
 domain = os.environ["AUTH_0_DOMAIN"]
 client_id = os.environ["AUTH_0_CLIENT_ID"]
@@ -71,8 +41,28 @@ app.register_blueprint(mediaPlayer_bp)
 app.register_blueprint(accountSettings_bp)
 app.register_blueprint(trending_bp)
 app.register_blueprint(library_bp)
+app.register_blueprint(activity_bp)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ["Database_url"]
 db.init_app(app)
+@app.context_processor
+def inject_nav_user():
+    # Gives every template `nav_user` for the top-right avatar (None when logged out).
+    try:
+        user = get_current_user()
+        if user is None:
+            return {"nav_user": None}
+        name = user.username or ""
+        return {"nav_user": {
+            "username": name,
+            "initial": name[:1].upper() or "?",
+            "picture": mediaURL(user.Profile_picture_key),
+        }}
+    except Exception:
+        return {"nav_user": None}
+
+with app.app_context():
+    db.create_all()
+    
 with app.app_context():
     db.create_all()
     inspector = inspect(db.engine)

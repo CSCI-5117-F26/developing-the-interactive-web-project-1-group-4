@@ -4,42 +4,12 @@ from . import mediaPlayer_bp
 from ..models import Playlists
 from ..services import get_current_user
 from ..mediaPlayerServices import (
-    NotFoundError, ValidationError, ConflictError,
+    NotFoundError, ValidationError, ConflictError, ForbiddenError,
     getVideo, addView, videoDetails, fetchRecommendations,
     countLikes, userLikedVideo, setLike,
-    fetchComments, addComment, commentPageSize,
+    fetchComments, addComment, editComment, deleteComment, commentPageSize, changeCommentLikes,
     fetchPlaylists, createPlaylist, addVideoToPlaylist, removeVideoFromPlaylist,
 )
-
-recommendations = [
-    {
-        "id": 12,
-        "title": "Introduction to Python",
-        "thumbnail_url": "",
-        "description": "Learn Python basics.",
-        "duration_text": "03:10",
-        "author": "unknown",
-        "author_url": "hehe", 
-    },
-    {
-        "id": 15,
-        "title": "Flask Web Development",
-        "thumbnail": "",
-        "description": "Build web apps with Flask.",
-        "duration_text": "03:10",
-        "author": "unknown",
-        "author_url": "hehe", 
-    },
-    {
-        "id": 15,
-        "title": "Flask Web Development",
-        "thumbnail": "",
-        "description": "Build web apps with Flask.",
-        "duration_text": "03:10",
-        "author": "unknown",
-        "author_url": "hehe", 
-    }
-]
 
 # ---------------- Helpers ----------------
 
@@ -79,25 +49,14 @@ def handleValidation(error):
 def handleConflict(error):
     return jsonify(error=str(error)), 409
 
+@mediaPlayer_bp.errorhandler(ForbiddenError)
+def handleForbidden(error):
+    return jsonify(error=str(error)), 403
 
 # ---------------- Page ----------------
 
 @mediaPlayer_bp.get("/watch/<int:videoId>")
 def watchVideo(videoId):
-    # dummy variables
-    comments = [
-        {
-            "author": "Taylor Slow",
-            "comment": ("The high notes were a master class in talent, please teach me your ways"),
-            "timecommented": "5 hours ago"
-        },
-        {
-            "author": "Taylor Fast",
-            "comment": ("The high notes were a master class in talent, please teach me your ways"),
-            "timecommented": "5 hours ago"
-        }
-    ]
-
     try:
         video = getVideo(videoId)
     except NotFoundError:
@@ -113,9 +72,6 @@ def watchVideo(videoId):
     if "playlist_id" in request.args:
         if playlist_id is None:
             abort(400, description="Invalid playlist ID.")
-
-        user = get_current_user()
-
         if user is None:
             return redirect(url_for("login"))
 
@@ -125,40 +81,31 @@ def watchVideo(videoId):
                 Playlists.ti_user == user.ti_user_id,
             )
         ).scalar_one_or_none()
-
         if playlist is None:
             abort(404, description="Playlist not found.")
 
-        ordered_videos = sorted(playlist.videos, key=lambda video: video.id)
-        video_ids = [video.id for video in ordered_videos]
-
+        video_ids = [v.id for v in sorted(playlist.videos, key=lambda v: v.id)]
         if videoId not in video_ids:
             abort(404, description="Video not found in this playlist.")
 
         index = video_ids.index(videoId)
-
         if index > 0:
-            previous_video_url = url_for(
-                "mediaPlayer.watchVideo",
-                videoId=video_ids[index - 1],
-                playlist_id=playlist.id,
-            )
-
+            previous_video_url = url_for("mediaPlayer.watchVideo",
+                                         videoId=video_ids[index - 1], playlist_id=playlist.id)
         if index < len(video_ids) - 1:
-            next_video_url = url_for(
-                "mediaPlayer.watchVideo",
-                videoId=video_ids[index + 1],
-                playlist_id=playlist.id,
-            )
-    mode = "Playlist" if playlist is not None else "Video"
+            next_video_url = url_for("mediaPlayer.watchVideo",
+                                     videoId=video_ids[index + 1], playlist_id=playlist.id)
+
+    # Count this visit FIRST, so the number on the page includes it
     addView(videoId)
+    video = getVideo(videoId)
+
     return render_template(
         "watch.html",
-        mode = mode,
-        video=video,
+        mode="Playlist" if playlist is not None else "Video",
+        video=videoDetails(video, user),          # page-ready data: videoURL, artist, likes, ...
         recommendations=fetchRecommendations(video),
-        comments=fetchComments(videoId),
-        playlists=fetchPlaylists(user, videoId) if user else [],
+        comments=fetchComments(videoId, user),
         previous_video_url=previous_video_url,
         next_video_url=next_video_url,
         loggedIn=user is not None,
@@ -207,8 +154,7 @@ def unlikeVideo(videoId):
 def getComments(videoId):
     offset = max(0, readInt(request.args.get("offset"), 0))
     limit = min(50, max(1, readInt(request.args.get("limit"), commentPageSize)))
-    return jsonify(fetchComments(videoId, offset, limit))
-
+    return jsonify(fetchComments(videoId, currentUser(), offset, limit))
 
 @mediaPlayer_bp.post("/api/videos/<int:videoId>/comments")
 def postComment(videoId):
@@ -219,6 +165,33 @@ def postComment(videoId):
     comment = addComment(videoId, user, data.get("comment"), readInt(data.get("parentId")))
     return jsonify(comment), 201
 
+@mediaPlayer_bp.post("/api/comments/<int:commentId>/likes")
+def likeComment(commentId):
+    if currentUser() is None:
+        return loginRequired()
+    return jsonify(likes=changeCommentLikes(commentId, +1))
+
+
+@mediaPlayer_bp.delete("/api/comments/<int:commentId>/likes")
+def unlikeComment(commentId):
+    if currentUser() is None:
+        return loginRequired()
+    return jsonify(likes=changeCommentLikes(commentId, -1))
+
+@mediaPlayer_bp.patch("/api/comments/<int:commentId>")
+def updateComment(commentId):
+    user = currentUser()
+    if user is None:
+        return loginRequired()
+    return jsonify(editComment(commentId, user, readJson().get("comment")))
+
+
+@mediaPlayer_bp.delete("/api/comments/<int:commentId>")
+def removeComment(commentId):
+    user = currentUser()
+    if user is None:
+        return loginRequired()
+    return jsonify(deleted=deleteComment(commentId, user))
 
 # ---------------- Playlists ----------------
 """

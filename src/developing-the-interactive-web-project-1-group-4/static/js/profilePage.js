@@ -7,7 +7,7 @@ if (subscribeBtn) {
 
     function showState(subscribed) {
         subscribeBtn.dataset.subscribed = String(subscribed);
-        subscribeBtn.textContent = subscribed ? "Subscribed" : "Subscribe";
+        subscribeBtn.textContent = subscribed ? "Unsubscribe" : "Subscribe";
         subscribeBtn.classList.toggle("pf-btn-light", subscribed);
         subscribeBtn.classList.toggle("pf-btn-primary", !subscribed);
     }
