@@ -82,10 +82,13 @@
     scroll-snap-align: start;
 }
 
+/* The playlist picture keeps its earlier size and sits in the middle of the card */
 .lib-carousel .playlist-card svg {
     display: block;
-    width: 100%;
+    width: 230px;
+    max-width: 100%;
     height: auto;
+    margin: 0 auto;
 }
 
 .lib-carousel .playlist-card:hover {
