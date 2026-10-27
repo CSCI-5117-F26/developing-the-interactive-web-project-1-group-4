@@ -18,15 +18,14 @@
         href="{{ url_for('static', filename='css/feedback.css') }}">
     <link rel="stylesheet"
         href="{{ url_for('static', filename='css/pure-compat.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/topbar-avatar.css') }}?v=2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/topbar-avatar.css') }}?v=2">
 </head>
 <body>
     {% block sidebar %}
         {% include "sidebar.html" %}
     {% endblock %}
 
-       {% include "navAvatar.html" %}
-    {% endif %}
+    {% include "navAvatar.html" %}
     <main class="main-page-colors">
         {% block content %}{% endblock %}
     </main>

@@ -62,7 +62,7 @@ def inject_nav_user():
 
 with app.app_context():
     db.create_all()
-    ...
+    
 with app.app_context():
     db.create_all()
     inspector = inspect(db.engine)
