@@ -1,0 +1,60 @@
+/* Sidebar logo (note + text) */
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.sidebar-logo-img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    flex: 0 0 auto;
+}
+
+/* Top-right profile avatar (all pages) */
+.topbar-avatar {
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 3px solid #5c724a;
+    overflow: hidden;
+    background: linear-gradient(135deg, #b7c6a4, #8a9863);
+    color: #27331a;
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    box-shadow: 0 3px 10px rgba(70, 87, 56, .25);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.topbar-avatar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(70, 87, 56, .3);
+}
+.topbar-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+@media (max-width: 768px) {
+    .topbar-avatar { top: 10px; right: 12px; width: 38px; height: 38px; font-size: 16px; }
+}
+
+/* On pages with a search bar, the avatar sits on the same row, just right of it */
+.search-bar-container { position: relative; }
+.topbar-avatar.in-search {
+    position: absolute;
+    top: 2px;
+    right: auto;
+    left: calc(85% + 18px);
+}
+body:has(.search-bar-container) > .topbar-avatar { display: none; }
+@media (max-width: 768px) {
+    .topbar-avatar.in-search { top: 4px; left: calc(85% + 8px); }
+}
