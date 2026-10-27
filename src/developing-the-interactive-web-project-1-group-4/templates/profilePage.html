@@ -5,8 +5,9 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/profile-page.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos-wide.css') }}">
 
-<div class="mv-page">
+<div class="mv-page mv-search-wide mv-capped">
     {% include "searchBar.html" %}
 
     <!-- ===== Profile header ===== -->

@@ -5,8 +5,9 @@
 
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos-wide.css') }}">
 
-<div class="mv-page">
+<div class="mv-page mv-search-wide">
     {% include "searchBar.html" %}
 
     <!-- genre filters (same as the home page) -->

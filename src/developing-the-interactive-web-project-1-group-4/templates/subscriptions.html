@@ -5,8 +5,8 @@
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/subscriptions.css') }}">
-
-<div class="mv-page sub-page">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos-wide.css') }}">
+<div class="mv-page sub-page mv-search-wide">
     {% include "searchBar.html" %}
 
     {% if artists %}
