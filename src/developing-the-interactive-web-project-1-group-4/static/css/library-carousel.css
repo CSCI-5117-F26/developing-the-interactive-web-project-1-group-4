@@ -83,7 +83,7 @@
 }
 
 /* The playlist picture keeps its earlier size and sits in the middle of the card */
-.lib-carousel .playlist-card svg {
+.lib-carousel .playlist-card > svg {
     display: block;
     width: 230px;
     max-width: 100%;
@@ -117,9 +117,18 @@
 }
 
 .lib-carousel .playlist-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     margin-top: 2px;
     color: #77796e;
     font-size: 12px;
+}
+
+.lib-carousel .playlist-count svg {
+    flex: none;
+    width: 14px;
+    height: 14px;
 }
 
 .lib-carousel .playlist-card:hover {
