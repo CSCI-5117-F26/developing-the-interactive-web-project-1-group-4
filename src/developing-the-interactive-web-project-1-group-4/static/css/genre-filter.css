@@ -20,10 +20,10 @@
     flex: none;
     box-sizing: border-box;
     padding: 7px 16px;
-    border: 2px solid transparent;
+    border: 2px solid #8fa377;
     border-radius: 999px;
-    background: #e9edd6;
-    color: #465738;
+    background: #c5d1ab;
+    color: #27331a;
     font-family: inherit;
     font-size: 14px;
     font-weight: 600;
@@ -34,12 +34,13 @@
 }
 
 .gf-chip:hover {
-    background: #dde4c3;
-    color: #27331a;
+    background: #b3c293;
+    color: #1f2a16;
 }
 
 .gf-chip.active,
 .gf-chip.active:hover {
+    border-color: #465738;
     background: #465738;
     color: #fcfcee;
     box-shadow: 0 3px 8px rgba(70, 87, 56, .3);
@@ -51,7 +52,7 @@
 }
 
 .gf-more[aria-expanded="true"] {
-    background: #e9edd6;
+    background: #c5d1ab;
     border-style: solid;
 }
 
