@@ -128,7 +128,7 @@ def publish():
         genres=data["genres"],
         video_key=data["video_key"],
         language=data["language"],
-        original=request.form.get("original", "false").lower() == "true"
+        original=data["video_type"] == "original",
     )
 
     # Save the published video here.
