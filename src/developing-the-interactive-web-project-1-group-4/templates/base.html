@@ -25,10 +25,7 @@
         {% include "sidebar.html" %}
     {% endblock %}
 
-    {% if nav_user %}
-    <a class="topbar-avatar" href="{{ url_for('profilePage.profile_page') }}" title="{{ nav_user.username }}" aria-label="My profile">
-        {% if nav_user.picture %}<img src="{{ nav_user.picture }}" alt="">{% else %}<span>{{ nav_user.initial }}</span>{% endif %}
-    </a>
+       {% include "navAvatar.html" %}
     {% endif %}
     <main class="main-page-colors">
         {% block content %}{% endblock %}

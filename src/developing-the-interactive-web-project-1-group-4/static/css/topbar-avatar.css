@@ -45,3 +45,16 @@
 @media (max-width: 768px) {
     .topbar-avatar { top: 10px; right: 12px; width: 38px; height: 38px; font-size: 16px; }
 }
+
+/* On pages with a search bar, the avatar sits on the same row, just right of it */
+.search-bar-container { position: relative; }
+.topbar-avatar.in-search {
+    position: absolute;
+    top: 2px;
+    right: auto;
+    left: calc(85% + 18px);
+}
+body:has(.search-bar-container) > .topbar-avatar { display: none; }
+@media (max-width: 768px) {
+    .topbar-avatar.in-search { top: 4px; left: calc(85% + 8px); }
+}
