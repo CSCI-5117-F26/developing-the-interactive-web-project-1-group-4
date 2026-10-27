@@ -5,13 +5,13 @@
     gap: 10px;
 }
 .sidebar-logo-img {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
     flex: 0 0 auto;
 }
 
-/* Top-right profile avatar (all pages) */
+/* Round profile avatar */
 .topbar-avatar {
     position: fixed;
     top: 14px;
@@ -42,19 +42,24 @@
     object-fit: cover;
     display: block;
 }
-@media (max-width: 768px) {
-    .topbar-avatar { top: 10px; right: 12px; width: 38px; height: 38px; font-size: 16px; }
-}
 
-/* On pages with a search bar, the avatar sits on the same row, just right of it */
-.search-bar-container { position: relative; }
-.topbar-avatar.in-search {
-    position: absolute;
-    top: 2px;
-    right: auto;
-    left: calc(85% + 18px);
+/* Avatar to the left of Logout in the sidebar */
+.sidebar-logout.has-avatar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
-body:has(.search-bar-container) > .topbar-avatar { display: none; }
-@media (max-width: 768px) {
-    .topbar-avatar.in-search { top: 4px; left: calc(85% + 8px); }
+.sidebar-logout.has-avatar .sidebar-link {
+    flex: 1;
+    width: auto;
+    margin: 0;
+}
+.topbar-avatar.in-sidebar {
+    position: static;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-width: 2px;
+    font-size: 15px;
+    margin-left: 6px;
 }

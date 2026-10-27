@@ -39,8 +39,9 @@
     </nav>
     {% endif %}
 
-    {% if session.get('user') %}
-    <div class="sidebar-logout">
+        {% if session.get('user') %}
+    <div class="sidebar-logout has-avatar">
+        {% with avatar_class="in-sidebar" %}{% include "navAvatar.html" %}{% endwith %}
         <a href="{{ url_for('logout') }}" class="sidebar-link"><span>↪</span> Logout</a>
     </div>
     {% endif %}
