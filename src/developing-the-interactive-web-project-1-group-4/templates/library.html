@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/playlist-popup.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/library-carousel.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/playlist-delete.css') }}">
 
 
 <div class="home-placeholder">
@@ -25,7 +26,8 @@
             {% for playlist in playlists %}
             <button type="button" class="playlist-card playlist-open"
                     data-playlist-title="{{ playlist.title }}"
-                    data-play-url="{{ url_for('library.play_playlist', playlist_id=playlist.id) }}">
+                    data-play-url="{{ url_for('library.play_playlist', playlist_id=playlist.id) }}"
+                    data-delete-url="{{ url_for('library.delete_playlist', playlist_id=playlist.id) }}">
                 {% include "svg/playlist.html"%}
                 <div class="playlist-title">
                     {{playlist.title}}
@@ -265,6 +267,7 @@
 </style>
 {% include "playlistPopup.html" %}
 <script src="{{ url_for('static', filename='js/playlistPopup.js') }}"></script>
+<script src="{{ url_for('static', filename='js/playlistDelete.js') }}"></script>
 <script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
 <script src="{{ url_for('static', filename='js/libraryRemove.js') }}" data-remove-url="{{ url_for('library.remove_from_library') }}"></script>
 {% endblock %}
