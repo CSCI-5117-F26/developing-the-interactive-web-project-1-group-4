@@ -162,7 +162,47 @@ def add_to_playlist(playlist_id):
         raise
 
     return jsonify(message="Video added to playlist."), 201
+@library_bp.post("/remove-from-library")
+def remove_from_library():
+    """Take a video out of the user's Saved Videos or Watch Later list."""
+    user = get_current_user()
 
+    if user is None:
+        return jsonify(error="Please log in."), 401
+
+    data = request.get_json(silent=True) or {}
+    video_id = data.get("video_id")
+    list_name = data.get("list")
+
+    if type(video_id) is not int or video_id <= 0:
+        return jsonify(error="A valid video_id is required."), 400
+
+    titles = {
+        "saved": os.environ["SAVED_VIDEOS"],
+        "watchlater": os.environ["WATCH_LATER"],
+    }
+    if list_name not in titles:
+        return jsonify(error="Unknown list."), 400
+
+    playlist = db.session.execute(
+        db.select(Playlists).where(
+            Playlists.ti_user == user.ti_user_id,
+            Playlists.title == titles[list_name],
+        )
+    ).scalar_one_or_none()
+    video = db.session.get(videos, video_id)
+
+    if playlist is None or video is None or video not in playlist.videos:
+        return jsonify(error="Video is not in this list."), 404
+
+    try:
+        playlist.videos.remove(video)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+    return jsonify(message="Video removed."), 200
 @library_bp.post("/create-playlist")
 def create_playlist():
     user = get_current_user()

@@ -62,9 +62,10 @@
         <h2>Saved Videos</h2>
         <div class="carousel lib-carousel">
         <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll saved videos left">‹</button>
-        <div class="carousel-track saved-row">
+        <div class="carousel-track saved-row" data-list="saved">
             {% for video in saved_videos %}
             <article class="mv-card saved-vid-card"
+                    data-video-id="{{ video.id }}"
                     role="link"
                     tabindex="0"
                     aria-label="Play {{ video.title }}"
@@ -115,9 +116,10 @@
         <h2>Watch Later</h2>
         <div class="carousel lib-carousel">
         <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll watch later left">‹</button>
-        <div class="carousel-track saved-row">
+        <div class="carousel-track saved-row" data-list="watchlater">
             {% for video in watchlater %}
             <article class="mv-card saved-vid-card"
+                    data-video-id="{{ video.id }}"
                         role="link"
                         tabindex="0"
                         aria-label="Play {{ video.title }}"
@@ -264,4 +266,5 @@
 {% include "playlistPopup.html" %}
 <script src="{{ url_for('static', filename='js/playlistPopup.js') }}"></script>
 <script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
+<script src="{{ url_for('static', filename='js/libraryRemove.js') }}" data-remove-url="{{ url_for('library.remove_from_library') }}"></script>
 {% endblock %}
