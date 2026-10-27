@@ -14,9 +14,7 @@
 
     <!-- ===== Section 1: Trending videos ===== -->
     <div id="mvGrid">
-    {% call carousel("Trending", "trendingVideos") %}
-    
-        {% for video in trendingVideos %}
+        {% call carousel("Trending", "trendingVideos") %}        {% for video in trendingVideos %}
             <div class="carousel-item">
                 <article class="mv-card"
                  data-title="{{ video.title }}"
