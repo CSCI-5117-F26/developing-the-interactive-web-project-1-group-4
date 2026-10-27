@@ -11,6 +11,13 @@
 </mask>
 <path d="M3 9C3 3.47715 7.47715 -1 13 -1H153.267C158.79 -1 163.267 3.47715 163.267 9C163.267 4.58172 159.238 1 154.267 1H13C8.58172 1 5 4.58172 5 9H3ZM163.267 45.7916H4H163.267ZM3 45.7916V9C3 3.47715 7.47715 -1 13 -1V1C8.58172 1 5 4.58172 5 9V45.7916H3ZM163.267 0V45.7916V0Z" fill="#737373" mask="url(#stroke1_273_278)"/>
 </g>
+{# genre name printed on the front of the folder; shrinks for long names #}
+{% set lines = video.title_lines or [video.title] %}
+{% set longest = lines|map('length')|max %}
+{% set fs = 26 if longest <= 10 else (21 if longest <= 16 else 17) %}
+<text text-anchor="middle" font-family="inherit" font-weight="700" font-size="{{ fs }}" fill="#27331a">
+{% for line in lines[:2] %}<tspan x="135.5" y="{{ 100 - ((lines[:2]|length - 1) * (fs * 0.6)) + loop.index0 * (fs * 1.2) }}">{{ line }}</tspan>{% endfor %}
+</text>
 <defs>
 <filter id="filter0_d_273_278" x="0" y="0" width="271" height="178" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
