@@ -31,6 +31,7 @@ function updateCount() {
 grid.addEventListener("click", (event) => {
     const dots = event.target.closest(".mv-dots");
     const deleteButton = event.target.closest('[data-action="delete"]');
+    const card = event.target.closest(".mv-card[data-watch-url]");
 
     if (dots) {
         const menu = dots.parentElement.querySelector(".mv-menu");
@@ -45,6 +46,19 @@ grid.addEventListener("click", (event) => {
         deleteName.textContent = cardToDelete.dataset.title;
         deleteError.textContent = "";
         dialog.showModal();
+    } else if (
+        card &&
+        !event.target.closest("a, button, input, [role='menu']")
+    ) {
+        window.location.href = card.dataset.watchUrl;
+    }
+});
+
+grid.addEventListener("keydown", (event) => {
+    const card = event.target.closest(".mv-card[data-watch-url]");
+    if (card && event.target === card && event.key === "Enter") {
+        event.preventDefault();
+        window.location.href = card.dataset.watchUrl;
     }
 });
 
