@@ -13,14 +13,14 @@
 /* Grids (Home, Search, Genre): fixed-width columns, left aligned */
 .mv-grid {
     grid-template-columns: repeat(auto-fill, var(--vcard-w));
-    justify-content: space-between;     /* cards spread evenly across the row */
+    justify-content: center;     /* cards spread evenly across the row */
 }
 
 /* Pure grids (Manage Videos, Profile, Subscriptions, Upload): each cell is one card + 14px each side */
 .pure-g.mv-grid-pure {
     display: grid;
     grid-template-columns: repeat(auto-fill, calc(var(--vcard-w) + 28px));
-    justify-content: space-between;     /* cards spread evenly across the row */
+    justify-content: center;     /* cards spread evenly across the row */
 }
 
 .mv-grid-pure > .mv-cell {
