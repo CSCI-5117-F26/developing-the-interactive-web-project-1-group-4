@@ -129,6 +129,7 @@
     <form id="draftForm"
       class="creator-upload-form"
       data-save-url="{{ url_for('uploadVideo.update_draft') }}"
+      data-delete-url="{{ url_for('uploadVideo.delete_draft') }}"
       data-publish-url="{{ url_for('uploadVideo.publish_draft') }}">
 
         <h2 id="draftDialogTitle">Edit draft</h2>
@@ -202,6 +203,11 @@
         <p id="draftError" role="alert"></p>
 
         <div class="creator-actions">
+            <button type="button" id="deleteDraft"
+                    class="pure-button creator-btn creator-btn-danger">
+                Delete draft
+            </button>
+
             <button type="submit" value="save"
                     class="pure-button creator-btn creator-btn-secondary">
                 Save draft
@@ -280,6 +286,11 @@
         font: inherit;
         text-align: left;
         cursor: pointer;
+    }
+
+    .creator-btn-danger {
+        background: #9b4034;
+        color: #fff;
     }
 
     #draftDialog {
@@ -591,6 +602,41 @@ document.getElementById("closeDraft").addEventListener("click", () => {
 
 document.getElementById("draftThumbnail").addEventListener("change", () => {
     replacementThumbnailKey = null;
+});
+
+document.getElementById("deleteDraft").addEventListener("click", async () => {
+    if (!window.confirm(
+        "Delete this draft and its uploaded video and thumbnail?"
+    )) {
+        return;
+    }
+
+    const buttons = draftForm.querySelectorAll("button");
+    buttons.forEach(button => button.disabled = true);
+    draftError.textContent = "";
+
+    try {
+        const data = new FormData();
+        data.set("draft_id", document.getElementById("draftId").value);
+        const response = await fetch(draftForm.dataset.deleteUrl, {
+            method: "POST",
+            body: data
+        });
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(result.error || "Could not delete the draft.");
+        }
+
+        if (result.cleanup_required) {
+            window.alert(result.message);
+        }
+        window.location.reload();
+    } catch (error) {
+        draftError.textContent = error.message;
+    } finally {
+        buttons.forEach(button => button.disabled = false);
+    }
 });
 
 draftForm.addEventListener("submit", async event => {
