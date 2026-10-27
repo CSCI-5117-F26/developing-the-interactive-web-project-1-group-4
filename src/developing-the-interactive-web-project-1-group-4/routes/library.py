@@ -42,7 +42,7 @@ def add_to_watch_later():
     user = get_current_user()
 
     if user is None:
-        return jsonify(error="Please log in to save videos."), 401
+        return jsonify(error="Please log in to add to Watch Later."), 401
 
     data = request.get_json(silent=True) or {}
     video_id = data.get("video_id")
@@ -129,6 +129,10 @@ def add_to_saved_videos():
 @library_bp.post("/api/playlists/<int:playlist_id>/videos")
 def add_to_playlist(playlist_id):
     user = get_current_user()
+
+    if user is None:
+        return jsonify(error="Please log in to add to playlist."), 401
+
     data = request.get_json(silent=True) or {}
     video_id = data.get("video_id")
 
@@ -162,6 +166,7 @@ def add_to_playlist(playlist_id):
         raise
 
     return jsonify(message="Video added to playlist."), 201
+
 @library_bp.post("/remove-from-library")
 def remove_from_library():
     """Take a video out of the user's Saved Videos or Watch Later list."""
@@ -203,6 +208,8 @@ def remove_from_library():
         raise
 
     return jsonify(message="Video removed."), 200
+
+
 @library_bp.post("/create-playlist")
 def create_playlist():
     user = get_current_user()

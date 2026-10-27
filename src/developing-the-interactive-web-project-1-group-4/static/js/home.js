@@ -230,6 +230,17 @@ if (tagScroller) {
 
         const { videoId, action } = event.detail;
 
+        // Logged out: no playlists / saving. Tell the person instead of opening the popup.
+        if (document.body.dataset.loggedIn === "false") {
+            const loginMessages = {
+                playlist: "Please log in to add to playlist.",
+                "watch-later": "Please log in to add to Watch Later.",
+                save: "Please log in to save videos."
+            };
+            showStatus(loginMessages[action] || "Please log in first.");
+            return;
+        }
+
         if (action === "playlist") {
             selectedVideoId = videoId;
             message.textContent = choices.querySelector("button")
