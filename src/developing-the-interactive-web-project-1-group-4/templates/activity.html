@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/library-style.css') }}?v=2">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/activity-style.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/library-carousel.css') }}">
 
 <div class="home-placeholder">
     {% include "searchBar.html" %}
@@ -11,7 +12,9 @@
     <!-- Liked Videos -->
     <div>
         <h2>Liked Videos</h2>
-        <div class="saved-row">
+        <div class="carousel lib-carousel">
+        <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll liked videos left">‹</button>
+        <div class="carousel-track saved-row">
             {% for video in liked_videos %}
             <article class="mv-card saved-vid-card"
                     data-title="{{ video.title }}"
@@ -49,12 +52,16 @@
             </article>
             {% endfor %}
         </div>
+        <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll liked videos right">›</button>
+        </div>
     </div>
 
     <!-- Comments -->
     <div class="saved-section">
-        <h2>Comments on Videos</h2>
-        <div class="mv-grid">
+        <h2>Your Comments</h2>
+        <div class="carousel lib-carousel">
+        <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll your comments right">›</button>
+        <div class="carousel-track saved-row">
             {% for video in commented_videos %}
             <article class="mv-card saved-vid-card"
                         data-title="{{ video.title }}"
@@ -105,8 +112,11 @@
                 </article>
             {% endfor %}
         </div>
+        <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll your videos right">›</button>
+        </div>
     </div>
 </div>
+<script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
 <script>
     function openActivityVideo(event) {
         if (!(event.target instanceof Element)) return;
