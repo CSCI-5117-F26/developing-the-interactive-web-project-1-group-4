@@ -45,7 +45,7 @@ def home():
 def search():
     q = readQuery()
     username = request.args.get("artist", "").strip()[:50]
-
+    user = get_current_user()
     if username:
         artist, videos = fetchArtistVideos(username, SEARCH_PAGE_LIMIT)
         if artist is None:
@@ -58,8 +58,13 @@ def search():
         return redirect(url_for("homePage.home"))
 
     addTitleLines(results["videos"])
-    return render_template("search.html", q=q, artist=artist, **results)
-
+    return render_template(
+        "search.html",
+        q=q,
+        artist=artist,
+        playlists=user.playlists if user else [],
+        **results,
+    )
 
 
 """
