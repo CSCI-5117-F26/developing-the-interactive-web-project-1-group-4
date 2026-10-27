@@ -247,6 +247,38 @@ def create_playlist():
     return redirect(url_for("library.library"), code=303)
 
 
+@library_bp.post("/playlists/<int:playlist_id>/delete")
+def delete_playlist(playlist_id):
+    """Delete one of the user's own playlists (never Watch Later / Saved Videos)."""
+    user = get_current_user()
+
+    if user is None:
+        return jsonify(error="Please log in."), 401
+
+    playlist = db.session.execute(
+        db.select(Playlists).where(
+            Playlists.id == playlist_id,
+            Playlists.ti_user == user.ti_user_id,
+        )
+    ).scalar_one_or_none()
+
+    if playlist is None:
+        return jsonify(error="Playlist not found."), 404
+
+    if playlist.title in (os.environ["WATCH_LATER"], os.environ["SAVED_VIDEOS"]):
+        return jsonify(error="This playlist can't be deleted."), 400
+
+    try:
+        playlist.videos.clear()          # remove the links only; the videos themselves stay
+        db.session.delete(playlist)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+    return jsonify(message="Playlist deleted."), 200
+
+
 @library_bp.get("/playlists/<int:playlist_id>/play")
 def play_playlist(playlist_id):
     user = get_current_user()
