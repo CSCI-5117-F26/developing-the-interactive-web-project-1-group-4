@@ -65,7 +65,11 @@
         <div class="carousel-track saved-row">
             {% for video in saved_videos %}
             <article class="mv-card saved-vid-card"
+                    role="link"
+                    tabindex="0"
+                    aria-label="Play {{ video.title }}"
                     data-title="{{ video.title }}"
+                    data-watch-url="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}"
                     >
 
                 <button type="button" class="mv-dots vinyl-dots" aria-haspopup="menu" aria-expanded="false"
@@ -114,7 +118,11 @@
         <div class="carousel-track saved-row">
             {% for video in watchlater %}
             <article class="mv-card saved-vid-card"
+                        role="link"
+                        tabindex="0"
+                        aria-label="Play {{ video.title }}"
                         data-title="{{ video.title }}"
+                        data-watch-url="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}"
                         >
 
                     <button type="button" class="mv-dots vinyl-dots" aria-haspopup="menu" aria-expanded="false"
@@ -223,6 +231,36 @@
     });
 })();
 </script>
+<script>
+    function openLibraryVideo(event) {
+        if (!(event.target instanceof Element)) return;
+        if (event.target.closest("a, button, input, select, textarea, [role='menu']")) return;
+
+        const card = event.target.closest(".saved-vid-card[data-watch-url]");
+        if (!card) return;
+
+        if (event.type === "keydown") {
+            if (event.target !== card) return;
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+        }
+
+        window.location.assign(card.dataset.watchUrl);
+    }
+
+    document.addEventListener("click", openLibraryVideo);
+    document.addEventListener("keydown", openLibraryVideo);
+</script>
+<style>
+    .saved-vid-card[data-watch-url] {
+        cursor: pointer;
+    }
+
+    .saved-vid-card[data-watch-url]:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 4px;
+    }
+</style>
 {% include "playlistPopup.html" %}
 <script src="{{ url_for('static', filename='js/playlistPopup.js') }}"></script>
 <script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
