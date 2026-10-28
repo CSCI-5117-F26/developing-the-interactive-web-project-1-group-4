@@ -32,7 +32,7 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 
 ## Screenshots of Site
 
-![Tune In home page](images/home page ss.png)
+![Tune In home page](images/home_page_ss.png)
 *Discover videos from the signed-in home page.*
 
 ![Trending page](images/trending_ss.png)
