@@ -5,8 +5,8 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 ## App Info:
 
 * Team Name: Brain Underflow
-* App Name: TODO
-* App Link: <https://TODO.com/>
+* App Name: Tune In
+* App Link: https://developing-the-interactive-web-project-1-mde9.onrender.com
 
 ### Students
 
@@ -18,24 +18,31 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 
 ## Key Features
 
-**Describe the most challenging features you implemented
-(one sentence per bullet, maximum 4 bullets):**
-
-* ...
+* Discover music performances with search, genre filters, trending videos and artists, and personalized video recommendations.
+* Watch videos and interact through likes and threaded comments, including replies, editing, deletion, and comment likes.
+* Subscribe to creators and organize videos into custom playlists, Saved Videos, and a Watch Later list.
+* Upload videos and thumbnails, save drafts, publish videos, and edit or delete uploads in Creator Studio.
 
 ## Testing Notes
 
-**Is there anything special we need to know in order to effectively test your app? (optional):**
-
-* ...
+* Sign-in and sign-up use Auth0. Testing account-only features requires signing in and completing profile setup.
+* The app requires a configured PostgreSQL database and Cloudflare R2 bucket; upload, thumbnail, and playback workflows rely on R2.
+* Test the logged-out experience, then sign in to try search and genre browsing, video playback, likes/comments, subscriptions, playlists, and creator upload/manage features.
 
 
 ## Screenshots of Site
 
-**[Add a screenshot of each key page (around 4)](https://stackoverflow.com/questions/10189356/how-to-add-screenshot-to-readmes-in-github-repository)
-along with a very brief caption:**
+![Tune In home page](images/home page ss.png)
+*Discover videos from the signed-in home page.*
 
-![](https://media.giphy.com/media/o0vwzuFwCGAFO/giphy.gif)
+![Trending page](images/trending_ss.png)
+*Browse trending videos, artists, and genres.*
+
+![Library page](images/library_ss.png)
+*Find playlists, saved videos, and Watch Later.*
+
+![Video player](images/mediaplayer_ss.png)
+*Watch a performance and join the conversation.*
 
 
 ## Mock-up 
