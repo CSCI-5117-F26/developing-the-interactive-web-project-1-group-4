@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "videoStats.html" import videoStats %}
+{% block title %}Library - Tune In{% endblock %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/library-style.css') }}?v=2">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
@@ -44,11 +45,13 @@
                 <template class="playlist-videos">
                     {% for video in playlist.videos|sort(attribute='id') %}
                     <li data-title="{{ video.title }}"
+                        data-video-id="{{ video.id }}"
                         data-artist="{{ video.artist or (video.uploader.username if video.uploader else '') }}"
                         data-duration-text="{{ video.duration_text }}"
                         data-seconds="{{ video.duration }}"
                         data-thumb="{{ mediaURL(video.thumbnail_key) or default_thumbnail_url or '' }}"
                         data-src="{{ video.video_url }}"
+                        data-remove-url="{{ url_for('mediaPlayer.deletePlaylistVideo', playlistId=playlist.id, videoId=video.id) }}"
                         data-play-url="{{ url_for(
                             'library.play_playlist',
                             playlist_id=playlist.id,
