@@ -144,11 +144,12 @@ The three dots on the media player area leads to this dropdown options. They can
 **Document integrations with 3rd Party code or services here.
 Please do not document required libraries. or libraries that are mentioned in the product requirements**
 
-* Library or service name: description of use
-* ...
+* **Auth0:** Provides user sign-up and sign-in; the application uses Auth0 credentials to associate authenticated accounts with Tune In profiles.
+* **Cloudflare R2:** Stores uploaded videos, video thumbnails, and profile pictures, which the app retrieves for playback and display.
+* **PostgreSQL:** Stores application data, including user profiles, videos, comments, subscriptions, and playlists.
 
 **If there's anything else you would like to disclose about how your project
 relied on external code, expertise, or anything else, please disclose that
 here:**
 
-...
+We asked our friends who are into music to send in their music videos for our website
