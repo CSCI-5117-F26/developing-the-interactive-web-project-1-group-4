@@ -1,0 +1,105 @@
+/* Genre filter under the search bar: same width as the search bar (70%, centred) */
+.genre-filter {
+    position: relative;
+    width: 70%;
+    margin: 0 auto 2%;
+}
+
+/* One row. Chips are spread evenly: the first touches the left edge of the
+   search bar and the last (the "+N more" button) touches the right edge. */
+.gf-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+}
+
+.gf-chip {
+    flex: none;
+    box-sizing: border-box;
+    padding: 7px 16px;
+    border: 2px solid #8fa377;
+    border-radius: 999px;
+    background: #c5d1ab;
+    color: #27331a;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.gf-chip:hover {
+    background: #b3c293;
+    color: #1f2a16;
+}
+
+.gf-chip.active,
+.gf-chip.active:hover {
+    border-color: #465738;
+    background: #465738;
+    color: #fcfcee;
+    box-shadow: 0 3px 8px rgba(70, 87, 56, .3);
+}
+
+.gf-more {
+    background: #fff;
+    border: 2px dashed #5c724a;
+}
+
+.gf-more[aria-expanded="true"] {
+    background: #c5d1ab;
+    border-style: solid;
+}
+
+/* Hidden chips (did not fit in the row) */
+.gf-chip.gf-hide {
+    display: none;
+}
+
+/* Panel with all genres: same width as the bar, floats over the page */
+.gf-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 60;
+    box-sizing: border-box;
+    padding: 14px 16px 16px;
+    border: 2px solid #b7c6a4;
+    border-radius: 12px;
+    background: #fcfcee;
+    box-shadow: 0 10px 24px rgba(70, 87, 56, .18);
+}
+
+.gf-panel[hidden],
+.gf-more[hidden] {
+    display: none;
+}
+
+.gf-title {
+    margin: 0 0 10px;
+    color: #5c724a;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .07em;
+}
+
+.gf-all {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.gf-panel .gf-chip {
+    padding: 6px 14px;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .gf-chip { padding: 6px 12px; font-size: 13px; }
+}

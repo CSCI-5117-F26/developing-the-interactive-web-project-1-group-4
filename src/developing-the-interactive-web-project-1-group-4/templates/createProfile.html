@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Create Profile - Tune In{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block content %}
+<style>
+    body > main { margin-left: 0; }
+</style>
+
+<div class="creator-page">
+
+    <div class="creator-heading">
+        <h1>Create Your Profile</h1>
+        <p>Fill in your details to get started on Tune In.</p>
+    </div>
+
+    <form class="creator-upload-form" action="{{ url_for('profileInput.createProfile') }}"method="post" enctype="multipart/form-data">
+        <div class="creator-form-banner">PROFILE DETAILS</div>
+
+        <div class="profile-card-body">
+
+            <!-- Left: profile picture -->
+            <div class="profile-picture-panel">
+                <div id="profileEmpty" class="profile-avatar profile-avatar-empty">Photo</div>
+                <img id="profilePreview" class="profile-avatar" alt="Profile picture preview" hidden>
+
+                <label class="creator-dropzone" for="profilePicture">
+                    <span class="creator-upload-icon">↑</span>
+                    <strong>Upload profile picture</strong>
+                    <span>PNG, JPG or WEBP, up to 5 MB</span>
+                    <input id="profilePicture" name="profilePicture" type="file"
+                           accept=".png,.jpg,.jpeg,.webp">
+                </label>
+                {% if errors.profilePicture %}
+                    <p class="field-error">{{ errors.profilePicture }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Right: text fields -->
+            <div class="profile-fields">
+                <div class="creator-details-grid">
+                    <div class="creator-field">
+                        <label for="firstName">First name <span class="required">*</span></label>
+                        <input id="firstName" name="firstName" type="text" maxlength="50" required
+                               value="{{ form.get('firstName', '') }}">
+                        {% if errors.firstName %}<p class="field-error">{{ errors.firstName }}</p>{% endif %}
+                    </div>
+
+                    <div class="creator-field">
+                        <label for="lastName">Last name <span class="required">*</span></label>
+                        <input id="lastName" name="lastName" type="text" maxlength="50" required
+                               value="{{ form.get('lastName', '') }}">
+                        {% if errors.lastName %}<p class="field-error">{{ errors.lastName }}</p>{% endif %}
+                    </div>
+
+                    <div class="creator-field">
+                        <label for="userName">Username <span class="required">*</span></label>
+                        <input id="userName" name="userName" type="text" maxlength="50" required
+                               pattern="[A-Za-z0-9_.]{3,50}" title="3-50 characters: letters, numbers, _ or ."
+                               value="{{ form.get('userName', '') }}">
+                        {% if errors.userName %}<p class="field-error">{{ errors.userName }}</p>{% endif %}
+                    </div>
+
+                <!--<div class="creator-field">
+                        <label for="userEmail">Email <span class="required">*</span></label>
+                        <input id="userEmail" name="userEmail" type="email" maxlength="100" required
+                               value="{{ form.get('userEmail', '') }}">
+                        {% if errors.userEmail %}<p class="field-error">{{ errors.userEmail }}</p>{% endif %}
+                    </div>-->
+
+                    <div class="creator-field">
+                        <label for="userPhoneNumber">Phone number</label>
+                        <input id="userPhoneNumber" name="userPhoneNumber" type="tel" maxlength="20"
+                               value="{{ form.get('userPhoneNumber', '') }}">
+                        {% if errors.userPhoneNumber %}<p class="field-error">{{ errors.userPhoneNumber }}</p>{% endif %}
+                    </div>
+                </div>
+
+                <div class="creator-field">
+                    <label for="userBio">Bio</label>
+                    <textarea id="userBio" name="userBio" maxlength="200" rows="4"
+                              placeholder="A few words about you (200 characters max)">{{ form.get('userBio', '') }}</textarea>
+                    {% if errors.userBio %}<p class="field-error">{{ errors.userBio }}</p>{% endif %}
+                </div>
+                <div class="creator-field">
+                    <label for="userContact">Contact Me</label>
+                    <textarea id="userContact" name="userContact" maxlength="200" rows="4"
+                              placeholder="Give a way for people to reach out (200 characters max)">{{ form.get('userContact', '') }}</textarea>
+                    {% if errors.userContact %}<p class="field-error">{{ errors.userContact }}</p>{% endif %}
+                </div>
+
+                <div class="creator-actions">
+                    <a class="creator-btn creator-btn-cancel" href="{{ url_for('homePage.home') }}">Cancel</a>
+                    <button type="submit" class="creator-btn creator-btn-primary">Create Account</button>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+{% endblock %}

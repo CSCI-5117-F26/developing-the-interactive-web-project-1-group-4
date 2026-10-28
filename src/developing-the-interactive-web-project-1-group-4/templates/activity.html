@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% from "videoStats.html" import videoStats %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/library-style.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/activity-style.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/library-carousel.css') }}">
+
+<div class="home-placeholder">
+    {% include "searchBar.html" %}
+
+    <!-- Liked Videos -->
+    <div>
+        <h2>Liked Videos</h2>
+        <div class="carousel lib-carousel">
+        <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll liked videos left">‹</button>
+        <div class="carousel-track saved-row">
+            {% for video in liked_videos %}
+            <article class="mv-card saved-vid-card"
+                    data-title="{{ video.title }}"
+                    data-watch-url="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}"
+                    tabindex="0"
+                    role="link"
+                    >
+
+                <div class="mv-art vinyl-art">
+                    <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
+                                    <div class="mv-thumb">
+                        {% set thumbnail_url = video.thumbnail_url or default_thumbnail_url %}
+                        {% if thumbnail_url %}
+                                                    <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                                class="{{ 'is-default' if video.is_default else '' }}"
+                                {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
+                                data-fallback="{{ default_thumbnail_url or '' }}"
+                                onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
+                        {% else %}
+                            <span class="mv-thumb-empty">♫</span>
+                        {% endif %}
+                        {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
+                    </div>
+                </div>
+
+                <div class="mv-info">
+                    <h2 class="mv-title">{{ video.title }}</h2>
+                    <div class="video-info">
+                        <div class="mv-views video-info-section">{{video.author}}</div>
+                        <div class="mv-views video-info-section video-info-section-time">Liked {{ video.likedtime }} ago</div>
+                    </div>
+                    {{ videoStats(video) }}
+                </div>
+
+            </article>
+            {% endfor %}
+        </div>
+        <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll liked videos right">›</button>
+        </div>
+    </div>
+
+    <!-- Comments -->
+    <div class="saved-section">
+        <h2>Your Comments</h2>
+        <div class="carousel lib-carousel">
+                <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll your comments left">‹</button>
+        <div class="carousel-track saved-row">
+            {% for video in commented_videos %}
+            <div class="act-item">
+            <article class="mv-card saved-vid-card"
+                        data-title="{{ video.title }}"
+                        data-watch-url="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}"
+                        tabindex="0"
+                        role="link"
+                        >
+
+                    <div class="mv-art vinyl-art">
+                        <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
+                                        <div class="mv-thumb">
+                            {% set thumbnail_url = video.thumbnail_url or default_thumbnail_url %}
+                            {% if thumbnail_url %}
+                                                        <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                                    class="{{ 'is-default' if video.is_default else '' }}"
+                                    {% if video.is_default %}style="object-fit: contain; background: #fff;"{% endif %}
+                                    data-fallback="{{ default_thumbnail_url or '' }}"
+                                    onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
+                            {% else %}
+                                <span class="mv-thumb-empty">♫</span>
+                            {% endif %}
+                            {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
+                        </div>
+                    </div>
+
+                <div class="mv-info">
+                    <h2 class="mv-title">{{ video.title }}</h2>
+                    <div class="video-info">
+                        <div class="mv-views video-info-section">{{video.author}}</div>
+                        <div class="mv-views video-info-section video-info-section-time">Commented {{ video.commentedtime }} ago</div>
+                    </div>
+                    {{ videoStats(video) }}
+                </div>
+
+                </article>
+
+                <div class="comment-container">
+                    {% for comment in video.comments %}
+                    <div class="mv-comment">
+                        {{comment.comment}}
+                    </div>
+
+                    {% else %}
+                    <div class="mv-comment">
+                        {{video.comment}}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+         <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll your comments right">›</button>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
+<script>
+    function openActivityVideo(event) {
+        if (!(event.target instanceof Element)) return;
+
+        // Let buttons, links, and menu controls handle their own clicks.
+        if (event.target.closest(
+            "a, button, input, select, textarea, [role='menu']"
+        )) return;
+
+        const card = event.target.closest("[data-watch-url]");
+        if (!card) return;
+
+        if (event.type === "keydown") {
+            if (event.target !== card) return;
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+        }
+
+        window.location.assign(card.dataset.watchUrl);
+    }
+
+    document.addEventListener("click", openActivityVideo);
+    document.addEventListener("keydown", openActivityVideo);
+</script>
+
+<style>
+    .saved-vid-card[data-watch-url] {
+        cursor: pointer;
+    }
+
+    .saved-vid-card[data-watch-url]:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 4px;
+    }
+</style>
+{% endblock %}

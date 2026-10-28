@@ -1,0 +1,5 @@
+{% if nav_user %}
+<a class="topbar-avatar {{ avatar_class or '' }}" href="{{ url_for('profilePage.profile_page') }}" title="{{ nav_user.username }}" aria-label="My profile">
+    {% if nav_user.picture %}<img src="{{ nav_user.picture }}" alt="">{% else %}<span>{{ nav_user.initial }}</span>{% endif %}
+</a>
+{% endif %}

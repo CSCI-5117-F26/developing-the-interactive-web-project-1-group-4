@@ -1,0 +1,10 @@
+<form id="search-form" class="search-bar-container" method="get" role="search" autocomplete="off"
+      action="{{ url_for('homePage.search') }}"
+      data-api="{{ url_for('homePage.api_search') }}">
+    <div class="search-bar">
+        <input type="text" id="fl-search" name="q" placeholder=" " maxlength="100"
+               value="{{ q or '' }}" aria-controls="search-dropdown" aria-expanded="false">
+        <label for="fl-search">Search</label>
+        <div id="search-dropdown" class="search-dropdown" hidden></div>
+    </div>
+</form>

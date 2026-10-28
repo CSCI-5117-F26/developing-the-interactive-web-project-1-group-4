@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% from "carousel.html" import carousel %}
+{% from "videoStats.html" import videoStats %}
+
+{% block title %}Trending - Tune In{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/svg-style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/trending.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/trending-align.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
+
+<div class="home-placeholder trending-page">
+    {% include "searchBar.html" %}
+
+    <!-- ===== Section 1: Trending videos ===== -->
+    <div id="mvGrid">
+        {% call carousel("Trending", "trendingVideos") %}        {% for video in trendingVideos %}
+            <div class="carousel-item">
+                <article class="mv-card"
+                 data-title="{{ video.title }}"
+                 data-video-id="{{ video.id }}">
+
+            <button type="button" class="mv-dots" aria-haspopup="menu" aria-expanded="false"
+                    aria-label="Options for {{ video.title }}">
+                <span></span><span></span><span></span>
+            </button>
+    <div class="mv-menu" role="menu" hidden>
+        <button type="button" role="menuitem" data-action="playlist">
+            Add to playlist
+        </button>
+
+        <button type="button" role="menuitem"
+                data-action="watch-later"
+                data-url="{{ url_for('library.add_to_watch_later') }}">
+            Add to watch later
+        </button>
+
+        <button type="button" role="menuitem"
+                data-action="save"
+                data-url="{{ url_for('library.add_to_saved_videos') }}">
+            Save video
+        </button>
+    </div>
+
+            <a class="video-watch-link"
+   href="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}">
+
+    <div class="mv-art">
+        <div class="mv-vinyl" aria-hidden="true"></div>
+
+        <div class="mv-thumb">
+            <img class="video-img"
+                 src="{{ video.cover or url_for('static', filename='images/Rectangle_1.png') }}"
+                 alt="{{ video.title }}">
+
+            {% if video.durationText %}
+                <span class="mv-duration">
+                    {{ video.durationText }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mv-info">
+        <h2 class="mv-title">{{ video.title }}</h2>
+        {{ videoStats(video) }}
+    </div>
+</a>
+
+        </article>
+                <p class="carousel-meta">
+                    {% if video.artist %}
+                        <a href="{{ url_for('profilePage.profile_page', username=video.artist) }}"
+                        aria-label="View {{ video.artist }}'s profile">
+                            {{ video.artist }}
+                        </a>
+                    {% else %}
+                        Unknown artist
+                    {% endif %}
+                </p>
+            </div>
+        {% else %}
+            <p class="carousel-empty">No videos yet.</p>
+        {% endfor %}
+    {% endcall %}
+    </div>
+    <p id="videoMenuStatus" role="status" hidden></p>
+
+    <!-- ===== Section 2: Genres ===== -->
+    {% call carousel("Genres", "genreCarousel") %}
+        {% for genre in genres %}
+            <a class="carousel-item genre-card" href="{{ genre.url }}" title="Browse {{ genre.title }}">
+                {% with video = genre %}
+                    {% include "svg/genre_folder_svg.html" %}
+                {% endwith %}
+                <p class="carousel-meta">{{ genre.videoCount }} video{{ "" if genre.videoCount == 1 else "s" }}</p>
+            </a>
+        {% else %}
+            <p class="carousel-empty">No genres yet.</p>
+        {% endfor %}
+        
+    {% endcall %}
+
+    <!-- ===== Section 3: Trending artists ===== -->
+    {% call carousel("Trending Artists", "artistCarousel") %}
+        {% for artist in artists %}
+            <a class="carousel-item artist-tile" href="{{ artist.url }}" title="{{ artist.displayName }}">
+                {% if artist.picture and artist.picture != artist.fallbackPicture %}
+                    <img class="artist-avatar" src="{{ artist.picture }}" alt="{{ artist.displayName }}"
+                        onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                    <span class="artist-avatar artist-initial" aria-hidden="true" hidden>{{ (artist.username or "?")[:1]|upper }}</span>
+                {% else %}
+                    <span class="artist-avatar artist-initial" aria-hidden="true">{{ (artist.username or "?")[:1]|upper }}</span>
+                {% endif %}
+                <strong>{{ artist.displayName }}</strong>
+                <span>@{{ artist.username }}</span>
+                <small>{{ artist.totalViews }} views · {{ artist.videoCount }} video{{ "" if artist.videoCount == 1 else "s" }}</small>
+            </a>
+        {% else %}
+            <p class="carousel-empty">No artists yet.</p>
+        {% endfor %}
+    {% endcall %}
+
+<dialog id="playlistDialog">
+    <h2>Add to playlist</h2>
+
+    <div id="playlistChoices">
+        {% for playlist in playlists %}
+            {% if playlist.title not in ["Watch Later", "Saved Videos"] %}
+                <button type="button"
+                        data-url="{{ url_for('library.add_to_playlist', playlist_id=playlist.id) }}">
+                    {{ playlist.title }}
+                </button>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {% include "playlistCreate.html" %}
+
+    <p id="playlistMessage" role="status"></p>
+    <button type="button" id="closePlaylistDialog">Cancel</button>
+</dialog>
+
+    <video id="fullscreen-player" controls playsinline hidden></video>
+</div>
+
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+<script src="{{ url_for('static', filename='js/playlistCreate.js') }}"></script>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
+{% endblock %}

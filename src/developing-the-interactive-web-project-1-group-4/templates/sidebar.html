@@ -1,0 +1,105 @@
+{% set currentPage = request.endpoint or "" %}
+<aside class="sidebar">
+            <a class="sidebar-logo" href="/"><img class="sidebar-logo-img" src="{{ url_for('static', filename='images/logo-note.png') }}" alt=""><span>Tune In</span></a>
+
+    <nav class="sidebar-nav">
+        <a href="/" class="sidebar-link" id="homeMenuOption"><span>⌂</span> Home</a>
+        <a href="{{ url_for('trending.trending') }}"
+            class="sidebar-link {% if currentPage in ['trending.trending', 'trending.genrePage'] %}active{% endif %}" id="trendingMenuOption">
+                <span>♫</span> Trending
+        </a>
+        {% if session.get('user') %}
+        <a href="{{ url_for('subscription.subscriptions_page') }}" class="sidebar-link" id="subscriptionsMenuOption"><span>▶</span> Subscriptions</a>
+        <!-- <a href="#" class="sidebar-link"><span></span> Library</a> -->
+        <a href="{{ url_for('library.library') }}" class="sidebar-link" id="libraryMenuOption"><span>□</span> Library</a>
+        <a href="{{ url_for('activity.activity') }}" class="sidebar-link" id="activityMenuOption"><span>◷</span>Activity</a>
+        {% endif %}
+    </nav>
+    {% if session.get('user') %}
+
+    <div class="sidebar-section">
+        <div class="sidebar-divider"></div>
+        <p class="sidebar-heading">CREATOR STUDIO</p>
+        <a href="{{ url_for('uploadVideo.new_video') }}" class="sidebar-link" id="uploadMenuOption">
+            <span>↑</span> Upload Video
+        </a>
+        <a href="{{ url_for('manageVideos.manage_videos') }}" class="sidebar-link" id="manageVideosMenuOption"><span>▷</span> Manage Videos</a>
+    </div>
+
+    <nav>
+        <div class="sidebar-section">
+            <div class="sidebar-divider"></div>
+            <p class="sidebar-heading">SETTINGS</p>
+            <a href="{{ url_for('profilePage.profile_page') }}" class="sidebar-link" id="profileMenuOption"><span>◉</span> Profile</a>
+            <a href="{{ url_for('accountSettings.accountSettings') }}"
+                class="sidebar-link {% if currentPage == 'accountSettings.accountSettings' %}active{% endif %}" id="accountSettingsMenuOption">
+                <span>⚙</span> Account Settings
+            </a>
+        </div>
+    </nav>
+    {% endif %}
+
+        {% if session.get('user') %}
+    <div class="sidebar-logout has-avatar">
+        {% with avatar_class="in-sidebar" %}{% include "navAvatar.html" %}{% endwith %}
+        <a href="{{ url_for('logout') }}" class="sidebar-link"><span>↪</span> Logout</a>
+    </div>
+    {% endif %}
+    {% if not session.get('user') %}
+    <div class="sidebar-logout">
+        <a href="{{ url_for('login') }}" class="sidebar-link"><span>↪</span> Login/Signup</a>
+    </div>
+    {% endif %}
+</aside>
+
+<script>
+(() => {
+    const path = window.location.pathname;
+    const originKey = "tuneIn.watchOriginNav";
+    const isWatchPage = (pathname) => pathname.startsWith("/watch/");
+
+    function navForPath(pathname) {
+        if (pathname.includes("new-video")) return "uploadMenuOption";
+        if (pathname.includes("manage-videos")) return "manageVideosMenuOption";
+        if (pathname === "/subscriptions") return "subscriptionsMenuOption";
+        if (pathname === "/trending" || pathname.startsWith("/genre")) {
+            return "trendingMenuOption";
+        }
+        if (pathname.includes("account-settings")) return "accountSettingsMenuOption";
+        if (pathname.includes("library")) return "libraryMenuOption";
+        if (pathname.includes("activity")) return "activityMenuOption";
+        if (pathname === "/profile") return "profileMenuOption";
+
+        // Home is also the sidebar category for search and other pages
+        // that don't have a dedicated sidebar item.
+        return "homeMenuOption";
+    }
+
+    let activeId;
+
+    if (isWatchPage(path)) {
+        const referrer = document.referrer ? new URL(document.referrer) : null;
+
+        if (
+            referrer &&
+            referrer.origin === window.location.origin &&
+            !isWatchPage(referrer.pathname)
+        ) {
+            activeId = navForPath(referrer.pathname);
+            sessionStorage.setItem(originKey, activeId);
+        } else {
+            // Keep the original section while moving between video pages.
+            activeId = sessionStorage.getItem(originKey) || "homeMenuOption";
+        }
+    } else {
+        activeId = navForPath(path);
+        sessionStorage.setItem(originKey, activeId);
+    }
+
+    document.querySelectorAll(".sidebar-link").forEach((link) => {
+        link.classList.remove("active");
+    });
+
+    document.getElementById(activeId)?.classList.add("active");
+})();
+</script>

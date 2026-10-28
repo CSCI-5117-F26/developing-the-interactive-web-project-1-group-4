@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tune In{% endblock %}</title>
+
+    <!-- Pure CSS: the main CSS framework (buttons + grids). Loaded first so our own CSS can build on it. -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@3.0.0/build/buttons-min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@3.0.0/build/grids-min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@3.0.0/build/grids-responsive-min.css" crossorigin="anonymous">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/main-style.css') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/feedback.css') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/pure-compat.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/topbar-avatar.css') }}?v=2">
+</head>
+<body data-logged-in="{{ 'true' if nav_user else 'false' }}">
+    {% block sidebar %}
+        {% include "sidebar.html" %}
+    {% endblock %}
+
+    <main class="main-page-colors">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/toast.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/video-card-uniform.css') }}?v=1">
+</body>
+</html>

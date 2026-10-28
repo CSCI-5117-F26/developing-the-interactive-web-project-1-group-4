@@ -1,0 +1,18 @@
+{% macro videoStats(video) %}
+<p class="video-stats">
+    <span class="video-stat video-stat-views" title="{{ video.views or 0 }} views">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <span class="video-stat-text">{{ video.viewsText or 0 }} view{{ '' if video.views == 1 else 's' }}</span>
+    </span>
+    <span class="video-stat video-stat-likes" title="{{ video.likes or 0 }} likes">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true">
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.8 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>
+        </svg>
+        <span class="video-stat-text">{{ video.likesText or 0 }} like{{ '' if video.likes == 1 else 's' }}</span>
+    </span>
+</p>
+{% endmacro %}

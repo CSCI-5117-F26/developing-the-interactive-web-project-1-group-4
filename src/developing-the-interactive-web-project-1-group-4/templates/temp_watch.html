@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ video.title }} - Tune In{% endblock %}
+
+{% block content %}
+<div class="home-placeholder">
+    <video src="{{ video.videoURL }}" poster="{{ video.cover }}" controls width="640"></video>
+
+    <h1>{{ video.title }}</h1>
+    <p>{{ video.artistName or video.artist }} · {{ video.views }} views · {{ video.uploadedAgo }}</p>
+    <p>❤ {{ video.likeCount }} likes{% if video.likedByMe %} (you liked this){% endif %}</p>
+    <p>{{ video.description }}</p>
+
+    <h2>Recommended</h2>
+    <ul>
+        {% for r in recommendations %}
+            <li><a href="{{ r.watchURL }}">{{ r.title }}</a> ({{ r.reason }})</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Comments ({{ comments.total }})</h2>
+    <ul>
+        {% for c in comments.comments %}
+            <li><strong>{{ c.username }}</strong> · {{ c.timeAgo }}<br>{{ c.comment }}</li>
+        {% else %}
+            <li>No comments yet.</li>
+        {% endfor %}
+    </ul>
+
+    {% if loggedIn %}
+        <h2>Your playlists</h2>
+        <ul>
+            {% for p in playlists %}
+                <li>{{ p.title }} ({{ p.videoCount }}){% if p.containsVideo %} ✓{% endif %}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}

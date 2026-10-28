@@ -1,0 +1,53 @@
+<!-- Playlist popup: opened from a playlist card on the Library page -->
+<dialog id="playlistDialog" class="pl-dialog" aria-labelledby="plTitle">
+
+    <div class="pl-head">
+        <div>
+            <p class="pl-eyebrow">PLAYLIST</p>
+            <h2 id="plTitle" class="pl-title"></h2>
+            <p id="plMeta" class="pl-meta"></p>
+        </div>
+        <button type="button" class="pl-close" id="plClose" aria-label="Close">✕</button>
+    </div>
+
+    <div class="pl-now" id="plNow" hidden>
+        <video id="plVideo" class="pl-video" playsinline preload="none"></video>
+        <div class="pl-now-info">
+            <p class="pl-eyebrow pl-now-label" id="plNowLabel">NOW PLAYING</p>
+            <p class="pl-now-title" id="plNowTitle"></p>
+            <p class="pl-now-artist" id="plNowArtist"></p>
+            <div class="pl-progress-row">
+                <div class="pl-progress"><div class="pl-progress-bar" id="plBar"></div></div>
+                <span class="pl-time" id="plTime">0:00 / 0:00</span>
+            </div>
+        </div>
+    </div>
+
+    <ol class="pl-list" id="plList"></ol>
+    <p class="pl-empty" id="plEmpty" hidden>This playlist has no videos yet.</p>
+    <p class="pl-error" id="plError" role="alert" hidden></p>
+
+    <div class="pl-controls">
+    <button type="button"
+            class="pure-button pl-btn pl-btn-primary"
+            id="plPlay">
+        <svg width="14" height="14" viewBox="0 0 14 14"
+             aria-hidden="true" fill="currentColor">
+            <path d="M3 1.5v11l9-5.5z"/>
+        </svg>
+        Play
+    </button>
+
+    <button type="button" class="pure-button pl-btn pl-btn-danger" id="plDelete">
+        Delete playlist
+    </button>
+</div>
+
+<div class="pl-confirm" id="plConfirm" role="alertdialog" aria-labelledby="plConfirmText" hidden>
+    <p id="plConfirmText">Delete this playlist? The videos stay on Tune In. This can't be undone.</p>
+    <div class="pl-confirm-actions">
+        <button type="button" class="pure-button pl-btn" id="plConfirmNo">Cancel</button>
+        <button type="button" class="pure-button pl-btn pl-btn-danger-solid" id="plConfirmYes">Delete</button>
+    </div>
+</div>
+</dialog>

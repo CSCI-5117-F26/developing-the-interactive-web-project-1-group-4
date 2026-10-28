@@ -1,0 +1,279 @@
+/* ===================== Toast messages (confirmations) ===================== */
+.tune-toast-stack {
+    position: fixed;
+    inset: 20px auto auto 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: max-content;
+    max-width: 92vw;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.tune-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 260px;
+    max-width: min(520px, 92vw);
+    padding: 12px 14px 12px 12px;
+    border: 2px solid #5c724a;
+    border-radius: 14px;
+    background: #fcfcee;
+    color: #1f2a16;
+    box-shadow: 0 10px 28px rgba(39, 51, 26, .3);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+    animation: tune-toast-in .25s ease-out;
+}
+
+/* Pure's .pure-g wraps its items; keep the icon, text and close button on one line */
+.tune-toast.pure-g {
+    flex-wrap: nowrap;
+}
+
+.tune-toast.is-leaving {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+.tune-toast-icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #465738;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.tune-toast-text {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.tune-toast-close {
+    flex: none;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #5f5f4a;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.tune-toast-close:hover {
+    background: #e9edd6;
+}
+
+.tune-toast.is-error {
+    border-color: #9b4034;
+}
+
+.tune-toast.is-error .tune-toast-icon {
+    background: #9b4034;
+}
+
+@keyframes tune-toast-in {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================== "Add to playlist" pop-up (Home + Trending) ===================== */
+#playlistDialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    width: min(420px, 92vw);
+    height: fit-content;
+    max-height: min(560px, 86vh);
+    padding: 0;
+    border: 2px solid #5c724a;
+    border-radius: 16px;
+    background: #fcfcee;
+    color: #1f2a16;
+    box-shadow: 0 18px 44px rgba(39, 51, 26, .4);
+    overflow: hidden;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+#playlistDialog[open] {
+    display: flex;
+    flex-direction: column;
+}
+
+#playlistDialog::backdrop {
+    background: rgba(39, 51, 26, .55);
+}
+
+#playlistDialog h2 {
+    margin: 0;
+    padding: 22px 24px 4px;
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+#playlistDialog h2::after {
+    content: "Choose a playlist for this video";
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #5f5f4a;
+}
+
+#playlistChoices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    padding: 14px 24px 8px;
+    overflow-y: auto;
+}
+
+#playlistChoices button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #d9dec6;
+    border-radius: 10px;
+    background: #f3f5e0;
+    color: #1f2a16;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+
+#playlistChoices button::before {
+    content: "\266B";
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e3e8cf;
+    color: #465738;
+    font-size: 15px;
+}
+
+#playlistChoices button:hover:not(:disabled),
+#playlistChoices button:focus-visible {
+    border-color: #5c724a;
+    background: #e9edd6;
+    outline: none;
+}
+
+#playlistChoices button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+#playlistMessage {
+    margin: 0;
+    padding: 0 24px;
+    font-size: 13px;
+    color: #5f5f4a;
+}
+
+#playlistMessage:empty {
+    display: none;
+}
+
+#closePlaylistDialog {
+    align-self: flex-end;
+    margin: 10px 24px 20px;
+    padding: 10px 22px;
+    border: 0;
+    border-radius: 8px;
+    background: #e3e8cf;
+    color: #27331a;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#playlistDialog #closePlaylistDialog:hover {
+    background: #d6ddbb;
+}
+/* ---------- Create a playlist inside the Add to playlist pop-up ---------- */
+#playlistDialog .quick-playlist {
+    margin: 0;
+    padding: 12px 24px 6px;
+    border-top: 1px solid #e3e8cf;
+}
+
+.quick-playlist label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    color: #465738;
+}
+
+.quick-playlist .qp-input {
+    padding-right: 8px;
+}
+
+.quick-playlist input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 2px solid #b7c6a4;
+    border-radius: 10px;
+    background: #fff;
+    color: #1f2a16;
+    font: inherit;
+    font-size: 14px;
+}
+
+.quick-playlist input:focus {
+    border-color: #5c724a;
+    outline: none;
+}
+
+.quick-playlist button {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: #465738;
+    color: #fcfcee;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.quick-playlist button:disabled {
+    opacity: .6;
+    cursor: wait;
+}

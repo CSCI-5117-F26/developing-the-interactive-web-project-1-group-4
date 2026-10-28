@@ -1,0 +1,711 @@
+{% extends "base.html" %}
+
+{% block title %}Upload | Tune In{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
+<div class="creator-page">
+        {% include "searchBar.html" %}
+    <div class="creator-heading">
+        <h1>Upload</h1>
+        <p>Share your music and videos with your audience.</p>
+    </div>
+
+    <form id="upload-video-form" action="{{ url_for('uploadVideo.publish') }}" class="creator-upload-form" method="POST" enctype="multipart/form-data">
+        <div class="creator-form-banner">ADD NEW VIDEO</div>
+
+        <div class="pure-g creator-upload-grid">
+            <section class="creator-panel pure-u-1 pure-u-md-1-2">
+                <h2>1. Upload Video <span class="required">*</span></h2>
+                <p>Select the video file you want to publish.</p>
+                <label class="creator-dropzone">
+                    <span class="creator-upload-icon">⇧</span>
+                    <strong>Upload video</strong>
+                    <span>Choose a video file or browse</span>
+                    <input type="file" id="video-file" accept="video/*">
+                    <input type="hidden" name="video_key" id="video-key">
+                    <p id="upload-status-video"role="status"></p>
+                </label>
+                <p class="creator-file-note">Supported: MP4, MOV</p>
+            </section>
+
+            <section class="creator-panel pure-u-1 pure-u-md-1-2">
+                <h2>2. Upload Thumbnail <span>(optional)</span></h2>
+                <p>Choose the cover image viewers will see.</p>
+                <label class="creator-dropzone">
+                    <span class="creator-upload-icon">▧</span>
+                    <strong>Upload thumbnail</strong>
+                    <span>Choose an image or browse</span>
+                    <input type="file" id = "thumbnail-file" accept="image/*">
+                    <input type="hidden" name="thumbnail_key" id="thumbnail-key">
+                    <p id="upload-status-thumbnail" role="status"></p>
+                </label>
+                <p class="creator-file-note">Supported: PNG, JPG, JPEG</p>
+            </section>
+
+
+            <section class="creator-panel creator-details-panel pure-u-1">
+                <h2>3. Video Details</h2>
+                <div class="creator-field">
+                    <label for="video-title">Title <span class="required">*</span></label>
+                    <input id="video-title" name="title" type="text"
+                           placeholder="Enter video title" required>
+                </div>
+                <div class="creator-field">
+                    <label for="video-description">Description <span class="required">*</span></label>
+                    <textarea id="video-description" name="description"
+                              rows="2" placeholder="Enter a description" required></textarea>
+                </div>
+    {% set dropdowns = [
+    ('genre', 'Genres', 'Select genres', 'checkbox', genre_options),
+    ('video_type', 'Original / Cover', 'Select type', 'radio', [
+        ('original', 'Original'),
+        ('cover', 'Cover')
+    ]),
+    ('language', 'Language', 'Select language', 'radio', [
+        ('English', 'English'),
+        ('Tamil', 'Tamil'),
+        ('Hindi', 'Hindi'),
+        ('Spanish', 'Spanish'),
+        ('Other', 'Other')
+    ])
+] %}
+
+<div class="pure-g creator-details-grid">
+    {% for name, label, placeholder, input_type, options in dropdowns %}
+    <div class="creator-field pure-u-1 pure-u-md-1-3">
+        <span id="{{ name }}-label" class="upload-dropdown-label">
+            {{ label }} <span class="required">*</span>
+        </span>
+
+        <div class="upload-dropdown"
+             data-placeholder="{{ placeholder }}">
+            <button type="button"
+                    class="upload-dropdown-toggle"
+                    aria-expanded="false"
+                    aria-controls="{{ name }}-panel"
+                    aria-labelledby="{{ name }}-label {{ name }}-summary"
+                    aria-describedby="{{ name }}-error">
+                <span id="{{ name }}-summary"
+                      class="upload-dropdown-summary">
+                    {{ placeholder }}
+                </span>
+                <span aria-hidden="true">▾</span>
+            </button>
+
+            <div id="{{ name }}-panel"
+                 class="upload-dropdown-panel"
+                 role="group"
+                 aria-labelledby="{{ name }}-label"
+                 hidden>
+                {% for value, text in options %}
+                <label class="upload-dropdown-option">
+                    <input type="{{ input_type }}"
+                           name="{{ name }}"
+                           value="{{ value }}">
+                    <span>{{ text }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <p id="{{ name }}-error"
+           class="upload-dropdown-error"
+           role="alert"></p>
+    </div>
+    {% endfor %}
+</div>
+                <div class="creator-actions">
+                    <button class="pure-button creator-btn creator-btn-primary"
+                            type="submit" name="action" value="publish">PUBLISH</button>
+                    <button class="pure-button creator-btn creator-btn-secondary"
+                            type="submit" name="action" value="draft" formaction="{{url_for('uploadVideo.save_draft')}}" formnovalidate>SAVE DRAFT</button>
+                    <a class="pure-button creator-btn creator-btn-cancel" href="/">CANCEL</a>
+                </div>
+            </section>
+        </div>
+    </form>
+    <dialog id="draftDialog" aria-labelledby="draftDialogTitle">
+    <form id="draftForm"
+      class="creator-upload-form"
+      data-save-url="{{ url_for('uploadVideo.update_draft') }}"
+      data-delete-url="{{ url_for('uploadVideo.delete_draft') }}"
+      data-publish-url="{{ url_for('uploadVideo.publish_draft') }}">
+
+        <h2 id="draftDialogTitle">Edit draft</h2>
+        <input type="hidden" name="draft_id" id="draftId">
+
+        <div class="creator-field">
+            <label for="draftTitle">Title *</label>
+            <input type="text" id="draftTitle" name="title"
+                   maxlength="200" required>
+        </div>
+
+        <div class="creator-field">
+            <label for="draftDescription">Description</label>
+            <textarea id="draftDescription" name="description"
+                      maxlength="10000" rows="4"></textarea>
+        </div>
+
+       <div class="creator-field">
+    <label class="creator-dropzone">
+        <span class="creator-upload-icon">▧</span>
+        <strong>Upload thumbnail</strong>
+        <span>Choose a replacement image or browse</span>
+        <input type="file" id="draftThumbnail"
+               accept=".png,.jpg,.jpeg">
+    </label>
+    <p id="draftThumbnailStatus" role="status"></p>
+</div>
+
+        <div class="pure-g creator-details-grid">
+    {% for name, label, placeholder, input_type, options in dropdowns %}
+        <div class="creator-field pure-u-1 pure-u-md-1-3">
+            <span id="draft-{{ name }}-label" class="upload-dropdown-label">
+                {{ label }}
+            </span>
+
+            <div class="upload-dropdown"
+                 data-placeholder="{{ placeholder }}">
+                <button type="button"
+                        class="upload-dropdown-toggle"
+                        aria-expanded="false"
+                        aria-controls="draft-{{ name }}-panel"
+                        aria-labelledby="draft-{{ name }}-label draft-{{ name }}-summary">
+                    <span id="draft-{{ name }}-summary"
+                          class="upload-dropdown-summary">
+                        {{ placeholder }}
+                    </span>
+                    <span aria-hidden="true">▾</span>
+                </button>
+
+                <div id="draft-{{ name }}-panel"
+                     class="upload-dropdown-panel"
+                     role="group"
+                     aria-labelledby="draft-{{ name }}-label"
+                     hidden>
+                    {% for value, text in options %}
+                        <label class="upload-dropdown-option">
+                            <input type="{{ input_type }}"
+                                   name="{{ name }}"
+                                   value="{{ value }}">
+                            <span>{{ text }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <p class="upload-dropdown-error" role="alert"></p>
+        </div>
+    {% endfor %}
+</div>
+
+        <p id="draftError" role="alert"></p>
+
+        <div class="creator-actions">
+            <button type="button" id="deleteDraft"
+                    class="pure-button creator-btn creator-btn-danger">
+                Delete draft
+            </button>
+
+            <button type="submit" value="save"
+                    class="pure-button creator-btn creator-btn-secondary">
+                Save draft
+            </button>
+
+            <button type="submit" value="publish"
+                    class="pure-button creator-btn creator-btn-primary">
+                Publish video
+            </button>
+
+            <button type="button" id="closeDraft"
+                    class="pure-button creator-btn creator-btn-cancel">
+                Cancel
+            </button>
+        </div>
+    </form>
+</dialog>
+
+
+    <section class="creator-drafts">
+    <div class="creator-form-banner">YOUR DRAFTS</div>
+
+    <div class="pure-g mv-grid-pure">
+        {% for draft in draft_list %}
+            <div class="mv-cell pure-u-1 pure-u-md-1-2 pure-u-lg-1-3">
+            <article class="mv-card">
+                <button type="button"
+                        class="draft-open"
+                        data-draft-index="{{ loop.index0 }}"
+                        aria-label="Edit draft {{ draft.title }}">
+                    <div class="mv-art">
+                        <div class="mv-vinyl" aria-hidden="true"></div>
+
+                        <div class="mv-thumb">
+                            {% if draft.thumbnail_url %}
+                                <img src="{{ draft.thumbnail_url }}"
+                                     alt="Thumbnail for {{ draft.title }}"
+                                     onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                                <span class="mv-thumb-empty" hidden>♫</span>
+                            {% else %}
+                                <span class="mv-thumb-empty">♫</span>
+                            {% endif %}
+
+                            {% if draft.duration is not none %}
+                                {% set seconds = draft.duration|int %}
+                                <span class="mv-duration">
+                                    {{ "%02d:%02d"|format(seconds // 60, seconds % 60) }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mv-info">
+                        <h2 class="mv-title">{{ draft.title }}</h2>
+                        <p class="mv-views">Draft</p>
+                    </div>
+                </button>
+            </article>
+            </div>
+        {% else %}
+            <div class="mv-cell pure-u-1">
+                <p>No drafts saved yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<style>
+    .draft-open {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .creator-btn-danger {
+        background: #9b4034;
+        color: #fff;
+    }
+
+    #draftDialog {
+        width: min(600px, 90vw);
+        max-height: 85vh;
+        overflow-y: auto;
+        padding: 24px;
+        border: 0;
+        border-radius: 16px;
+    }
+
+    #draftDialog::backdrop {
+        background: rgb(0 0 0 / 50%);
+    }
+
+    #draftForm .creator-field {
+        margin-bottom: 16px;
+    }
+
+    #draftForm input[type="text"],
+    #draftForm textarea,
+    #draftForm select {
+        box-sizing: border-box;
+        width: 100%;
+    }
+</style>
+</div>
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+<script>
+const form = document.getElementById("upload-video-form");
+const submitButtons = form.querySelectorAll('button[type="submit"]');
+let activeUploads = 0;
+
+function setupUpload(type) {
+    const input = document.getElementById(`${type}-file`);
+    const keyInput = document.getElementById(`${type}-key`);
+    const statusText = document.getElementById(`upload-status-${type}`);
+
+    input.addEventListener("change", async () => {
+        keyInput.value = "";
+        statusText.textContent = "";
+        const file = input.files[0];
+        if (!file) return;
+
+        const data = new FormData();
+        data.append(`${type}_file`, file);
+
+        activeUploads += 1;
+        input.disabled = true;
+        submitButtons.forEach(button => button.disabled = true);
+        statusText.textContent = `Uploading ${type}…`;
+
+        try {
+            // Each endpoint returns its corresponding video_key or thumbnail_key.
+            const uploadUrl = type === "thumbnail"
+                ? "{{ url_for('uploadVideo.upload_thumbnail') }}"
+                : "{{ url_for('uploadVideo.upload_video') }}";
+            const response = await fetch(uploadUrl, {
+                method: "POST",
+                body: data
+            });
+
+            if (!response.ok) {
+                throw new Error(`Upload failed. Please select the ${type} again.`);
+            }
+
+            const result = await response.json();
+            const key = result[`${type}_key`];
+            if (typeof key !== "string" || !key.trim()) {
+                throw new Error(`The server did not return a ${type} key.`);
+            }
+
+            keyInput.value = key;
+            statusText.textContent = `${type === "video" ? "Video" : "Thumbnail"} uploaded. Ready to publish.`;
+        } catch (error) {
+            statusText.textContent = error.message;
+            input.value = "";
+        } finally {
+            activeUploads -= 1;
+            input.disabled = false;
+            submitButtons.forEach(button => button.disabled = activeUploads > 0);
+        }
+    });
+}
+
+setupUpload("video");
+setupUpload("thumbnail");
+const dropdowns = [
+    ...document.querySelectorAll(
+        "#upload-video-form .upload-dropdown, #draftForm .upload-dropdown"
+    )
+];
+
+function setDropdownOpen(dropdown, open) {
+    dropdown.querySelector(".upload-dropdown-panel").hidden = !open;
+    dropdown.querySelector(".upload-dropdown-toggle")
+        .setAttribute("aria-expanded", String(open));
+}
+
+function closeDropdowns() {
+    dropdowns.forEach(dropdown => setDropdownOpen(dropdown, false));
+}
+
+function updateDropdown(dropdown) {
+    const selected = [...dropdown.querySelectorAll("input:checked")];
+    const summary = dropdown.querySelector(".upload-dropdown-summary");
+    const toggle = dropdown.querySelector(".upload-dropdown-toggle");
+    const error = dropdown.parentElement.querySelector(
+        ".upload-dropdown-error"
+    );
+
+    summary.textContent = selected.length === 0
+        ? dropdown.dataset.placeholder
+        : selected.length === 1
+            ? selected[0].nextElementSibling.textContent.trim()
+            : `${selected.length} genres selected`;
+
+    if (selected.length > 0) {
+        error.textContent = "";
+        toggle.removeAttribute("aria-invalid");
+    }
+}
+
+dropdowns.forEach(dropdown => {
+    const toggle = dropdown.querySelector(".upload-dropdown-toggle");
+    const panel = dropdown.querySelector(".upload-dropdown-panel");
+
+    toggle.addEventListener("click", () => {
+        const shouldOpen = panel.hidden;
+        closeDropdowns();
+        setDropdownOpen(dropdown, shouldOpen);
+    });
+
+    dropdown.querySelectorAll("input").forEach(input => {
+        input.addEventListener("change", () => {
+            updateDropdown(dropdown);
+
+            // Single-choice dropdowns close after selection.
+            if (input.type === "radio" && !input.matches(":focus-visible")) {
+                setDropdownOpen(dropdown, false);
+                toggle.focus();
+            }
+        });
+    });
+
+    dropdown.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !panel.hidden) {
+            event.preventDefault();
+            setDropdownOpen(dropdown, false);
+            toggle.focus();
+        }
+
+        if (event.key === "ArrowDown" && event.target === toggle) {
+            event.preventDefault();
+            closeDropdowns();
+            setDropdownOpen(dropdown, true);
+
+            const target = panel.querySelector("input:checked")
+                || panel.querySelector("input");
+            target?.focus();
+        }
+    });
+
+    dropdown.addEventListener("focusout", event => {
+        if (!dropdown.contains(event.relatedTarget)) {
+            setDropdownOpen(dropdown, false);
+        }
+    });
+
+    updateDropdown(dropdown);
+});
+
+document.addEventListener("click", event => {
+    if (!dropdowns.some(dropdown => dropdown.contains(event.target))) {
+        closeDropdowns();
+    }
+});
+
+function validateDropdowns() {
+    for (const dropdown of form.querySelectorAll(".upload-dropdown")) {
+        if (dropdown.querySelector("input:checked")) continue;
+
+        const toggle = dropdown.querySelector(".upload-dropdown-toggle");
+        const error = dropdown.parentElement.querySelector(
+            ".upload-dropdown-error"
+        );
+        const firstInput = dropdown.querySelector("input");
+
+        if (!firstInput) {
+            error.textContent = "No options available. Please try again later.";
+            toggle.setAttribute("aria-invalid", "true");
+            toggle.focus();
+            return false;
+        }
+
+        const name = firstInput.name;
+
+        const messages = {
+            genre: "Choose at least one genre.",
+            video_type: "Choose Original or Cover.",
+            language: "Choose a language."
+        };
+
+        error.textContent = messages[name];
+        toggle.setAttribute("aria-invalid", "true");
+
+        closeDropdowns();
+        setDropdownOpen(dropdown, true);
+        dropdown.querySelector("input").focus();
+        return false;
+    }
+
+    return true;
+}
+
+form.addEventListener("submit", event => {
+    if (activeUploads > 0) {
+        event.preventDefault();
+        return;
+    }
+
+    const isDraft = event.submitter?.value === "draft";
+
+    // Both actions require a completed video upload.
+    if (!document.getElementById("video-key").value.trim()) {
+        event.preventDefault();
+        document.getElementById("upload-status-video").textContent =
+            "Please upload a video before continuing.";
+        return;
+    }
+    const titleInput = document.getElementById("video-title");
+
+if (!titleInput.value.trim()) {
+    event.preventDefault();
+    titleInput.value = "";
+    titleInput.setCustomValidity("Please enter a video title.");
+    titleInput.reportValidity();
+    return;
+}
+
+titleInput.setCustomValidity("");
+document.getElementById("video-title").addEventListener("input", event => {
+    event.target.setCustomValidity("");
+});
+
+    // All remaining fields are optional for drafts.
+    if (isDraft) return;
+
+    for (const id of ["video-title", "video-description"]) {
+        const field = document.getElementById(id);
+
+        if (!field.value.trim()) {
+            event.preventDefault();
+            field.value = "";
+            field.reportValidity();
+            return;
+        }
+    }
+
+    if (!validateDropdowns()) {
+        event.preventDefault();
+    }
+});
+const savedDrafts = {{ draft_list | tojson }};
+const draftDialog = document.getElementById("draftDialog");
+const draftForm = document.getElementById("draftForm");
+const draftError = document.getElementById("draftError");
+
+// Keep a successfully uploaded replacement key if saving needs a retry.
+let replacementThumbnailKey = null;
+
+document.querySelectorAll("[data-draft-index]").forEach(button => {
+    button.addEventListener("click", () => {
+        const draft = savedDrafts[Number(button.dataset.draftIndex)];
+
+        draftForm.reset();
+        replacementThumbnailKey = null;
+        draftError.textContent = "";
+        document.getElementById("draftThumbnailStatus").textContent = "";
+
+        document.getElementById("draftId").value = draft.id;
+        document.getElementById("draftTitle").value = draft.title;
+        document.getElementById("draftDescription").value = draft.description;
+        const selectedGenres = (draft.genres || []).map(String);
+
+draftForm.querySelectorAll('[name="genre"]').forEach(input => {
+    input.checked = selectedGenres.includes(input.value);
+});
+
+draftForm.querySelectorAll('[name="video_type"]').forEach(input => {
+    input.checked = input.value === draft.video_type;
+});
+
+draftForm.querySelectorAll('[name="language"]').forEach(input => {
+    input.checked = input.value === draft.language;
+});
+
+draftForm.querySelectorAll(".upload-dropdown").forEach(dropdown => {
+    updateDropdown(dropdown);
+    setDropdownOpen(dropdown, false);
+});
+        draftDialog.showModal();
+    });
+});
+
+document.getElementById("closeDraft").addEventListener("click", () => {
+    draftDialog.close();
+});
+
+document.getElementById("draftThumbnail").addEventListener("change", () => {
+    replacementThumbnailKey = null;
+});
+
+document.getElementById("deleteDraft").addEventListener("click", async () => {
+    if (!window.confirm(
+        "Delete this draft and its uploaded video and thumbnail?"
+    )) {
+        return;
+    }
+
+    const buttons = draftForm.querySelectorAll("button");
+    buttons.forEach(button => button.disabled = true);
+    draftError.textContent = "";
+
+    try {
+        const data = new FormData();
+        data.set("draft_id", document.getElementById("draftId").value);
+        const response = await fetch(draftForm.dataset.deleteUrl, {
+            method: "POST",
+            body: data
+        });
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(result.error || "Could not delete the draft.");
+        }
+
+        if (result.cleanup_required) {
+            window.alert(result.message);
+        }
+        window.location.reload();
+    } catch (error) {
+        draftError.textContent = error.message;
+    } finally {
+        buttons.forEach(button => button.disabled = false);
+    }
+});
+
+draftForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    draftError.textContent = "";
+
+    const title = document.getElementById("draftTitle").value.trim();
+    if (!title) {
+        draftError.textContent = "A video title is required.";
+        return;
+    }
+
+    const buttons = draftForm.querySelectorAll("button");
+    buttons.forEach(button => button.disabled = true);
+
+    try {
+        const data = new FormData(draftForm);
+        data.set("title", title);
+
+        const file = document.getElementById("draftThumbnail").files[0];
+
+        if (file && replacementThumbnailKey === null) {
+            document.getElementById("draftThumbnailStatus").textContent =
+                "Uploading thumbnail…";
+
+            const uploadData = new FormData();
+            uploadData.append("thumbnail_file", file);
+
+            const response = await fetch(
+                "{{ url_for('uploadVideo.upload_thumbnail') }}",
+                { method: "POST", body: uploadData }
+            );
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok || !result.thumbnail_key) {
+                throw new Error(result.error || "Thumbnail upload failed.");
+            }
+
+            replacementThumbnailKey = result.thumbnail_key;
+            document.getElementById("draftThumbnailStatus").textContent =
+                "Thumbnail uploaded.";
+        }
+
+        if (replacementThumbnailKey !== null) {
+            data.set("thumbnail_key", replacementThumbnailKey);
+        }
+
+        const url = event.submitter?.value === "publish"
+            ? draftForm.dataset.publishUrl
+            : draftForm.dataset.saveUrl;
+
+        const response = await fetch(url, {
+            method: "POST",
+            body: data
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(result.error || "Could not save the draft.");
+        }
+
+        window.location.reload();
+    } catch (error) {
+        draftError.textContent = error.message;
+    } finally {
+        buttons.forEach(button => button.disabled = false);
+    }
+});
+</script>
+{% endblock %}

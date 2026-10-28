@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% from "videoStats.html" import videoStats %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/library-style.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}?v=2">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/playlist-popup.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/library-carousel.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/playlist-delete.css') }}">
+
+
+<div class="home-placeholder">
+    {% include "searchBar.html" %}
+
+    <!-- Playlist -->
+    <div>
+        <div class="lib-head">
+            <h2>Playlists</h2>
+            <button type="button" id="newPlaylistButton"
+                    class="mv-btn mv-btn-primary">
+                + New playlist
+            </button>
+        </div>
+        <div class="carousel lib-carousel">
+        <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll playlists left">‹</button>
+        <div class="carousel-track playlist-row">
+            {% for playlist in playlists %}
+            <button type="button" class="playlist-card playlist-open"
+                    data-playlist-title="{{ playlist.title }}"
+                    data-play-url="{{ url_for('library.play_playlist', playlist_id=playlist.id) }}"
+                    data-delete-url="{{ url_for('library.delete_playlist', playlist_id=playlist.id) }}">
+                {% include "svg/playlist.html"%}
+                <div class="playlist-title">
+                    {{playlist.title}}
+                </div>
+                                <div class="playlist-count">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 6h12M3 12h12M3 18h7"/>
+                        <path d="M16 14l6 4-6 4z"/>
+                    </svg>
+                    <span>{{ playlist.videos|length }} video{{ '' if playlist.videos|length == 1 else 's' }}</span>
+                </div>
+                <!-- videos in this playlist, read by playlistPopup.js -->
+                <template class="playlist-videos">
+                    {% for video in playlist.videos|sort(attribute='id') %}
+                    <li data-title="{{ video.title }}"
+                        data-artist="{{ video.artist or (video.uploader.username if video.uploader else '') }}"
+                        data-duration-text="{{ video.duration_text }}"
+                        data-seconds="{{ video.duration }}"
+                        data-thumb="{{ mediaURL(video.thumbnail_key) or default_thumbnail_url or '' }}"
+                        data-src="{{ video.video_url }}"
+                        data-play-url="{{ url_for(
+                            'library.play_playlist',
+                            playlist_id=playlist.id,
+                            video_id=video.id
+                        ) }}"></li>
+                    {% endfor %}
+                </template>
+            </button>
+            {% endfor %}
+        </div>
+        <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll playlists right">›</button>
+        </div>
+    </div>
+
+
+    <!-- Saved Videos -->
+    <div class="saved-section">
+        <h2>Saved Videos</h2>
+        <div class="carousel lib-carousel">
+        <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll saved videos left">‹</button>
+        <div class="carousel-track saved-row" data-list="saved">
+            {% for video in saved_videos %}
+            <article class="mv-card saved-vid-card"
+                    data-video-id="{{ video.id }}"
+                    role="link"
+                    tabindex="0"
+                    aria-label="Play {{ video.title }}"
+                    data-title="{{ video.title }}"
+                    data-watch-url="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}"
+                    >
+
+                <button type="button" class="mv-dots vinyl-dots" aria-haspopup="menu" aria-expanded="false"
+                        aria-label="Options for {{ video.title }}">
+                    <span></span><span></span><span></span>
+                </button>
+
+                <div class="mv-art vinyl-art">
+                    <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
+                                    <div class="mv-thumb">
+                        {% set thumbnail_url = mediaURL(video.thumbnail_key) or default_thumbnail_url %}
+                        {% if thumbnail_url %}
+                                                    <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                                class="{{ 'is-default' if not video.thumbnail_key else '' }}"
+                                {% if not video.thumbnail_key %}style="object-fit: contain; background: #fff;"{% endif %}
+                                data-fallback="{{ default_thumbnail_url or '' }}"
+                                onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
+                        {% else %}
+                            <span class="mv-thumb-empty">♫</span>
+                        {% endif %}
+                        {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
+                    </div>
+                </div>
+
+                <div class="mv-info">
+                    <h2 class="mv-title">{{ video.title }}</h2>
+                    <div class="video-info">
+                        <div class="mv-views video-info-section">{{video.author}}</div>
+                        <div class="mv-views video-info-section video-info-section-time">Viewed {{ video.savedtime }} ago</div>
+                    </div>
+                    {{ videoStats(video) }}
+                </div>
+
+            </article>
+            {% endfor %}
+        </div>
+        <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll saved videos right">›</button>
+        </div>
+    </div>
+
+    <!-- Watch Later -->
+    <div class="saved-section">
+        <h2>Watch Later</h2>
+        <div class="carousel lib-carousel">
+        <button type="button" class="carousel-arrow carousel-arrow-left" aria-label="Scroll watch later left">‹</button>
+        <div class="carousel-track saved-row" data-list="watchlater">
+            {% for video in watchlater %}
+            <article class="mv-card saved-vid-card"
+                    data-video-id="{{ video.id }}"
+                        role="link"
+                        tabindex="0"
+                        aria-label="Play {{ video.title }}"
+                        data-title="{{ video.title }}"
+                        data-watch-url="{{ url_for('mediaPlayer.watchVideo', videoId=video.id) }}"
+                        >
+
+                    <button type="button" class="mv-dots vinyl-dots" aria-haspopup="menu" aria-expanded="false"
+                            aria-label="Options for {{ video.title }}">
+                        <span></span><span></span><span></span>
+                    </button>
+
+                    <div class="mv-art vinyl-art">
+                        <div class="mv-vinyl vinyl-library" aria-hidden="true"></div>
+                                        <div class="mv-thumb">
+                            {% set thumbnail_url = mediaURL(video.thumbnail_key) or default_thumbnail_url %}
+                            {% if thumbnail_url %}
+                                                        <img src="{{ thumbnail_url }}" alt="Thumbnail for {{ video.title }}"
+                                    class="{{ 'is-default' if not video.thumbnail_key else '' }}"
+                                    {% if not video.thumbnail_key %}style="object-fit: contain; background: #fff;"{% endif %}
+                                    data-fallback="{{ default_thumbnail_url or '' }}"
+                                    onerror="if (this.dataset.fallback && !this.dataset.tried) { this.dataset.tried = '1'; this.classList.add('is-default'); this.style.objectFit = 'contain'; this.style.background = '#fff'; this.src = this.dataset.fallback; } else { this.hidden = true; this.nextElementSibling.hidden = false; }">
+                            {% else %}
+                                <span class="mv-thumb-empty">♫</span>
+                            {% endif %}
+                            {% if video.duration_text %}<span class="mv-duration">{{ video.duration_text }}</span>{% endif %}
+                        </div>
+                    </div>
+
+                <div class="mv-info">
+                    <h2 class="mv-title">{{ video.title }}</h2>
+                    <div class="video-info">
+                        <div class="mv-views video-info-section">{{video.author}}</div>
+                        <div class="mv-views video-info-section video-info-section-time">Viewed {{ video.savedtime }} ago</div>
+                    </div>
+                    {{ videoStats(video) }}
+                </div>
+
+                </article>
+            {% endfor %}
+        </div>
+        <button type="button" class="carousel-arrow carousel-arrow-right" aria-label="Scroll watch later right">›</button>
+        </div>
+</div>
+<dialog id="newPlaylistDialog"
+        class="mv-confirm"
+        aria-labelledby="newPlaylistTitle">
+
+    <form action="{{ url_for('library.create_playlist') }}"
+          method="POST">
+
+        <h2 id="newPlaylistTitle">Create playlist</h2>
+
+        <div class="mv-field">
+            <label for="playlistTitle">Playlist title</label>
+
+            <div class="mv-input-row">
+                <input type="text"
+                       id="playlistTitle"
+                       name="title"
+                       maxlength="200"
+                       placeholder="Enter playlist title"
+                       required>
+            </div>
+        </div>
+
+        <div class="mv-confirm-actions">
+            <button type="button" id="cancelNewPlaylist"
+                    class="mv-btn mv-btn-light">
+                Cancel
+            </button>
+
+            <button type="submit" class="mv-btn mv-btn-primary">
+                Submit
+            </button>
+        </div>
+    </form>
+</dialog>
+
+<script>
+(() => {
+    const dialog = document.getElementById("newPlaylistDialog");
+    const form = dialog.querySelector("form");
+    const title = document.getElementById("playlistTitle");
+
+    document.getElementById("newPlaylistButton")
+        .addEventListener("click", () => {
+            form.reset();
+            title.setCustomValidity("");
+            dialog.showModal();
+            title.focus();
+        });
+
+    document.getElementById("cancelNewPlaylist")
+        .addEventListener("click", () => dialog.close());
+
+    title.addEventListener("input", () => {
+        title.setCustomValidity(
+            title.value.trim() ? "" : "Please enter a playlist title."
+        );
+    });
+
+    form.addEventListener("submit", event => {
+        title.value = title.value.trim();
+
+        if (!title.value) {
+            event.preventDefault();
+            title.setCustomValidity("Please enter a playlist title.");
+            title.reportValidity();
+        }
+    });
+})();
+</script>
+<script>
+    function openLibraryVideo(event) {
+        if (!(event.target instanceof Element)) return;
+        if (event.target.closest("a, button, input, select, textarea, [role='menu']")) return;
+
+        const card = event.target.closest(".saved-vid-card[data-watch-url]");
+        if (!card) return;
+
+        if (event.type === "keydown") {
+            if (event.target !== card) return;
+            if (event.key !== "Enter" && event.key !== " ") return;
+            event.preventDefault();
+        }
+
+        window.location.assign(card.dataset.watchUrl);
+    }
+
+    document.addEventListener("click", openLibraryVideo);
+    document.addEventListener("keydown", openLibraryVideo);
+</script>
+<style>
+    .saved-vid-card[data-watch-url] {
+        cursor: pointer;
+    }
+
+    .saved-vid-card[data-watch-url]:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 4px;
+    }
+</style>
+{% include "playlistPopup.html" %}
+<script src="{{ url_for('static', filename='js/playlistPopup.js') }}"></script>
+<script src="{{ url_for('static', filename='js/playlistDelete.js') }}"></script>
+<script src="{{ url_for('static', filename='js/carousel.js') }}"></script>
+<script src="{{ url_for('static', filename='js/libraryRemove.js') }}" data-remove-url="{{ url_for('library.remove_from_library') }}"></script>
+{% endblock %}

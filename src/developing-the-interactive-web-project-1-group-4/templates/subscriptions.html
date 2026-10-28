@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Subscriptions - Tune In{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/subscriptions.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage-videos-wide.css') }}">
+<div class="mv-page sub-page mv-search-wide">
+    {% include "searchBar.html" %}
+
+    {% if artists %}
+    <div class="sub-grid">
+        {% for artist in artists %}
+        <a class="sub-artist" href="{{ artist.profile_url }}">
+            <span class="sub-avatar">
+                {% if artist.picture_url %}
+                    <img src="{{ artist.picture_url }}" alt="" loading="lazy"
+                         onerror="this.hidden = true; this.nextElementSibling.hidden = false;">
+                    <span hidden aria-hidden="true">{{ artist.initial }}</span>
+                {% else %}
+                    <span aria-hidden="true">{{ artist.initial }}</span>
+                {% endif %}
+            </span>
+            <span class="sub-name">{{ artist.username }}</span>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="mv-empty">
+        <p>You haven't subscribed to any artists yet.</p>
+        <a class="pure-button mv-btn mv-btn-primary" href="{{ url_for('homePage.home') }}">Discover artists</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
