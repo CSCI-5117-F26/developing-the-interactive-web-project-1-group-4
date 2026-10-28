@@ -121,6 +121,7 @@ def watchVideo(videoId):
                 "mediaPlayer.watchVideo",
                 videoId=video_ids[index + 1],
                 playlist_id=playlist.id,
+                autoplay=1,
             )
     # Count this visit FIRST, so the number on the page includes it
     addView(videoId)
