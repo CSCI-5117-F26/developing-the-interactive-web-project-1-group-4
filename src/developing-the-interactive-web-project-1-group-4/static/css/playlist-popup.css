@@ -9,9 +9,10 @@
 }
 
 /* ---------- Playlist popup ---------- */
-.pl-dialog {
-    width: min(620px, 94vw);
-    max-height: 90vh;
+#playlistDialog.pl-dialog {
+    width: min(1000px, 94vw);
+    height: min(780px, 86vh);
+    max-height: 92vh;
     padding: 0;
     border: 2px solid #5c724a;
     border-radius: 16px;
@@ -163,7 +164,7 @@
 
 .pl-row {
     display: grid;
-    grid-template-columns: 24px 84px minmax(0, 1fr) 48px;
+    grid-template-columns: 24px 84px minmax(0, 1fr) 48px 30px;
     column-gap: 14px;
     align-items: center;
     width: 100%;
@@ -176,6 +177,24 @@
     font: inherit;
     text-align: left;
     cursor: pointer;
+}
+
+.pl-list > li {
+    position: relative;
+}
+
+.pl-list > li.menu-open {
+    z-index: 2;
+}
+
+.pl-dots.mv-dots {
+    position: static;
+    flex: none;
+}
+
+.pl-menu.mv-menu {
+    top: calc(100% - 6px);
+    right: 8px;
 }
 
 .pl-row:hover {
@@ -302,4 +321,12 @@
 @media (max-width: 560px) {
     .pl-now { flex-direction: column; align-items: stretch; }
     .pl-video { width: 100%; }
+    .pl-row {
+        grid-template-columns: 24px 56px minmax(0, 1fr) 40px 30px;
+        column-gap: 8px;
+    }
+    .pl-thumb {
+        width: 56px;
+        height: 32px;
+    }
 }

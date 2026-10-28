@@ -223,6 +223,13 @@ def removeComment(commentId):
         return loginRequired()
     return jsonify(deleted=deleteComment(commentId, user))
 
+@mediaPlayer_bp.delete("/api/playlists/<int:playlistId>/videos/<int:videoId>")
+def deletePlaylistVideo(playlistId, videoId):
+    user = currentUser()
+    if user is None:
+        return loginRequired()
+    return jsonify(removeVideoFromPlaylist(playlistId, videoId, user))
+
 # ---------------- Playlists ----------------
 """
 @mediaPlayer_bp.get("/api/playlists")
