@@ -1,10 +1,7 @@
 from flask import render_template, request, jsonify, url_for, redirect, abort
 from ..models import Playlists, videos
 from . import library_bp
-from ..services import (
-    fetchVideos, fetchGenres, fetchArtistVideos, searchAll, text_wrap,mediaURL,
-    SEARCH_PREVIEW_LIMIT, SEARCH_PAGE_LIMIT, get_current_user, defaultCoverURL
-)
+from ..services import mediaURL, get_current_user, defaultCoverURL
 from ..database import db
 from dotenv import load_dotenv
 load_dotenv()

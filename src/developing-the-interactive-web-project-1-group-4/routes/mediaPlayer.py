@@ -8,7 +8,7 @@ from ..mediaPlayerServices import (
     getVideo, addView, videoDetails, fetchRecommendations,
     countLikes, userLikedVideo, setLike,
     fetchComments, addComment, editComment, deleteComment, commentPageSize, changeCommentLikes,
-    fetchPlaylists, createPlaylist, addVideoToPlaylist, removeVideoFromPlaylist,
+     removeVideoFromPlaylist,
 )
 
 # ---------------- Helpers ----------------
@@ -230,42 +230,3 @@ def deletePlaylistVideo(playlistId, videoId):
     if user is None:
         return loginRequired()
     return jsonify(removeVideoFromPlaylist(playlistId, videoId, user))
-
-# ---------------- Playlists ----------------
-"""
-@mediaPlayer_bp.get("/api/playlists")
-def getPlaylists():
-    user = currentUser()
-    if user is None:
-        return loginRequired()
-    return jsonify(fetchPlaylists(user, readInt(request.args.get("videoId"))))
-
-
-@mediaPlayer_bp.post("/api/playlists")
-def postPlaylist():
-    user = currentUser()
-    if user is None:
-        return loginRequired()
-    data = readJson()
-    playlist = createPlaylist(user, data.get("title"), readInt(data.get("videoId")))
-    return jsonify(playlist), 201
-
-
-@mediaPlayer_bp.post("/api/playlists/<int:playlistId>/videos")
-def postPlaylistVideo(playlistId):
-    user = currentUser()
-    if user is None:
-        return loginRequired()
-    videoId = readInt(readJson().get("videoId"))
-    if videoId is None:
-        return jsonify(error="videoId is required."), 400
-    return jsonify(addVideoToPlaylist(playlistId, videoId, user))
-
-
-@mediaPlayer_bp.delete("/api/playlists/<int:playlistId>/videos/<int:videoId>")
-def deletePlaylistVideo(playlistId, videoId):
-    user = currentUser()
-    if user is None:
-        return loginRequired()
-    return jsonify(removeVideoFromPlaylist(playlistId, videoId, user))
-    """

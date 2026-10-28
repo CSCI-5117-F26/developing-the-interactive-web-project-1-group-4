@@ -5,7 +5,6 @@ from sqlalchemy.orm import joinedload, selectinload
 from . import activity_bp
 from ..database import db
 from ..models import Comments, Likes, videos
-# Import your existing get_current_user and mediaURL helpers here.
 
 
 def time_ago(value):

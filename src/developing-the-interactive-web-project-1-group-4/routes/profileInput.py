@@ -65,30 +65,6 @@ def savePicture(file):
 
     return profile_picture_key, None
 
-"""
-@profileInput_bp.route("/createProfile", methods=["GET", "POST"])
-def createProfile():
-    if request.method == "GET":
-        return render_template("createProfile.html", form={}, errors={}, saved=None)
-
-    data, errors = validate(request.form)
-
-    picture = request.files.get("profilePicture")
-    data["profilePicture"] = None
-    if not errors and picture and picture.filename:
-        filename, error = savePicture(picture)
-        if error:
-            errors["profilePicture"] = error
-        else:
-            data["profilePicture"] = filename
-
-    if errors:
-        return render_template("createProfile.html", form=data, errors=errors, saved=None), 400
-
-    data["submittedAt"] = datetime.now(timezone.utc).isoformat()
-    saveProfile(data)
-    return render_template("createProfile.html", form={}, errors={}, saved=data)
-    """
 
 @profileInput_bp.route("/createProfile", methods=["GET", "POST"])
 def createProfile():

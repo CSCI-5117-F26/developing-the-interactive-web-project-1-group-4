@@ -4,7 +4,7 @@ from sqlalchemy import inspect
 from . import models
 from flask import Flask, render_template, request,jsonify, current_app , session, redirect , url_for
 from .database import db
-from .services import create_dummy_user, create_dummy_video, get_thumbnails_url, mediaURL , get_current_user, create_default_playlists_for_all_users
+from .services import get_thumbnails_url, mediaURL , get_current_user, create_default_playlists_for_all_users
 from botocore.exceptions import BotoCoreError, ClientError
 from .models import Ti_user
 from werkzeug.utils import secure_filename
@@ -125,28 +125,6 @@ def signup():
         prompt="signup"
     )
 
-@app.route('/create-profile', methods=['POST'])
-def create_profile():
-    username = request.args.get('username')
-    email = request.args.get('email')
-    first_name = request.args.get('first_name')
-    last_name = request.args.get('last_name')
-    create_dummy_user(username, email, first_name, last_name)
-    return "successfull"
-@app.route('/create-video', methods=['POST'])
-def create_video():
-    ti_user = request.args.get('ti_user',type=int)
-    thumbnail_key = request.args.get('thumbnail_key')
-    duration = request.args.get('duration',type=int)
-    title = request.args.get('title')
-    video_key = request.args.get('video_key')
-    language = request.args.get('language')
-    original = request.args.get("original", "false").lower() == "true"
-    create_dummy_video(ti_user, thumbnail_key, duration, title, video_key, language, original)
-    return "successfull"
-
-
-
 @app.route("/api/thumbnails", methods=["GET"])
 def get_thumbnails():
     thumbnails = get_thumbnails_url()
@@ -159,4 +137,3 @@ def playvid():
 
 if __name__ == "__main__":
     app.run(debug=True)
-

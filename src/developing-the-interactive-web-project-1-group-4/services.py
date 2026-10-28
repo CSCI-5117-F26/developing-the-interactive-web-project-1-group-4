@@ -23,21 +23,6 @@ genrePageLimit = 60
 from .models import videos as Video, Genres, Ti_user, video_genres
 
 load_dotenv()
-def create_dummy_user(username: str, email: str, first_name: str, last_name: str):
-    user = Ti_user(username=username, email=email, first_name=first_name, last_name=last_name)
-    db.session.add(user)
-    db.session.commit()
-    return user
-def create_dummy_genre(name: str):
-    genre = Genres(name=name)
-    db.session.add(genre)
-    db.session.commit()
-    return genre
-def create_dummy_video(ti_user:int,thumbnail_key:str,duration:int,title:str,video_key:str,language:str,original:bool):
-    video = videos(ti_user=ti_user, thumbnail_key=thumbnail_key, duration=duration, title=title, video_key=video_key, language=language, Original=original)
-    db.session.add(video)
-    db.session.commit()
-    return video
 def get_thumbnails_url():
     thumbnail_keys = [
             "thumbnails/0067769d-f9fd-4a79-983e-ec8660fdaff4-2.jpg",
@@ -191,35 +176,6 @@ def text_wrap(text, max_length = 50):
         lines.append(line)
     return lines
 
-def getVideoDuration(video):
-    """
-    result = subprocess.run(
-        [
-            "ffprobe",
-            "-v",
-            "error",
-            "-show_entries",
-            "format=duration",
-            "-of",
-            "default=noprint_wrappers=1:nokey=1",
-            video,
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-    )
-    """
-    """
-    with av.open(video) as container:
-        if container.duration is not None:
-            return float(container.duration / av.time_base)
-
-        for stream in container.streams.video:
-            if stream.duration is not None and stream.time_base is not None:
-                return float(stream.duration * stream.time_base)
-    #duration = float(result.stdout.strip())
-    raise ValueError("Could not determine video duration.")
-    """
 
 
 def getVideoDuration(video_url):
