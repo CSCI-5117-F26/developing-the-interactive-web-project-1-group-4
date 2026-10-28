@@ -44,6 +44,24 @@ CSCI 5117, Fall 2026, [assignment description](https://canvas.umn.edu/courses/57
 ![Video player](images/mediaplayer_ss.png)
 *Watch a performance and join the conversation.*
 
+![Account settings](images/Accountsettings_ss.png)
+*Manage your account and profile settings.*
+
+![Activity](images/activity_ss.png)
+*Review your liked videos and comments.*
+
+![Manage videos](images/managevideos_ss.png)
+*Edit and manage your uploaded videos.*
+
+![Profile](images/Profile_ss.png)
+*View a creator profile and their videos.*
+
+![Subscriptions](images/subscription_ss.png)
+*Browse the creators you follow.*
+
+![Upload video](images/upload_ss.png)
+*Upload and publish a new video.*
+
 
 ## Mock-up 
 
