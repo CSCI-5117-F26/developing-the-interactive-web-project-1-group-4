@@ -482,3 +482,8 @@ if (mainVideo?.hasAttribute("autoplay")) {
         autoplayMessage.hidden = false;
     });
 }
+
+mainVideo?.addEventListener("ended", () => {
+    const nextVideo = document.querySelector(".playlist-button-row .next");
+    if (nextVideo) window.location.assign(nextVideo.href);
+});
